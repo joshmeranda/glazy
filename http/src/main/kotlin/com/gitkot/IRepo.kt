@@ -1,3 +1,6 @@
 package com.gitkot
 
-interface IRepo { }
+interface IRepo {
+
+
+}
