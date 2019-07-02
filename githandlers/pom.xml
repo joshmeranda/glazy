@@ -19,6 +19,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
+    <jackson.core.vesion>2.9.8</jackson.core.vesion>
   </properties>
 
   <dependencies>
@@ -27,6 +28,14 @@
       <artifactId>khttp</artifactId>
       <version>1.0.0</version>
     </dependency>
+
+    <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>${jackson.core.vesion}</version>
+    </dependency>
+
   </dependencies>
 
   <build>
