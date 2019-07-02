@@ -1,3 +1,7 @@
-package com.gitkot
+package com.jmeranda.gitkot
 
-interface IRepo { }
+import com.jmeranda.gitkot.impl.IssueImpl
+
+interface IRepo {
+    var issues: Set<IssueImpl>?
+}
