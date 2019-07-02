@@ -23,3 +23,5 @@ Git web API wrapper written in Kotlin
 [Apache Maven Docs](https://maven.apache.org/guides/getting-started/index.html)
 
 [khhtp Docs](https://khttp.readthedocs.io/en/latest/)
+
+[Jackson for Kotlin Docs](https://www.baeldung.com/jackson-kotlin)
