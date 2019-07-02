@@ -23,6 +23,11 @@
             <url>http://jcenter.bintray.com/</url>
         </repository>
 
+        <repository>
+            <id>maven</id>
+            <url></url>
+        </repository>
+
     </repositories>
 
     <dependencies>
