@@ -7,7 +7,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>githandlers</module>
+        <module>client</module>
     </modules>
 
     <properties>
