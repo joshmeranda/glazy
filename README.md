@@ -24,4 +24,4 @@ Git web API wrapper written in Kotlin
 
 [khhtp Docs](https://khttp.readthedocs.io/en/latest/)
 
-[Jackson for Kotlin Docs](https://www.baeldung.com/jackson-kotlin)
+[Kklaxon Docs (Github)](https://github.com/cbeust/klaxon)
