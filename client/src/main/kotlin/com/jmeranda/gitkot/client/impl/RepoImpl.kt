@@ -1,6 +1,6 @@
-package com.jmeranda.gitkot.impl
+package com.jmeranda.gitkot.client.impl
 
-import com.jmeranda.gitkot.IRepo
+import com.jmeranda.gitkot.client.IRepo
 
 class RepoImpl : IRepo {
     /* TODO if issues is null call from API */
