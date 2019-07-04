@@ -7,7 +7,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>client</module>
+        <module>lib</module>
     </modules>
 
     <properties>
