@@ -5,7 +5,9 @@ import com.beust.klaxon.Klaxon
 import com.beust.klaxon.FieldRenamer
 
 /**
- * data class representing the
+ * Represents the available endpoints for the github api v3.
+ *
+ * todo document properties with '@property tag'
  */
 data class Endpoints (
         val currentUserUrl: String,
@@ -55,7 +57,7 @@ const val BASE_URL: String = "https://api.github.com/"
  *
  * @return Endpoint? deserialized json response
  */
-fun getEnpoints(): Endpoints? {
+fun getEndpoints(): Endpoints? {
     val endpointsAsJson: String = get(BASE_URL).text
     return klaxon.parse<Endpoints>(endpointsAsJson)
 }
