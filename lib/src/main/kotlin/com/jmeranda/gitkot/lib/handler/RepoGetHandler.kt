@@ -1,6 +1,7 @@
 package com.jmeranda.gitkot.lib.handler
 
 import khttp.get
+
 import com.beust.klaxon.Klaxon
 
 import com.jmeranda.gitkot.lib.Repo
@@ -11,7 +12,7 @@ class RepoGetHandler(repoRequest: RepoRequest): Handler {
     private val repositoryUrl: String? = Handler.endpoints?.repositoryUrl
 
     override fun handleRequest(): Repo? {
-        val repoAsJson: String = get("$repositoryUrl/${request.user}/${request.repo}").text
+        val repoAsJson: String = get("$repositoryUrl/${request.repo.owner}/${request.repo.name}").text
         return Klaxon().parse<Repo>(repoAsJson)
     }
 }

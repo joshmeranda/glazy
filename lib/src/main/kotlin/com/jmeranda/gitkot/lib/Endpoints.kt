@@ -43,21 +43,4 @@ data class Endpoints (
         val userSearchUrl: String
         )
 
-/* Allow for simpler Json deserialization (EG) stud_puffin -> studPuffin*/
-val fieldRenamer = object: FieldRenamer {
-    override fun toJson(fieldName: String) = FieldRenamer.camelToUnderscores(fieldName)
-    override fun fromJson(fieldName: String) = FieldRenamer.underscoreToCamel(fieldName)
-}
-internal val klaxon = Klaxon().fieldRenamer(fieldRenamer)
-
 const val BASE_URL: String = "https://api.github.com/"
-
-/**
- * Get a class representing all available github endpoint as of v3.
- *
- * @return Endpoint? deserialized json response
- */
-fun getEndpoints(): Endpoints? {
-    val endpointsAsJson: String = get(BASE_URL).text
-    return klaxon.parse<Endpoints>(endpointsAsJson)
-}
