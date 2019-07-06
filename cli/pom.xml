@@ -12,6 +12,7 @@
   <groupId>com.jmeranda.gitkot.cli</groupId>
   <artifactId>cli</artifactId>
   <version>0.0</version>
+  <packaging>jar</packaging>
 
   <name>cli</name>
   <url>http://maven.apache.org</url>
@@ -22,9 +23,18 @@
     <junit.version>4.11</junit.version>
   </properties>
 
+  <dependencies>
+    <dependency>
+      <groupId>com.jmeranda.gitkot.lib</groupId>
+      <artifactId>lib</artifactId>
+      <version>0.0</version>
+    </dependency>
+  </dependencies>
+
   <build>
     <sourceDirectory>src/main/kotlin</sourceDirectory>
     <testSourceDirectory>src/test/kotlin</testSourceDirectory>
+
     <plugins>
       <plugin>
         <groupId>org.jetbrains.kotlin</groupId>
@@ -36,7 +46,6 @@
             <id>compile</id>
             <goals> <goal>compile</goal> </goals>
           </execution>
-
           <execution>
             <id>test-compile</id>
             <goals> <goal>test-compile</goal> </goals>

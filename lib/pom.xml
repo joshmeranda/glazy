@@ -12,6 +12,7 @@
   <groupId>com.jmeranda.gitkot.lib</groupId>
   <artifactId>lib</artifactId>
   <version>0.0</version>
+  <packaging>jar</packaging>
 
   <name>lib</name>
   <!-- FIXME change it to the project's website -->
@@ -40,27 +41,25 @@
     </dependency>
 
   </dependencies>
-<!--  <build>-->
-<!--    <pluginManagement>&lt;!&ndash; lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) &ndash;&gt;-->
-<!--      <plugins>-->
-<!--        <plugin>-->
-<!--          <groupId>org.jetbrains.kotlin</groupId>-->
-<!--          <artifactId>kotlin-maven-plugin</artifactId>-->
-<!--          <version>${kotlin.version}</version>-->
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-maven-plugin</artifactId>
+        <version>${kotlin.version}</version>
 
-<!--          <executions>-->
-<!--            <execution>-->
-<!--              <id>compile</id>-->
-<!--              <goals> <goal>compile</goal> </goals>-->
-<!--            </execution>-->
+        <executions>
+          <execution>
+            <id>compile</id>
+            <goals> <goal>compile</goal> </goals>
+          </execution>
 
-<!--            <execution>-->
-<!--              <id>test-compile</id>-->
-<!--              <goals> <goal>test-compile</goal> </goals>-->
-<!--            </execution>-->
-<!--          </executions>-->
-<!--        </plugin>-->
-<!--      </plugins>-->
-<!--    </pluginManagement>-->
-<!--  </build>-->
+          <execution>
+            <id>test-compile</id>
+            <goals> <goal>test-compile</goal> </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

@@ -23,6 +23,9 @@ internal val klaxon = Klaxon().fieldRenamer(fieldRenamer)
  */
 fun getEndpoints(): Endpoints? {
     val endpointsAsJson: String = get(BASE_URL).text
+
+    println(endpointsAsJson)
+
     return klaxon.parse<Endpoints>(endpointsAsJson)
 }
 
