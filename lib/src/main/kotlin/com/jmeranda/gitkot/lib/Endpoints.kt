@@ -17,7 +17,6 @@ data class Endpoints (
         val commitSearchUrl: String,
         val emailsUrl: String,
         val emojisUrl: String,
-        val eventUrl: String,
         val eventsUrl: String,
         val feedsUrl: String,
         val followersUrl: String,
@@ -39,7 +38,6 @@ data class Endpoints (
         val teamUrl: String,
         val userUrl: String,
         val userOrganizationsUrl: String,
-        val usrRepositoriesUrl: String,
         val userSearchUrl: String
         )
 

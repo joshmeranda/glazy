@@ -13,7 +13,7 @@
 
     <properties>
         <kotlin.version>1.3.40</kotlin.version>
-        <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
+<!--        <kotlin.compiler.incremental>true</kotlin.compiler.incremental>-->
         <main.class>com.jmeranda.gitkot.cli.EntryPoint</main.class>
     </properties>
 
@@ -27,6 +27,12 @@
     </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+            <version>1.3.10</version>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -47,4 +53,9 @@
             <version>${kotlin.version}</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
+    </build>
 </project>
