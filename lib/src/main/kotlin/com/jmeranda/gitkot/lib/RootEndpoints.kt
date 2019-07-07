@@ -9,7 +9,7 @@ import com.beust.klaxon.FieldRenamer
  *
  * todo document properties with '@property tag'
  */
-data class Endpoints (
+data class RootEndpoints (
         val currentUserUrl: String,
         val currentUserAuthorizationsHtmlUrl: String,
         val authorizationsUrl: String,
@@ -39,6 +39,6 @@ data class Endpoints (
         val userUrl: String,
         val userOrganizationsUrl: String,
         val userSearchUrl: String
-        )
+)
 
-const val BASE_URL: String = "https://api.github.com/"
+const val ROOT_ENDPOINT: String = "https://api.github.com/"
