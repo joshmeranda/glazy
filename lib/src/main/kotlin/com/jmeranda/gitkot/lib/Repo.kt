@@ -114,4 +114,4 @@ data class Repo(
         val defaultBranch: String,
         val networkCount: Int,
         val subscribersCount: Int
-        )
+)

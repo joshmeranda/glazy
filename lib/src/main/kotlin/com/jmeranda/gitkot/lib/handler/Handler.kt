@@ -5,43 +5,50 @@ import com.beust.klaxon.Klaxon
 
 import khttp.get
 
-import com.jmeranda.gitkot.lib.BASE_URL
-import com.jmeranda.gitkot.lib.Endpoints
-import com.jmeranda.gitkot.lib.request.Request
+import com.jmeranda.gitkot.lib.ROOT_ENDPOINT
+import com.jmeranda.gitkot.lib.RootEndpoints
+import com.jmeranda.gitkot.lib.exception.BadEndpoint
 
-/* Allow for simpler Json deserialization (EG) stud_puffin <-> studPuffin */
-val fieldRenamer = object: FieldRenamer {
-    override fun toJson(fieldName: String) = FieldRenamer.camelToUnderscores(fieldName)
-    override fun fromJson(fieldName: String) = FieldRenamer.underscoreToCamel(fieldName)
+fun getKlaxonFieldRenamer(): Klaxon {
+    val fieldRenamer: FieldRenamer = object: FieldRenamer {
+        override fun toJson(fieldName: String) = FieldRenamer.camelToUnderscores(fieldName)
+        override fun fromJson(fieldName: String) = FieldRenamer.underscoreToCamel(fieldName)
+    }
+
+    return Klaxon().fieldRenamer(fieldRenamer)
 }
-internal val klaxon = Klaxon().fieldRenamer(fieldRenamer)
 
 /**
- * Get a class representing all available github endpoint as of v3.
+ * Get a all available github endpoints as of v3.
  *
  * @return Endpoint? deserialized json response
  */
-fun getEndpoints(): Endpoints? {
-    val endpointsAsJson: String = get(BASE_URL).text
+private fun getRootEndpoints(klaxon: Klaxon): RootEndpoints {
+    val endpointsAsJson: String = get(ROOT_ENDPOINT).text
+    var rootEndpoints: RootEndpoints?
 
-    println(endpointsAsJson)
+    try {
+        rootEndpoints = klaxon.parse<RootEndpoints>(endpointsAsJson)
+    } catch (e: Exception) {
+        rootEndpoints = null
+    }
 
-    return klaxon.parse<Endpoints>(endpointsAsJson)
+    return rootEndpoints ?: throw BadEndpoint()
 }
 
 /**
  * A http request handler.
  *
  * Send http request to github api, and deserialize the Json response.
- *
- * @property request Request instance describing the request to be made.
  */
-interface Handler {
+abstract class Handler {
+    abstract fun handleRequest(): Any?
+
+    abstract fun getRequestUrl(): String
+
     companion object {
-        val endpoints: Endpoints? = getEndpoints()
+        val fieldRenameKlaxon: Klaxon = getKlaxonFieldRenamer()
+
+        val endpoints: RootEndpoints = getRootEndpoints(fieldRenameKlaxon)
     }
-
-    val request: Request
-
-    fun handleRequest(): Any?
 }

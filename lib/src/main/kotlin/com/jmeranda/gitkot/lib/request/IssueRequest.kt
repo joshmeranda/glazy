@@ -1,8 +1,7 @@
 package com.jmeranda.gitkot.lib.request
 
-import com.jmeranda.gitkot.lib.Repo
-
 data class IssueRequest (
-        val repo: Repo,
+        val name: String,
+        val owner: String,
         val number: Int
-        ): Request
+)
