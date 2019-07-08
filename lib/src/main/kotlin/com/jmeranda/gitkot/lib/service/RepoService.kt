@@ -6,18 +6,18 @@ import com.jmeranda.gitkot.lib.handler.RepoGetHandler
 
 /**
  * Client service to construct requests and return response data.
- *
- * @property name name of the repository to get.
- * @property user name of the repository owner.
  */
-open class RepoService(
-        protected val name: String,
-        protected val user: String
-) {
-    private fun getRepo(): Repo? {
-        val repoRequest: RepoRequest = RepoRequest(this.name, this.user)
-        val repoHandler: RepoGetHandler = RepoGetHandler(repoRequest)
+open class RepoService {
+    private var repo: Repo? = null
 
-        return repoHandler.getRepo()
+    fun getRepo(name: String, user: String): Repo? {
+        if (this.repo != null) { return this.repo }
+
+        val repoRequest = RepoRequest(name, user)
+        val repoHandler = RepoGetHandler(repoRequest)
+
+        this.repo = repoHandler.handleRequest()
+
+        return this.repo
     }
 }
