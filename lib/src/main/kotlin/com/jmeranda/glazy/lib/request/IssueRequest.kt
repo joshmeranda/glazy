@@ -1,6 +1,6 @@
-package com.jmeranda.gitkot.lib.request
+package com.jmeranda.glazy.lib.request
 
-import com.jmeranda.gitkot.lib.Repo
+import com.jmeranda.glazy.lib.Repo
 
 data class IssueRequest (
         val repo: Repo,

@@ -1,13 +1,13 @@
-package com.jmeranda.gitkot.lib.handler
+package com.jmeranda.glazy.lib.handler
 
 import com.beust.klaxon.FieldRenamer
 import com.beust.klaxon.Klaxon
 
 import khttp.get
 
-import com.jmeranda.gitkot.lib.ROOT_ENDPOINT
-import com.jmeranda.gitkot.lib.RootEndpoints
-import com.jmeranda.gitkot.lib.exception.BadEndpoint
+import com.jmeranda.glazy.lib.ROOT_ENDPOINT
+import com.jmeranda.glazy.lib.RootEndpoints
+import com.jmeranda.glazy.lib.exception.BadEndpoint
 
 fun getKlaxonFieldRenamer(): Klaxon {
     val fieldRenamer: FieldRenamer = object: FieldRenamer {

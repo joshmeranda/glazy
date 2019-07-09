@@ -1,9 +1,9 @@
-package com.jmeranda.gitkot.lib.handler
+package com.jmeranda.glazy.lib.handler
 
 import khttp.get
 
-import com.jmeranda.gitkot.lib.Repo
-import com.jmeranda.gitkot.lib.request.RepoRequest
+import com.jmeranda.glazy.lib.Repo
+import com.jmeranda.glazy.lib.request.RepoRequest
 
 class RepoGetHandler(private val repoRequest: RepoRequest): Handler() {
     private val repositoryUrl: String = Handler.endpoints.repositoryUrl

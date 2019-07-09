@@ -5,11 +5,11 @@
 
   <parent>
     <artifactId>git-kot</artifactId>
-    <groupId>com.jmeranda.gitkot</groupId>
+    <groupId>com.jmeranda.glazy</groupId>
     <version>0.0</version>
   </parent>
 
-  <groupId>com.jmeranda.gitkot.cli</groupId>
+  <groupId>com.jmeranda.glazy.cli</groupId>
   <artifactId>cli</artifactId>
   <version>0.0</version>
   <packaging>jar</packaging>
@@ -25,7 +25,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.jmeranda.gitkot.lib</groupId>
+      <groupId>com.jmeranda.glazy.lib</groupId>
       <artifactId>lib</artifactId>
       <version>0.0</version>
     </dependency>

@@ -1,4 +1,4 @@
-package com.jmeranda.gitkot.lib
+package com.jmeranda.glazy.lib
 
 /**
  * Describes the owner of a repo

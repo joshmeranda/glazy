@@ -1,9 +1,9 @@
-package com.jmeranda.gitkot.lib.handler
+package com.jmeranda.glazy.lib.handler
 
 import khttp.get
 
-import com.jmeranda.gitkot.lib.Issue
-import com.jmeranda.gitkot.lib.request.IssueRequest
+import com.jmeranda.glazy.lib.Issue
+import com.jmeranda.glazy.lib.request.IssueRequest
 
 class IssueGetHandler(private val issueRequest: IssueRequest): Handler() {
     private val issueUrl: String = this.issueRequest.repo.issuesUrl

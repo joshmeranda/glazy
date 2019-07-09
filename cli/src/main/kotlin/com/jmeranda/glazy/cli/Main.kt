@@ -1,6 +1,8 @@
-package com.jmeranda.gitkot.cli
+package com.jmeranda.glazy.cli
 
-class EntryPoint {
+import com.jmeranda.glazy.lib.service.RepoService
+
+class Main {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {

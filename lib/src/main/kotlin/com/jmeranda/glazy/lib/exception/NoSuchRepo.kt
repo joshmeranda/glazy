@@ -1,4 +1,4 @@
-package com.jmeranda.gitkot.lib.exception
+package com.jmeranda.glazy.lib.exception
 
 import java.lang.Exception
 
