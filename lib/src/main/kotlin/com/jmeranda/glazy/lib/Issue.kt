@@ -1,4 +1,4 @@
-package com.jmeranda.gitkot.lib
+package com.jmeranda.glazy.lib
 
 /**
  * Describes a label to an issue

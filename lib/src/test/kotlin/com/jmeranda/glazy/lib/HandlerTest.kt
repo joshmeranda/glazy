@@ -1,14 +1,11 @@
-package com.jmeranda.gitkot.lib
+package com.jmeranda.glazy.lib
 
 import org.junit.Test
 
-import kotlin.test.fail
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
-import com.jmeranda.gitkot.lib.handler.*
-import com.jmeranda.gitkot.lib.request.RepoRequest
-import com.jmeranda.gitkot.lib.request.IssueRequest
+import com.jmeranda.glazy.lib.handler.*
+import com.jmeranda.glazy.lib.request.RepoRequest
 
 class HandlerTest {
     /**

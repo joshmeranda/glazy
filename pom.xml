@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.jmeranda.gitkot</groupId>
+    <groupId>com.jmeranda.glazy</groupId>
     <artifactId>git-kot</artifactId>
     <version>0.0</version>
     <packaging>pom</packaging>
@@ -14,7 +14,7 @@
     <properties>
         <kotlin.version>1.3.40</kotlin.version>
 <!--        <kotlin.compiler.incremental>true</kotlin.compiler.incremental>-->
-        <main.class>com.jmeranda.gitkot.cli.EntryPoint</main.class>
+        <main.class>com.jmeranda.glazy.cli.Main</main.class>
     </properties>
 
     <repositories>

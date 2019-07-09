@@ -1,4 +1,4 @@
-package com.jmeranda.gitkot.lib.request
+package com.jmeranda.glazy.lib.request
 
 data class RepoRequest(
         val name: String,

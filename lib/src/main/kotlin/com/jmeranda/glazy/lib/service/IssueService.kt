@@ -1,12 +1,12 @@
-package com.jmeranda.gitkot.lib.service
+package com.jmeranda.glazy.lib.service
 
-import com.jmeranda.gitkot.lib.Issue
-import com.jmeranda.gitkot.lib.Repo
-import com.jmeranda.gitkot.lib.exception.NoSuchRepo
-import com.jmeranda.gitkot.lib.handler.IssueAllGetHandler
-import com.jmeranda.gitkot.lib.handler.IssueGetHandler
-import com.jmeranda.gitkot.lib.request.IssueRequest
-import com.jmeranda.gitkot.lib.request.IssueAllRequest
+import com.jmeranda.glazy.lib.Issue
+import com.jmeranda.glazy.lib.Repo
+import com.jmeranda.glazy.lib.exception.NoSuchRepo
+import com.jmeranda.glazy.lib.handler.IssueAllGetHandler
+import com.jmeranda.glazy.lib.handler.IssueGetHandler
+import com.jmeranda.glazy.lib.request.IssueRequest
+import com.jmeranda.glazy.lib.request.IssueAllRequest
 
 /**
  * Client service to construct requests and return response data.

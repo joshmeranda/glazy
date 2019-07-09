@@ -1,8 +1,4 @@
-package com.jmeranda.gitkot.lib
-
-import khttp.get
-import com.beust.klaxon.Klaxon
-import com.beust.klaxon.FieldRenamer
+package com.jmeranda.glazy.lib
 
 /**
  * Represents the available endpoints for the github api v3.
