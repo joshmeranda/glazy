@@ -40,7 +40,6 @@
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-maven-plugin</artifactId>
         <version>${kotlin.version}</version>
-
         <executions>
           <execution>
             <id>compile</id>
@@ -73,7 +72,18 @@
           </execution>
         </executions>
       </plugin>
-
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>3.1.0</version>
+        <configuration>
+          <addDefaultExcludes>false</addDefaultExcludes>
+          <outputDirectory>target/test-classes/com/jmeranda/glazy/cli/resources</outputDirectory>
+          <resources>
+            <resource><directory>src/test/resources</directory></resource>
+          </resources>
+        </configuration>
+      </plugin>
 
     </plugins>
   </build>
