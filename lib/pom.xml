@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <artifactId>git-kot</artifactId>
+    <groupId>com.jmeranda.glazy</groupId>
+    <version>0.0</version>
+  </parent>
+
+  <groupId>com.jmeranda.glazy.lib</groupId>
+  <artifactId>lib</artifactId>
+  <version>0.0</version>
+  <packaging>jar</packaging>
+
+  <name>lib</name>
+  <!-- FIXME change it to the project's website -->
+  <url>http://www.example.com</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
+    <khttp.version>1.0.0</khttp.version>
+    <klaxon.version>4.0.2</klaxon.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>khttp</groupId>
+      <artifactId>khttp</artifactId>
+      <version>${khttp.version}</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/com.beust/klaxon -->
+    <dependency>
+      <groupId>com.beust</groupId>
+      <artifactId>klaxon</artifactId>
+      <version>${klaxon.version}</version>
+    </dependency>
+
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.jetbrains.kotlin</groupId>
+        <artifactId>kotlin-maven-plugin</artifactId>
+        <version>${kotlin.version}</version>
+
+        <executions>
+          <execution>
+            <id>compile</id>
+            <goals> <goal>compile</goal> </goals>
+          </execution>
+
+          <execution>
+            <id>test-compile</id>
+            <goals> <goal>test-compile</goal> </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
