@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.jmeranda.gitkot</groupId>
+    <groupId>com.jmeranda.glazy</groupId>
     <artifactId>git-kot</artifactId>
-    <version>0.0-SNAPSHOT</version>
+    <version>0.0</version>
     <packaging>pom</packaging>
 
     <modules>
-        <module>githandlers</module>
+        <module>lib</module>
+        <module>cli</module>
     </modules>
 
     <properties>
         <kotlin.version>1.3.40</kotlin.version>
-        <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
-        <main.class>com.gitkot.GitKotKt</main.class>
+<!--        <kotlin.compiler.incremental>true</kotlin.compiler.incremental>-->
+        <main.class>com.jmeranda.glazy.cli.MainKt</main.class>
     </properties>
 
     <repositories>
@@ -23,18 +24,26 @@
             <url>http://jcenter.bintray.com/</url>
         </repository>
 
-        <repository>
-            <id>maven</id>
-            <url></url>
-        </repository>
-
     </repositories>
 
     <dependencies>
         <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-reflect</artifactId>
+            <version>1.3.10</version>
+        </dependency>
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test-junit</artifactId>
+            <version>${kotlin.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -48,48 +57,5 @@
     <build>
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
         <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
-
-        <plugins>
-            <plugin>
-                <groupId>org.jetbrains.kotlin</groupId>
-                <artifactId>kotlin-maven-plugin</artifactId>
-                <version>${kotlin.version}</version>
-
-                <executions>
-                    <execution>
-                        <id>compile</id>
-                        <goals> <goal>compile</goal> </goals>
-                    </execution>
-
-                    <execution>
-                        <id>test-compile</id>
-                        <goals> <goal>test-compile</goal> </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.6</version>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals> <goal>single</goal> </goals>
-                        <configuration>
-                            <archive>
-                                <manifest>
-                                    <mainClass>${main.class}</mainClass>
-                                </manifest>
-                            </archive>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
     </build>
 </project>
