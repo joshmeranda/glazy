@@ -24,4 +24,4 @@ Git web API wrapper written in Kotli. Its git, but all command line for when a g
 
 [khhtp Docs](https://khttp.readthedocs.io/en/latest/)
 
-[Kklaxon Docs (Github)](https://github.com/cbeust/klaxon)
+[Klaxon Docs (Github)](https://github.com/cbeust/klaxon)

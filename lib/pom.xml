@@ -23,7 +23,7 @@
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
     <khttp.version>1.0.0</khttp.version>
-    <klaxon.version>4.0.2</klaxon.version>
+    <klaxon.version>5.0.7</klaxon.version>
   </properties>
 
   <dependencies>
