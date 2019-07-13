@@ -2,15 +2,15 @@
 Git web API wrapper written in Kotli. Its git, but all command line for when a gui is just too much effort.
 
 # First Steps
-- [ ] Initial Project Setup
-- [ ] Basic request handling
-  - [ ] Test for internet connection
-  - [ ] Request Stack
+- [ ] ~~Initial Project Setup~~
 - [ ] Basic API usage
   - [ ] Parse JSON to Kotlin class
   - [ ] Parse Kotlin class to JSON
   - [ ] Basic GET requests
   - [ ] Basic POST Requests
+- [ ] Basic request handling
+  - [ ] Test for internet connection
+  - [ ] Request Stack
 - [ ] CLI
 
 # Development resources
@@ -24,4 +24,4 @@ Git web API wrapper written in Kotli. Its git, but all command line for when a g
 
 [khhtp Docs](https://khttp.readthedocs.io/en/latest/)
 
-[Kklaxon Docs (Github)](https://github.com/cbeust/klaxon)
+[Klaxon Docs (Github)](https://github.com/cbeust/klaxon)
