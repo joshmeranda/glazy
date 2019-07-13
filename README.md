@@ -11,7 +11,7 @@ Git web API wrapper written in Kotli. Its git, but all command line for when a g
   - [ ] Parse Kotlin class to JSON
   - [ ] Basic GET requests
   - [ ] Basic POST Requests
-- [ ] CLI ???
+- [ ] CLI
 
 # Development resources
 [Kotlin Coding Conventions](https://kotlinlang.org/docs/reference/coding-conventions.html)
