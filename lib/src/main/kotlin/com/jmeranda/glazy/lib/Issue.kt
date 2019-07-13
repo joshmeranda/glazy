@@ -13,6 +13,28 @@ data class Label (
 )
 
 /**
+ * Describes an issue milestone.
+ */
+data class Milestone(
+        val url: String,
+        val htmlUrl: String,
+        val labelsUrl: String,
+        val id: Int,
+        val nodeId: String,
+        val number: Int,
+        val title: String,
+        val description: String,
+        val creator: Owner,
+        val openIssues: Int,
+        val closedIssues: Int,
+        val state: String,
+        val createdAt: String,
+        val updatedAt: String?,
+        val dueOn: String?,
+        val closedAt: String?
+)
+
+/**
  * Describes a repo issue
  */
 data class Issue (
@@ -27,17 +49,17 @@ data class Issue (
         val number: Int,
         val title: String,
         val user: Owner,
-        val labels: Set<Label>,
+        val labels: List<Label>,
         val state: String,
         val locked: Boolean,
         val assignee: Owner?,
-        val assignees: Set<Owner>?,
-        val mileStone: String?,
+        val assignees: List<Owner>,
+        val milestone: Milestone?,
         val comments: Int,
         val createdAt: String,
-        val updatedAtt: String?,
+        val updatedAt: String?,
         val closedAt: String?,
         val authorAssociation: String,
-        val body: String,
+        val body: String?,
         val closedBy: String?
 )
