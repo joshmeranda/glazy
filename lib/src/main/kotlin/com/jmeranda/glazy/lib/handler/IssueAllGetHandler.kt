@@ -10,13 +10,12 @@ class IssueAllGetHandler(private val issueRequest: IssueAllRequest): Handler() {
         val issueAsJson = khttp.get(this.getRequestUrl()).text
         var allIssues: List<Issue>?
 
-//        try {
-//            allIssues = Handler.fieldRenameKlaxon.parseArray(issueAsJson)
-//        } catch (e: Exception) {
-//            allIssues = null
-//        }
-
-        allIssues = Handler.fieldRenameKlaxon.parseArray(issueAsJson)
+        try {
+            allIssues = Handler.fieldRenameKlaxon.parseArray(issueAsJson)
+        } catch (e: Exception) {
+            allIssues = null
+            e.printStackTrace()
+        }
 
         return allIssues
     }
