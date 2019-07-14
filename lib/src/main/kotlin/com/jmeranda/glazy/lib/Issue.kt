@@ -61,5 +61,5 @@ data class Issue (
         val closedAt: String?,
         val authorAssociation: String,
         val body: String?,
-        val closedBy: String?
+        val closedBy: Owner? /* Problem Child */
 )
