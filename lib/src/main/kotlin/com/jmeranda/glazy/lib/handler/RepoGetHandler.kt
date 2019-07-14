@@ -9,12 +9,14 @@ class RepoGetHandler(private val repoRequest: RepoRequest): Handler() {
     private val repositoryUrl: String = Handler.endpoints.repositoryUrl
 
     override fun handleRequest(): Repo? {
+        var repo: Repo? = Handler.cache.repo(repoRequest.name, repoRequest.owner)
+        if (repo != null) { return repo }
+
         val repoAsJson: String = get(this.getRequestUrl()).text
-        var repo: Repo?
 
         try {
             repo = Handler.fieldRenameKlaxon.parse<Repo>(repoAsJson)
-        } catch( e:  Exception) {
+        } catch(e:  Exception) {
             repo = null
         }
 

@@ -1,5 +1,5 @@
 # glazy
-Git web API wrapper written in Kotli. Its git, but all command line for when a gui is just too much effort.
+Git web API wrapper written in Kotlin. Its git, but all command line for when a gui is just too much effort.
 
 # First Steps
 - [ ] Initial Project Setup
