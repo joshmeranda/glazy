@@ -2,6 +2,7 @@ package com.jmeranda.glazy.lib.service
 
 import com.jmeranda.glazy.lib.Issue
 import com.jmeranda.glazy.lib.Repo
+import com.jmeranda.glazy.lib.exception.NoSuchIssue
 import com.jmeranda.glazy.lib.handler.IssueAllGetHandler
 import com.jmeranda.glazy.lib.handler.IssueGetHandler
 import com.jmeranda.glazy.lib.request.IssueRequest
@@ -18,10 +19,10 @@ class IssueService(private val repo: Repo) {
         return issueAllGetHandler.handleRequest() ?: throw Exception()
     }
 
-    fun getIssue(number: Int): Issue? {
-        val issueRequest: IssueRequest = IssueRequest(this.repo, number)
+    fun getIssue(number: Int): Issue {
+        val issueRequest = IssueRequest(this.repo, number)
         val issueHandler = IssueGetHandler(issueRequest)
 
-        return issueHandler.handleRequest()
+        return issueHandler.handleRequest() ?: throw NoSuchIssue(number)
     }
 }

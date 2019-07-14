@@ -17,9 +17,10 @@ fun main(args: Array<String>) {
     val service = RepoService()
     val repo: Repo = service.getRepo(name, user) ?: throw NoSuchRepo(name)
     val issueService = IssueService(repo)
-    val issues = issueService.getAllIssues()
+    val issue = issueService.getIssue(7)
 
-    for (i: Issue in issues) {
-        println("issue: ${i.title}")
-    }
+    println("issue: ${issue.title}")
+//    for (i: Issue in issues) {
+//        println("issue: ${i.title}")
+//    }
 }

@@ -24,5 +24,5 @@ class IssueGetHandler(private val issueRequest: IssueRequest): Handler() {
     override fun getRequestUrl(): String = this.issueUrl
             .replace("{owner}", this.issueRequest.repo.owner.login)
             .replace("{repo}", this.issueRequest.repo.name)
-            .replace("{/number}", this.issueRequest.number.toString())
+            .replace("{/number}", "/${this.issueRequest.number.toString()}")
 }
