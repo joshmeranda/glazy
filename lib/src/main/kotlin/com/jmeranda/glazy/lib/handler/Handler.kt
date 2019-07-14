@@ -46,9 +46,11 @@ abstract class Handler {
 
     abstract fun getRequestUrl(): String
 
-    companion object {
+    protected companion object {
         val fieldRenameKlaxon: Klaxon = getKlaxonFieldRenamer()
 
-        val endpoints: RootEndpoints = getRootEndpoints(fieldRenameKlaxon)
+        val cache = ResponseCache()
+
+        val endpoints: RootEndpoints = cache.endpoints() ?: getRootEndpoints(fieldRenameKlaxon)
     }
 }
