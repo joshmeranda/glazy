@@ -28,8 +28,7 @@ class ResponseCache {
      */
     fun write(data: Repo) {
         val dest: File = File("$CACHE_DIR/${data.fullName}.json")
-        val repoAsJson: String = fieldRenameKlaxon.toJsonString(
-                data, true) ?: ""
+        val repoAsJson: String = fieldRenameKlaxon.toJsonString(data)
 
         try {
             dest.writeText(repoAsJson)
@@ -45,8 +44,7 @@ class ResponseCache {
      */
     fun write(data: RootEndpoints) {
         val dest: File = File("$CACHE_DIR/root_endpoints.json")
-        val endpointsAsJson: String = fieldRenameKlaxon.toJsonString(
-                data, true) ?: ""
+        val endpointsAsJson: String = Klaxon().toJsonString(data)
 
         try {
             dest.writeText(endpointsAsJson)
@@ -83,7 +81,6 @@ class ResponseCache {
 
         return fieldRenameKlaxon.parse<RootEndpoints>(target.readText())
     }
-
 
     companion object {
         val fieldRenameKlaxon: Klaxon = getKlaxonFieldRenamer()

@@ -23,6 +23,7 @@
     <maven.compiler.source>1.7</maven.compiler.source>
     <maven.compiler.target>1.7</maven.compiler.target>
     <khttp.version>1.0.0</khttp.version>
+    <klaxon.version>5.0.7</klaxon.version>
   </properties>
 
   <dependencies>
@@ -35,6 +36,7 @@
     <dependency>
       <groupId>com.beust</groupId>
       <artifactId>klaxon</artifactId>
+      <version>${klaxon.version}</version>
     </dependency>
   </dependencies>
 
