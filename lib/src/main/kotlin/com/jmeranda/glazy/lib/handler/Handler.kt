@@ -33,6 +33,8 @@ private fun getRootEndpoints(klaxon: Klaxon): RootEndpoints {
         rootEndpoints = null
     }
 
+    if (rootEndpoints != null) { ResponseCache().write(rootEndpoints) }
+
     return rootEndpoints ?: throw BadEndpoint()
 }
 
@@ -46,9 +48,11 @@ abstract class Handler {
 
     abstract fun getRequestUrl(): String
 
-    companion object {
+    protected companion object {
         val fieldRenameKlaxon: Klaxon = getKlaxonFieldRenamer()
 
-        val endpoints: RootEndpoints = getRootEndpoints(fieldRenameKlaxon)
+        val cache = ResponseCache()
+
+        val endpoints: RootEndpoints = Handler.cache.endpoints() ?: getRootEndpoints(fieldRenameKlaxon)
     }
 }

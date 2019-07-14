@@ -6,17 +6,18 @@ import com.jmeranda.glazy.lib.request.IssueAllRequest
 class IssueAllGetHandler(private val issueRequest: IssueAllRequest): Handler() {
     private val issueUrl: String = this.issueRequest.repo.issuesUrl
 
-    override fun handleRequest(): Set<Issue>? {
+    override fun handleRequest(): List<Issue>? {
         val issueAsJson = khttp.get(this.getRequestUrl()).text
-        var issue: Set<Issue>?
+        var allIssues: List<Issue>?
 
         try {
-            issue = Handler.fieldRenameKlaxon.parse(issueAsJson)
+            allIssues = Handler.fieldRenameKlaxon.parseArray(issueAsJson)
         } catch (e: Exception) {
-            issue = null
+            allIssues = null
+            e.printStackTrace()
         }
 
-        return issue
+        return allIssues
     }
 
     override fun getRequestUrl(): String = this.issueUrl
