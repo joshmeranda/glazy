@@ -33,6 +33,8 @@ private fun getRootEndpoints(klaxon: Klaxon): RootEndpoints {
         rootEndpoints = null
     }
 
+    if (rootEndpoints != null) { ResponseCache().write(rootEndpoints) }
+
     return rootEndpoints ?: throw BadEndpoint()
 }
 

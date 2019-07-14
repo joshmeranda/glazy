@@ -20,6 +20,8 @@ class RepoGetHandler(private val repoRequest: RepoRequest): Handler() {
             repo = null
         }
 
+        if (repo != null) { Handler.cache.write(repo) }
+
         return repo
     }
 
