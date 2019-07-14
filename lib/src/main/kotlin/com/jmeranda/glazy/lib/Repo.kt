@@ -37,8 +37,6 @@ data class License(
 
 /**
  * Describes a github repository.
- *
- * todo document properties
  */
 data class Repo(
         val id: Int,
