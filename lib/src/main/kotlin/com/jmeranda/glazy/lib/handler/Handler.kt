@@ -53,6 +53,6 @@ abstract class Handler {
 
         val cache = ResponseCache()
 
-        val endpoints: RootEndpoints = cache.endpoints() ?: getRootEndpoints(fieldRenameKlaxon)
+        val endpoints: RootEndpoints = Handler.cache.endpoints() ?: getRootEndpoints(fieldRenameKlaxon)
     }
 }
