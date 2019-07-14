@@ -21,16 +21,29 @@ val CACHE_DIR = "${System.getProperty("user.home")}/.cache/glazy"
  * All cached data is stored in .cache/lazy in the users HOME directory.
  */
 class ResponseCache {
+    init {
+        if (! Files.exists(Paths.get(CACHE_DIR))) {
+            File(CACHE_DIR).mkdir()
+        }
+    }
+
     /**
      * Write repository data to .cache/glazy in HOME directory.
      *
      * @param data Repo to be cached.
      */
     fun write(data: Repo) {
-        val dest: File = File("$CACHE_DIR/${data.fullName}.json")
+
+        if (! Files.exists(Paths.get("$CACHE_DIR/${data.owner.login}"))) {
+            File("$CACHE_DIR/${data.owner.login}").mkdir()
+        }
+
+        val fileName = "$CACHE_DIR/${data.fullName}.json"
+        val dest = File(fileName)
         val repoAsJson: String = fieldRenameKlaxon.toJsonString(data)
 
         try {
+            dest.createNewFile()
             dest.writeText(repoAsJson)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -43,10 +56,12 @@ class ResponseCache {
      * @param data Root endpoints to be cached.
      */
     fun write(data: RootEndpoints) {
-        val dest: File = File("$CACHE_DIR/root_endpoints.json")
+        val fileName = "$CACHE_DIR/root_endpoints.json"
+        val dest = File(fileName)
         val endpointsAsJson: String = Klaxon().toJsonString(data)
 
         try {
+            dest.createNewFile()
             dest.writeText(endpointsAsJson)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -62,11 +77,11 @@ class ResponseCache {
      *  @return Repo if cached data exists, null otherwise.
      */
     fun repo(name: String, user: String): Repo? {
-        val fileName: String = "$CACHE_DIR/$user/$name.json"
+        val fileName = "$CACHE_DIR/$user/$name.json"
         if (!Files.exists(Paths.get(fileName))) { return null }
-        val target: File = File(fileName)
+        val target = File(fileName)
 
-        return fieldRenameKlaxon.parse<Repo>(target.readText())
+        return fieldRenameKlaxon.parse<Repo>(target)
     }
 
     /**
@@ -75,11 +90,11 @@ class ResponseCache {
      * @return RootEndpoints if cached data exists, null otherwise
      */
     fun endpoints(): RootEndpoints? {
-        val fileName: String = "$CACHE_DIR/root_endpoints.json"
+        val fileName = "$CACHE_DIR/root_endpoints.json"
         if (! Files.exists(Paths.get(fileName))) { return null }
-        val target: File = File(fileName)
+        val target = File(fileName)
 
-        return fieldRenameKlaxon.parse<RootEndpoints>(target.readText())
+        return fieldRenameKlaxon.parse<RootEndpoints>(target)
     }
 
     companion object {

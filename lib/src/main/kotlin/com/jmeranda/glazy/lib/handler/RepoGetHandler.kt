@@ -5,9 +5,20 @@ import khttp.get
 import com.jmeranda.glazy.lib.Repo
 import com.jmeranda.glazy.lib.request.RepoRequest
 
+/**
+ * Handle request for a repository.
+ *
+ * @property repoRequest The repository request.
+ */
 class RepoGetHandler(private val repoRequest: RepoRequest): Handler() {
     private val repositoryUrl: String = Handler.endpoints.repositoryUrl
 
+    /**
+     * Send the request and return the response repository.
+     *
+     * @return Repo? The repository object received from the API, null
+     * if there are json parsing errors.
+     */
     override fun handleRequest(): Repo? {
         var repo: Repo? = Handler.cache.repo(repoRequest.name, repoRequest.owner)
         if (repo != null) { return repo }
