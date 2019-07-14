@@ -81,7 +81,6 @@ class ResponseCache {
         if (!Files.exists(Paths.get(fileName))) { return null }
         val target = File(fileName)
 
-//        return ResponseCache.fieldRenameKlaxon.parse<Repo>(target)
         return Klaxon().parse<Repo>(target)
 
     }
@@ -96,11 +95,6 @@ class ResponseCache {
         if (! Files.exists(Paths.get(fileName))) { return null }
         val target = File(fileName)
 
-//        return ResponseCache.fieldRenameKlaxon.parse<RootEndpoints>(target)
         return Klaxon().parse<RootEndpoints>(target)
-    }
-
-    companion object {
-        val fieldRenameKlaxon: Klaxon = getKlaxonFieldRenamer()
     }
 }
