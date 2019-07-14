@@ -29,9 +29,9 @@ data class Milestone(
         val closedIssues: Int,
         val state: String,
         val createdAt: String,
-        val updatedAt: String?,
-        val dueOn: String?,
-        val closedAt: String?
+        val updatedAt: String? = null,
+        val dueOn: String? = null,
+        val closedAt: String? = null
 )
 
 /**
@@ -52,14 +52,14 @@ data class Issue (
         val labels: List<Label>,
         val state: String,
         val locked: Boolean,
-        val assignee: Owner?,
+        val assignee: Owner? = null,
         val assignees: List<Owner>,
-        val milestone: Milestone?,
+        val milestone: Milestone? = null,
         val comments: Int,
         val createdAt: String,
-        val updatedAt: String?,
+        val updatedAt: String? = null,
         val closedAt: String?,
         val authorAssociation: String,
-        val body: String?,
-        val closedBy: Owner? /* Problem Child */
+        val body: String? = null,
+        val closedBy: Owner? = null
 )
