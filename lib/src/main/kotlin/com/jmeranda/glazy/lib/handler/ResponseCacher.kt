@@ -40,7 +40,7 @@ class ResponseCache {
 
         val fileName = "$CACHE_DIR/${data.fullName}.json"
         val dest = File(fileName)
-        val repoAsJson: String = fieldRenameKlaxon.toJsonString(data)
+        val repoAsJson: String = Klaxon().toJsonString(data)
 
         try {
             dest.createNewFile()
@@ -81,7 +81,9 @@ class ResponseCache {
         if (!Files.exists(Paths.get(fileName))) { return null }
         val target = File(fileName)
 
-        return fieldRenameKlaxon.parse<Repo>(target)
+//        return ResponseCache.fieldRenameKlaxon.parse<Repo>(target)
+        return Klaxon().parse<Repo>(target)
+
     }
 
     /**
@@ -94,7 +96,8 @@ class ResponseCache {
         if (! Files.exists(Paths.get(fileName))) { return null }
         val target = File(fileName)
 
-        return fieldRenameKlaxon.parse<RootEndpoints>(target)
+//        return ResponseCache.fieldRenameKlaxon.parse<RootEndpoints>(target)
+        return Klaxon().parse<RootEndpoints>(target)
     }
 
     companion object {
