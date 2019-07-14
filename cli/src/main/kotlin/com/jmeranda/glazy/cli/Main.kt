@@ -12,17 +12,8 @@ fun main(args: Array<String>) {
 
     if (user == null || name == null) { exitProcess(1) }
 
-    name = "bash-full"
-
-    val service = RepoService()
-    val repo: Repo = service.getRepo(name, user) ?: throw NoSuchRepo(name)
-    val issueService = IssueService(repo)
-
-//    val issue = issueService.getIssue(7)
-//    println("issue: ${issue.title}")
-
-    val issues = issueService.getAllIssues()
-    for (i: Issue in issues) {
-        println("issue: ${i.title}")
-    }
+    /* Currently Repo is private  and will throw NoSuchRepo */
+//    val service = RepoService()
+//    val repo: Repo = service.getRepo(name, user) ?: throw NoSuchRepo(name)
+//    val issueService = IssueService(repo)
 }

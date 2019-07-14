@@ -2,8 +2,6 @@ package com.jmeranda.glazy.lib
 
 /**
  * Represents the available endpoints for the github api v3.
- *
- * todo document properties with '@property tag'
  */
 data class RootEndpoints (
         val currentUserUrl: String,
