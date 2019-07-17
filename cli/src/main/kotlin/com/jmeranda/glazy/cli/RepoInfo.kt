@@ -1,9 +1,9 @@
 package com.jmeranda.glazy.cli
 
 import java.io.File
-import java.nio.file.Paths
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 
 private fun getRepoDir(): String {
     var cwd: Path = Paths.get(".").toAbsolutePath().normalize()
@@ -17,7 +17,7 @@ private fun getRepoDir(): String {
 
 fun getRepoName(): Pair<String?, String?> {
     val repoRegex = Regex( "[a-zA-Z0-9]+/[a-zA-Z0-9\\-_]+\\.git$", RegexOption.UNIX_LINES)
-    val contents = File("${getRepoDir()}/.git/config").readLines()
+    val contents: List<String> = File("${getRepoDir()}/.git/config").readLines()
     var repoResult: MatchResult? = null
 
     /* Search for git repo name */

@@ -24,4 +24,10 @@ class MainTest {
         assertEquals("joshmeranda", user)
         assertEquals("glazy", name)
     }
+
+    @Test
+    fun testGetCachedAccessToken() {
+        val token = getCachedAccessToken("foo")
+        assertEquals("bar", token)
+    }
 }
