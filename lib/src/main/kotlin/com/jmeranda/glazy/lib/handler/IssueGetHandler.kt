@@ -1,15 +1,18 @@
 package com.jmeranda.glazy.lib.handler
 
-import khttp.get
-
 import com.jmeranda.glazy.lib.Issue
 import com.jmeranda.glazy.lib.request.IssueRequest
+import khttp.get
 
-class IssueGetHandler(private val issueRequest: IssueRequest): Handler() {
+class IssueGetHandler(
+        private val issueRequest: IssueRequest,
+        token: String?
+): Handler(token) {
     private val issueUrl: String = this.issueRequest.repo.issuesUrl
 
     override fun handleRequest(): Issue? {
-        val issueAsJson = get(this.getRequestUrl()).text
+        val issueAsJson =
+                get(this.getRequestUrl(), headers=this.getAuthorizationHeaders()).text
         var issue: Issue?
 
         try {

@@ -1,16 +1,18 @@
 package com.jmeranda.glazy.lib.handler
 
-import khttp.get
-
 import com.jmeranda.glazy.lib.Repo
 import com.jmeranda.glazy.lib.request.RepoRequest
+import khttp.get
 
 /**
  * Handle request for a repository.
  *
  * @property repoRequest The repository request.
  */
-class RepoGetHandler(private val repoRequest: RepoRequest): Handler() {
+class RepoGetHandler(
+        private val repoRequest: RepoRequest,
+        token: String? = null
+): Handler(token) {
     private val repositoryUrl: String = Handler.endpoints.repositoryUrl
 
     /**
@@ -23,7 +25,8 @@ class RepoGetHandler(private val repoRequest: RepoRequest): Handler() {
         var repo: Repo? = Handler.cache.repo(repoRequest.name, repoRequest.owner)
         if (repo != null) { return repo }
 
-        val repoAsJson: String = get(this.getRequestUrl()).text
+        val repoAsJson: String =
+                get(this.getRequestUrl(), headers=this.getAuthorizationHeaders()).text
 
         try {
             repo = Handler.fieldRenameKlaxon.parse<Repo>(repoAsJson)
