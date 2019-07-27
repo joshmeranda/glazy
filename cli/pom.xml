@@ -25,6 +25,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>com.github.ajalt</groupId>
+      <artifactId>clikt</artifactId>
+      <version>2.1.0</version>
+    </dependency>
+    <dependency>
       <groupId>com.jmeranda.glazy.lib</groupId>
       <artifactId>lib</artifactId>
       <version>0.0</version>
