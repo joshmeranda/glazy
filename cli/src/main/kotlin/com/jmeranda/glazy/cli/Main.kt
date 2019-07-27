@@ -10,7 +10,7 @@ import com.jmeranda.glazy.lib.exception.NoSuchRepo
 import com.jmeranda.glazy.lib.handler.CACHE_DIR
 import com.jmeranda.glazy.lib.service.IssueService
 import com.jmeranda.glazy.lib.service.RepoService
-
+import com.jmeranda.glazy.cli.commands.Issue
 
 fun getCachedAccessToken(user: String): String? {
     val tokenFile = "$CACHE_DIR/access_tokens"
@@ -30,8 +30,10 @@ fun getCachedAccessToken(user: String): String? {
 }
 
 fun main(args: Array<String>) {
-    val (user: String?, name: String?) = getRepoName()
+    var (user: String?, name: String?) = getRepoName()
     if (user == null || name == null) { exitProcess(1) }
+
+    name = "bash-full"
 
     val accessToken = getCachedAccessToken(user)
 
@@ -40,4 +42,6 @@ fun main(args: Array<String>) {
     val issueService = IssueService(repo, accessToken)
 
     println("${repo.name}, ${repo.owner.login}")
+
+    Issue(repo, accessToken).main(args)
 }
