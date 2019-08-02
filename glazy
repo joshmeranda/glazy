@@ -1,3 +1,11 @@
 #!/bin/env bash
 
-java -jar cli/target/cli-0.0-jar-with-dependencies.jar "$@"
+jar_file="cli/target/cli-0.0-jar-with-dependencies.jar"
+
+if [ ! -f "$jar_file" ]; then
+    echo "$(basename $0): No jar file found"
+    echo "Please package the project with 'mvn package'"
+    exit 1
+fi
+
+java -jar "$jar_file" "$@"
