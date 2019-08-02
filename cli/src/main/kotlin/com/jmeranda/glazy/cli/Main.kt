@@ -8,10 +8,13 @@ import kotlin.system.exitProcess
 import com.jmeranda.glazy.lib.Repo
 import com.jmeranda.glazy.lib.exception.NoSuchRepo
 import com.jmeranda.glazy.lib.handler.CACHE_DIR
-import com.jmeranda.glazy.lib.service.IssueService
 import com.jmeranda.glazy.lib.service.RepoService
-import com.jmeranda.glazy.cli.commands.Issue
+import com.jmeranda.glazy.cli.commands.*
+import picocli.CommandLine
 
+/**
+ * Get the cached private access token of the user.
+ */
 fun getCachedAccessToken(user: String): String? {
     val tokenFile = "$CACHE_DIR/access_tokens"
     if (! Files.exists(Paths.get(tokenFile))) {
@@ -33,15 +36,13 @@ fun main(args: Array<String>) {
     var (user: String?, name: String?) = getRepoName()
     if (user == null || name == null) { exitProcess(1) }
 
-    name = "bash-full"
-
     val accessToken = getCachedAccessToken(user)
 
     val service = RepoService(accessToken)
     val repo: Repo = service.getRepo(name, user) ?: throw NoSuchRepo(name)
-    val issueService = IssueService(repo, accessToken)
 
     println("${repo.name}, ${repo.owner.login}")
 
-    Issue(repo, accessToken).main(args)
+    val cmd = CommandLine(Issue(repo, accessToken))
+    cmd.execute(*args)
 }

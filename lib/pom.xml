@@ -13,17 +13,16 @@
   <artifactId>lib</artifactId>
   <version>0.0</version>
   <packaging>jar</packaging>
-
   <name>lib</name>
-  <!-- FIXME change it to the project's website -->
-  <url>http://www.example.com</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>1.7</maven.compiler.source>
-    <maven.compiler.target>1.7</maven.compiler.target>
     <khttp.version>1.0.0</khttp.version>
     <klaxon.version>5.0.7</klaxon.version>
+    <java.version>1.8</java.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
   </properties>
 
   <dependencies>
@@ -46,19 +45,27 @@
         <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-maven-plugin</artifactId>
         <version>${kotlin.version}</version>
-
         <executions>
           <execution>
             <id>compile</id>
             <goals> <goal>compile</goal> </goals>
           </execution>
-
           <execution>
             <id>test-compile</id>
             <goals> <goal>test-compile</goal> </goals>
           </execution>
         </executions>
       </plugin>
+
+<!--      <plugin>-->
+<!--        <groupId>org.apache.maven.plugins</groupId>-->
+<!--        <artifactId>maven-compiler-plugin</artifactId>-->
+<!--        <version>2.3.2</version>-->
+<!--        <configuration>-->
+<!--          <fork>true</fork>-->
+<!--          <compilerVersion>1.8</compilerVersion>-->
+<!--        </configuration>-->
+<!--      </plugin>-->
     </plugins>
   </build>
 </project>

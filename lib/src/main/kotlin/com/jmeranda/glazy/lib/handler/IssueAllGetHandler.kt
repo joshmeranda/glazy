@@ -1,17 +1,25 @@
 package com.jmeranda.glazy.lib.handler
 
-import com.jmeranda.glazy.lib.Issue
-import com.jmeranda.glazy.lib.request.IssueAllRequest
+import khttp.get
 
+import com.jmeranda.glazy.lib.Issue
+import com.jmeranda.glazy.lib.request.IssueGetAllRequest
+
+/**
+ * Handle a GET request for every available issue in a repository
+ *
+ * @property issueRequest The request object used by the handler.
+ * @property token The personal access token of the user.
+ */
 class IssueAllGetHandler(
-        private val issueRequest: IssueAllRequest,
+        private val issueRequest: IssueGetAllRequest,
         token: String?
 ): Handler(token) {
     private val issueUrl: String = this.issueRequest.repo.issuesUrl
 
     override fun handleRequest(): List<Issue>? {
-        val issueAsJson =
-                khttp.get(this.getRequestUrl(), headers=this.getAuthorizationHeaders()).text
+        val issueAsJson = get(this.getRequestUrl(), headers=this.getAuthorizationHeaders())
+                        .text
         var allIssues: List<Issue>?
 
         try {

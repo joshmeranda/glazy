@@ -7,6 +7,11 @@ import com.jmeranda.glazy.lib.RootEndpoints
 import com.jmeranda.glazy.lib.exception.BadEndpoint
 import khttp.get
 
+/**
+ * Get klaxon parser for renaming camel case to snake case.
+ *
+ * @return field renaming Klaxon instance.
+ */
 fun getKlaxonFieldRenamer(): Klaxon {
     val fieldRenamer: FieldRenamer = object: FieldRenamer {
         override fun toJson(fieldName: String) = FieldRenamer.camelToUnderscores(fieldName)
@@ -43,8 +48,15 @@ private fun getRootEndpoints(klaxonParser: Klaxon, cache: ResponseCache): RootEn
  * A http request handler.
  *
  * Send http request to github api, and deserialize the Json response.
+ *
+ * @property token The personal access token of the user.
  */
-abstract class Handler(private val token: String? = null) {
+abstract class Handler(private val token: String?) {
+    /**
+     * Get request header for authorizing with personal access token.
+     *
+     * @return A map of the header field to the personal access token.
+     */
     protected fun getAuthorizationHeaders(): Map<String, String> {
         return if (this.token == null) {
             mapOf("" to "")
@@ -53,8 +65,18 @@ abstract class Handler(private val token: String? = null) {
             }
     }
 
+    /**
+     * Handle the request.
+     *
+     * @return The object response from the api.
+     */
     abstract fun handleRequest(): Any?
 
+    /**
+     * Get the endpoint url for the request.
+     *
+     * @return The url to query.
+     */
     abstract fun getRequestUrl(): String
 
     protected companion object {

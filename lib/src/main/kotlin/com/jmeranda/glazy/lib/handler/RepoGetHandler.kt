@@ -8,6 +8,7 @@ import khttp.get
  * Handle request for a repository.
  *
  * @property repoRequest The repository request.
+ * @property token The personal access token of the user.
  */
 class RepoGetHandler(
         private val repoRequest: RepoRequest,
