@@ -5,6 +5,11 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
+/**
+ * Get the name of the topmost directory in the current repository.
+ *
+ * @return The name of the topmost repository directory.
+ */
 private fun getRepoDir(): String {
     var cwd: Path = Paths.get(".").toAbsolutePath().normalize()
 
@@ -15,6 +20,11 @@ private fun getRepoDir(): String {
     return cwd.toString()
 }
 
+/**
+ * Get the name of the current repository name.
+ *
+ * @return The name of the repository.
+ */
 fun getRepoName(): Pair<String?, String?> {
     val repoRegex = Regex( "[a-zA-Z0-9]+/[a-zA-Z0-9\\-_]+\\.git$", RegexOption.UNIX_LINES)
     val contents: List<String> = File("${getRepoDir()}/.git/config").readLines()

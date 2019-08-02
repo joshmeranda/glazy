@@ -1,11 +1,18 @@
 package com.jmeranda.glazy.lib.handler
 
-import com.jmeranda.glazy.lib.Issue
-import com.jmeranda.glazy.lib.request.IssueRequest
 import khttp.get
 
+import com.jmeranda.glazy.lib.Issue
+import com.jmeranda.glazy.lib.request.IssueGetRequest
+
+/**
+ * Handle GET request for a specific.
+ *
+ * @property issueRequest The request object used by the handler.
+ * @property token The personal access token of the user.
+ */
 class IssueGetHandler(
-        private val issueRequest: IssueRequest,
+        private val issueRequest: IssueGetRequest,
         token: String?
 ): Handler(token) {
     private val issueUrl: String = this.issueRequest.repo.issuesUrl
