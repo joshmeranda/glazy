@@ -49,8 +49,6 @@ class IssueService(
      * Create a new issue in the repository.
      * @param title The name of the new issue.
      * @param body The body of the new issue.
-     * @param state The state of the new issue, defaults to
-     *        open if not state specified.
      * @param milestone The number of the milestone this issue is
      *        associated with.
      * @param labels The labels for the new issue.

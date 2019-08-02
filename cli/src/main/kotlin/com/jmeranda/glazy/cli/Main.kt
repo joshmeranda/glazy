@@ -14,6 +14,8 @@ import picocli.CommandLine
 
 /**
  * Get the cached private access token of the user.
+ * @param user The name of the user whose access token to parse from the file.
+ * @return The access token associated with the specified user.
  */
 fun getCachedAccessToken(user: String): String? {
     val tokenFile = "$CACHE_DIR/access_tokens"
@@ -33,7 +35,7 @@ fun getCachedAccessToken(user: String): String? {
 }
 
 fun main(args: Array<String>) {
-    var (user: String?, name: String?) = getRepoName()
+    val (user: String?, name: String?) = getRepoName()
     if (user == null || name == null) { exitProcess(1) }
 
     val accessToken = getCachedAccessToken(user)
