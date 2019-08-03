@@ -22,13 +22,14 @@ class IssuePatchHandler(
 
     override fun handleRequest(): Issue? {
         var body: String? = null
+
         try {
-            body = Handler.fieldRenameKlaxon.toJsonString(this.issueRequest)
+            body = Handler.fieldRenameKlaxon.propertyStrategy(Handler.strategy).toJsonString(this.issueRequest)
         } catch(e: Exception) {
             e.printStackTrace()
         }
 
-        val response: Response = patch(this.issueUrl,
+        val response: Response = patch(this.getRequestUrl(),
                 data = body,
                 headers = this.getAuthorizationHeaders())
 

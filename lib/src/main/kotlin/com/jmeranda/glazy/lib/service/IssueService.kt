@@ -78,8 +78,8 @@ class IssueService(
      * @param assignees The login ids for the users to assign to the issue.
      * @return The issue edited by the request.
      */
-    fun editIssue(number: Int, title: String?, body: String?, state: String?,
-                  milestone: Int?, labels: List<String>?, assignees: List<String>?
+    fun editIssue(number: Int, title: String, body: String, state: String,
+                  milestone: Int, labels: List<String>, assignees: List<String>
     ): Issue {
         val issueRequest = IssuePatchRequest(this.repo, number, title,
                 body, state, milestone, labels, assignees)
