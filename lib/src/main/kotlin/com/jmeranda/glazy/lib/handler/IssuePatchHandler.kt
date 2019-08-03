@@ -38,5 +38,5 @@ class IssuePatchHandler(
     override fun getRequestUrl(): String = this.issueUrl
             .replace("{owner}", this.issueRequest.repo.owner.login)
             .replace("{repo}", this.issueRequest.repo.name)
-            .replace("/number", "/$number")
+            .replace("{/number}", "/$number")
 }

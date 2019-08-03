@@ -20,13 +20,14 @@ class IssuePostHandler(
 
     override fun handleRequest(): Issue? {
         var body: String? = null
+
         try {
             body = Handler.fieldRenameKlaxon.toJsonString(this.issueRequest)
         } catch(e: Exception) {
             e.printStackTrace()
         }
 
-        val response: Response = post(this.issueUrl,
+        val response: Response = post(this.getRequestUrl(),
                 data = body,
                 headers = this.getAuthorizationHeaders()
                 )
