@@ -20,7 +20,7 @@ class HandlerTest {
         val requestUrl: String = repoHandler.getRequestUrl()
 
         assertEquals(
-                "https://api.github.com/repos/OWNER/REPO",requestUrl
+                "https://api.github.com/repos/OWNER/REPO", requestUrl
         )
     }
 }

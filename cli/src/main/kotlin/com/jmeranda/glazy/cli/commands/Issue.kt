@@ -54,7 +54,7 @@ class Issue(private val repo: Repo, private var token: String?): Runnable {
      */
     @Command(name="list", description=["List issue(s) from the repository."])
     fun list(
-            @Option(names=["-n", "--number"], description=["The number of the desired issue"])
+            @Option(names=["-n", "--number"], description=["The number of the desired issue"], paramLabel="NUMBER")
                 number: Int? = null
     ) {
         val issueList: List<Issue> = if (number == null) {
@@ -95,6 +95,8 @@ class Issue(private val repo: Repo, private var token: String?): Runnable {
 
     /**
      * Sub-command to send a patch to a repository issue.
+     * Currently all options are required since Klaxon does not currently
+     * support ignoring null fields, when converting to a JSON string.+
      * @param number The number of the issue to patch.
      * @param title The patched title for the issue.
      * @param body The patched body of the issue.
@@ -109,16 +111,16 @@ class Issue(private val repo: Repo, private var token: String?): Runnable {
                 number: Int,
             @Option(names=["-t", "--title"], description=["The patched issue of the issue."], required=true)
                 title: String,
-            @Option(names=["-b", "--body"], description=["The patched body of the issue."])
-                body: String? = null,
-            @Option(names=["-s", "--state"], description=["The patched state of the issue."])
-                state: State? = null,
-            @Option(names=["-m", "--milestone"], description=["The patched number of the milestone for the issue."])
-                milestone: Int? = null,
-            @Option(names=["-l", "--labels"], description=["The patched labels for the issue"])
-                labels: List<String>? = null,
-            @Option(names=["-a", "--assignees"], description=["The patched user logins for users to be assigned to the issue."])
-                assignees: List<String>? = null
+            @Option(names=["-b", "--body"], description=["The patched body of the issue."], required=true)
+                body: String,
+            @Option(names=["-s", "--state"], description=["The patched state of the issue."], required=true)
+                state: State,
+            @Option(names=["-m", "--milestone"], description=["The patched number of the milestone for the issue."], required=true)
+                milestone: Int,
+            @Option(names=["-l", "--labels"], description=["The patched labels for the issue"], required=true)
+                labels: List<String>,
+            @Option(names=["-a", "--assignees"], description=["The patched user logins for users to be assigned to the issue."], required=true)
+                assignees: List<String>
     ) {
         val issue = this.service.editIssue(number, title, body, state.toString(), milestone, labels, assignees)
         displayIssue(issue)
