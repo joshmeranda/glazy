@@ -1,16 +1,19 @@
 package com.jmeranda.glazy.cli
 
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Paths
+
 import kotlin.system.exitProcess
+
+import com.beust.klaxon.Klaxon
+
+import picocli.CommandLine
+import picocli.CommandLine.Command
 
 import com.jmeranda.glazy.lib.Repo
 import com.jmeranda.glazy.lib.exception.NoSuchRepo
 import com.jmeranda.glazy.lib.handler.CACHE_DIR
 import com.jmeranda.glazy.lib.service.RepoService
 import com.jmeranda.glazy.cli.commands.*
-import picocli.CommandLine
 
 /**
  * Get the cached private access token of the user.
@@ -18,33 +21,48 @@ import picocli.CommandLine
  * @return The access token associated with the specified user.
  */
 fun getCachedAccessToken(user: String): String? {
-    val tokenFile = "$CACHE_DIR/access_tokens"
-    if (! Files.exists(Paths.get(tokenFile))) {
-        return null
+    /**
+     * Data class used for parsing cached access-token pairs
+     * @param user The user login key for each token.
+     * @param token The token mapped to each user.
+     */
+    data class UserTokenPair(
+        val user: String,
+        val token: String
+    )
+
+    val tokenFile = File("$CACHE_DIR/access_tokens.json")
+    val tokenArray = Klaxon().parseArray<UserTokenPair>(tokenFile)
+    var token: String? = null
+
+    for (pair: UserTokenPair in tokenArray ?: listOf(UserTokenPair("", ""))) {
+        if (pair.user == user) { token = pair.token }
     }
 
-    val contents: List<String> = File(tokenFile).readLines()
+    return token
+}
 
-    for (line: String in contents) {
-        val (username, token) = line.split(" ")
+@Command(name="glazy", description=["A command line interface to the github api."], mixinStandardHelpOptions=true)
+class Glazy(): Runnable {
+    var token: String? = null
+    lateinit var repo: Repo
 
-        if ( username == user) { return token }
+    override fun run() {
+        val (user: String?, name: String?) = getRepoName()
+        if (user == null || name == null) { return }
+        this.token = getCachedAccessToken(user)
+        val service = RepoService(this.token)
+        this.repo = service.getRepo(name, user) ?: throw NoSuchRepo(name)
+
+        println("${this.repo.name}, ${this.repo.owner.login}")
     }
-
-    return null
 }
 
 fun main(args: Array<String>) {
-    val (user: String?, name: String?) = getRepoName()
-    if (user == null || name == null) { exitProcess(1) }
-
-    val accessToken = getCachedAccessToken(user)
-
-    val service = RepoService(accessToken)
-    val repo: Repo = service.getRepo(name, user) ?: throw NoSuchRepo(name)
-
-    println("${repo.name}, ${repo.owner.login}")
-
-    val cmd = CommandLine(Issue(repo, accessToken))
-    cmd.execute(*args)
+    CommandLine(Glazy())
+            .addSubcommand(CommandLine(IssueParent())
+                    .addSubcommand(IssueList())
+                    .addSubcommand(IssueAdd())
+                    .addSubcommand(IssuePatch()))
+            .execute(*args)
 }
