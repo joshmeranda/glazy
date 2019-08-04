@@ -5,7 +5,7 @@ import org.junit.Test
 import kotlin.test.assertEquals
 
 import com.jmeranda.glazy.lib.handler.*
-import com.jmeranda.glazy.lib.request.RepoRequest
+import com.jmeranda.glazy.lib.request.RepoGetRequest
 
 class HandlerTest {
     /**
@@ -14,7 +14,7 @@ class HandlerTest {
     @Test
     fun testRepoRequestUrl() {
         val repoHandler = RepoGetHandler(
-                RepoRequest("REPO", "OWNER")
+                RepoGetRequest("REPO", "OWNER")
         )
 
         val requestUrl: String = repoHandler.getRequestUrl()
