@@ -1,13 +1,12 @@
 package com.jmeranda.glazy.cli.commands
 
+import com.jmeranda.glazy.cli.Glazy
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
 import picocli.CommandLine.ParentCommand
 
 import com.jmeranda.glazy.lib.Issue
-import com.jmeranda.glazy.lib.Repo
 import com.jmeranda.glazy.lib.service.IssueService
-import picocli.CommandLine
 
 enum class State(val state: String) {
     OPEN("open"),
@@ -36,93 +35,136 @@ fun displayIssue(issue: Issue) {
 
 /**
  * Parent command for all issue operations.
- * @property repo The github repository object on which to run issue
- *     operations.
- * @property token The personal access token to use for authentication.
+ * @parent Reference to the parent command instance.
+ * @property service The issue service used to interact with the github api.
  */
-@Command(name="issue")
-class Issue(private val repo: Repo, private var token: String?): Runnable {
-    private val service = IssueService(this.repo, this.token)
+@Command(name="issue", description=["Perform operations on repository issues"], mixinStandardHelpOptions=true)
+class IssueParent(): Runnable {
+    @ParentCommand
+    private val parent: Glazy? = null
+    var service: IssueService? = null
+
+    /**
+     * Instantiate the service required by sub-commands.
+     * Any sub-command which requires the use of an issue service will
+     * be required to call this method or service will be null.
+     * e.g
+     *     this.paren?.startService()
+     */
+    override fun run() {
+        this.parent?.run()
+        this.service = IssueService(this.parent?.repo ?: return,
+                this.parent.token)
+    }
+}
+
+/**
+ * Sub-command to list repository issues.
+ * @property parent Reference to the parent command instance.
+ * @property number The number of the issue to retrieve, if none is
+ *     provided then all repository issues are  retrieved.
+ */
+@Command(name="list", description=["List repository issues."], mixinStandardHelpOptions=true)
+class IssueList(): Runnable {
+    @ParentCommand
+    private val parent: IssueParent? = null
+
+    @Option(names=["-n", "--number"], description=["The number of the desired issue."], paramLabel="N")
+    private val number: Int? = null
 
     override fun run() {
-    }
-
-    /**
-     * Sub-command to list repository issues or issue.
-     * @param number The number of the target issue, if non specified
-     *     all 'open' issues are found.
-     */
-    @Command(name="list", description=["List issue(s) from the repository."])
-    fun list(
-            @Option(names=["-n", "--number"], description=["The number of the desired issue"], paramLabel="NUMBER")
-                number: Int? = null
-    ) {
-        val issueList: List<Issue> = if (number == null) {
-            this.service.getAllIssues()
-        } else {
-            listOf(this.service.getIssue(number))
+        this.parent?.run()
+        val issueList: List<Issue?>? = if (this.number == null) {
+            this.parent?.service?.getAllIssues()
+        } else  {
+            listOf(this.parent?.service?.getIssue(this.number))
         }
 
-        for (issue: Issue in issueList) {
-            displayIssue(issue)
+        for (issue: Issue? in issueList ?: listOf()) {
+            displayIssue(issue ?: continue)
         }
     }
+}
 
-    /**
-     * Sub-command to add an issue to the repository.
-     * @param title The title for the new issue.
-     * @param body The body for the new issue.
-     * @param milestone The milestone number for the new issue.
-     * @param labels The labels for the new issue.
-     * @param assignees The user logins to be assigned to the new issue.
-     */
-    @Command(name="add", description=["Create a new issue in the repository."])
-    fun add(
-            @Option(names=["-t", "--title"], description=["The title of the new issue."], required=true)
-                title: String,
-            @Option(names=["-b", "--body"], description=["The body of the new issue."])
-                body: String? = null,
-            @Option(names=["-m", "--milestone"], description=["The number of the milestone for the new issue."])
-                milestone: Int? = null,
-            @Option(names=["-l", "--labels"], description=["The labels for the new issue"])
-                labels: List<String>? = null,
-            @Option(names=["-a", "--assignees"], description=["The user logins for users to be assigned to the issue."])
-                assignees: List<String>? = null
-    ) {
-        val issue = this.service.createIssue(title, body, milestone, labels, assignees)
-        displayIssue(issue)
+/**
+ * Sub-command to add an issue to the repository.
+ * @property parent Reference to the parent command instance.
+ * @property title The title for the new issue.
+ * @property body The body for the new issue.
+ * @property milestone The milestone number for the new issue.
+ * @property labels The labels for the new issue.
+ * @property assignees The user logins to be assigned to the new issue.
+ */
+@Command(name="add", description=["Create a new issue in the repository."], mixinStandardHelpOptions=true)
+class IssueAdd(): Runnable {
+    @ParentCommand
+    private val parent: IssueParent? = null
+
+    @Option(names=["-t", "--title"], description=["The title of the new issue."], paramLabel="STRING", required=true)
+    private var title: String = ""
+
+    @Option(names=["-b", "--body"], description=["The body of the new issue."], paramLabel="STRING")
+    private var body: String? = null
+
+    @Option(names=["-m", "--milestone"], description=["The number of the milestone for the new issue."], paramLabel="N")
+    private var milestone: Int? = null
+
+    @Option(names=["-l", "--labels"], description=["The labels for the new issue, as comma separated strings."], split=",", paramLabel="[LABEL...]")
+    private var labels: List<String>? = null
+
+    @Option(names=["-a", "--assignees"], description=["The user logins for users to be assigned to the issue, as comma separated strings."], split=",", paramLabel="[LOGIN...]")
+    private var assignees: List<String>? = null
+
+    override fun run() {
+        this.parent?.run()
+        val issue = this.parent?.service?.createIssue(title, body, milestone, labels, assignees)
+        displayIssue(issue ?: return)
     }
+}
 
-    /**
-     * Sub-command to send a patch to a repository issue.
-     * Currently all options are required since Klaxon does not currently
-     * support ignoring null fields, when converting to a JSON string.+
-     * @param number The number of the issue to patch.
-     * @param title The patched title for the issue.
-     * @param body The patched body of the issue.
-     * @param state The patched state of the issue.
-     * @param milestone The patched milestone of  issue.
-     * @param labels The patched labels of the issue.
-     * @param assignees The patched list of assignees for the issue.w
-     */
-    @Command(name="patch", description=["Send a patch to an issue."])
-    fun patch(
-            @Option(names=["-n", "--number"], description=["The number of the issue to patch."], required=true)
-                number: Int,
-            @Option(names=["-t", "--title"], description=["The patched issue of the issue."], required=true)
-                title: String,
-            @Option(names=["-b", "--body"], description=["The patched body of the issue."], required=true)
-                body: String,
-            @Option(names=["-s", "--state"], description=["The patched state of the issue."], required=true)
-                state: State,
-            @Option(names=["-m", "--milestone"], description=["The patched number of the milestone for the issue."], required=true)
-                milestone: Int,
-            @Option(names=["-l", "--labels"], description=["The patched labels for the issue"], required=true)
-                labels: List<String>,
-            @Option(names=["-a", "--assignees"], description=["The patched user logins for users to be assigned to the issue."], required=true)
-                assignees: List<String>
-    ) {
-        val issue = this.service.editIssue(number, title, body, state.toString(), milestone, labels, assignees)
-        displayIssue(issue)
+/**
+ * Sub-command to send a patch to a repository issue.
+ * Currently all options are required to avoid overwriting fields meant
+ * to be ignored with a null value.
+ * @property parent Reference to the parent command instance.
+ * @property number The number of the issue to patch.
+ * @property title The patched title for the issue.
+ * @property body The patched body of the issue.
+ * @property state The patched state of the issue.
+ * @property milestone The patched milestone of  issue.
+ * @property labels The patched labels of the issue.
+ * @property assignees The patched list of assignees for the issue.
+ */
+@Command(name="patch", description=["Send a patch to an issue."], mixinStandardHelpOptions=true)
+class IssuePatch(): Runnable {
+    @ParentCommand
+    private val parent: IssueParent? = null
+
+    @Option(names=["-n", "--number"], description=["The number of the issue to patch."], paramLabel="N", required=true)
+    private var number: Int = -1
+
+    @Option(names=["-t", "--title"], description=["The patched issue of the issue."], paramLabel="STRING", required=true)
+    private var title: String = ""
+
+    @Option(names=["-b", "--body"], description=["The patched body of the issue."], paramLabel="STRING", required=true)
+    private var body: String = ""
+
+    @Option(names=["-s", "--state"], description=["The patched state of the issue."], paramLabel="[open,closed,all]", required=true)
+    private var state: State = State.OPEN
+
+    @Option(names=["-m", "--milestone"], description=["The patched number of the milestone for the issue."], paramLabel="N", required=true)
+    private var milestone: Int = -1
+
+    @Option(names=["-l", "--labels"], description=["The patched labels for the issue, as comma separated strings."], paramLabel="[LABELS...]", required=true)
+    private var labels: List<String> = listOf()
+
+    @Option(names=["-a", "--assignees"], description=["The patched user logins for users to be assigned to the issue, as comma separated strings."], paramLabel="[LOGIN...]", split=",", required=true)
+    private var assignees: List<String> = listOf()
+
+    override fun run() {
+        this.parent?.run()
+        val issue = this.parent?.service?.editIssue(this.number, this.title, this.body,
+                this.state.toString(), this.milestone, this.labels, this.assignees)
+        displayIssue(issue ?: return)
     }
 }
