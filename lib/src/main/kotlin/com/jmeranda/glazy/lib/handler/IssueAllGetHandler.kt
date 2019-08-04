@@ -7,7 +7,6 @@ import com.jmeranda.glazy.lib.request.IssueGetAllRequest
 
 /**
  * Handle a GET request for every available issue in a repository
- *
  * @property issueRequest The request object used by the handler.
  * @property token The personal access token of the user.
  */
