@@ -7,12 +7,16 @@ import java.nio.file.Paths
 
 /**
  * Get the name of the topmost directory in the current repository.
- * @return The name of the topmost repository directory.
+ * @param dir The starting directory, defaults to '.'
+ * @return The name of the bottom-most repository directory.
  */
-private fun getRepoDir(): String {
-    var cwd: Path = Paths.get(".").toAbsolutePath().normalize()
+fun getRepoDir(dir: String = "."): String? {
+    var cwd: Path = Paths.get(dir).toAbsolutePath().normalize()
 
+    /* Walk up the tree to find a directory containing the '.git' dir. */
     while (! Files.exists(cwd.resolve(".git"))) {
+        if (cwd == cwd.root) { return null }
+
         cwd = cwd.parent
     }
 
@@ -21,11 +25,18 @@ private fun getRepoDir(): String {
 
 /**
  * Get the name of the current repository name.
+ * @param dir The starting directory, defaults to '.'
  * @return The name of the repository.
  */
-fun getRepoName(): Pair<String?, String?> {
+fun getRepoName(dir: String = "."): Pair<String?, String?> {
     val repoRegex = Regex( "[a-zA-Z0-9]+/[a-zA-Z0-9\\-_]+\\.git$", RegexOption.UNIX_LINES)
-    val contents: List<String> = File("${getRepoDir()}/.git/config").readLines()
+    var contents: List<String>
+
+    try {
+        contents = File("${getRepoDir(dir)}/.git/config").readLines()
+    } catch(e: Exception) {
+        return Pair(null, null)
+    }
     var repoResult: MatchResult? = null
 
     /* Search for git repo name */
