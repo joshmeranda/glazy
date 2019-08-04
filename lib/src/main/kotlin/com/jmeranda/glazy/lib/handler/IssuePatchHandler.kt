@@ -8,7 +8,6 @@ import com.jmeranda.glazy.lib.request.IssuePatchRequest
 
 /**
  * Handle a PATCH request to edit an issue.
- *
  * @property issueRequest The request object used by the handler.
  * @property number The number of the issue to edit.
  * @property token The personal access token of the user.

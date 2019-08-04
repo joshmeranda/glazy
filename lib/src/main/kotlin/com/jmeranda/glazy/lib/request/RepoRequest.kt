@@ -1,6 +1,9 @@
 package com.jmeranda.glazy.lib.request
 
-data class RepoRequest(
+/**
+ * Request class for GET requests.
+ */
+data class RepoGetRequest(
         val name: String,
         val owner: String
 )
