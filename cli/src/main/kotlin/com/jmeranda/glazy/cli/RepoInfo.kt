@@ -7,7 +7,6 @@ import java.nio.file.Paths
 
 /**
  * Get the name of the topmost directory in the current repository.
- *
  * @return The name of the topmost repository directory.
  */
 private fun getRepoDir(): String {
@@ -22,7 +21,6 @@ private fun getRepoDir(): String {
 
 /**
  * Get the name of the current repository name.
- *
  * @return The name of the repository.
  */
 fun getRepoName(): Pair<String?, String?> {

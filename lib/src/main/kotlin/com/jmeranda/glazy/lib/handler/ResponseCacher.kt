@@ -17,7 +17,6 @@ val CACHE_DIR = "${System.getProperty("user.home")}/.cache/glazy"
 
 /**
  * Reads and Writes cached API data in json format.
- *
  * All cached data is stored in .cache/lazy in the users HOME directory.
  */
 class ResponseCache {
@@ -29,7 +28,6 @@ class ResponseCache {
 
     /**
      * Write repository data to .cache/glazy in HOME directory.
-     *
      * @param data Repo to be cached.
      */
     fun write(data: Repo) {
@@ -52,7 +50,6 @@ class ResponseCache {
 
     /**
      * Write root endpoints dat to .cache/glazy in HOME directory.
-     *
      * @param data Root endpoints to be cached.
      */
     fun write(data: RootEndpoints) {
@@ -70,10 +67,8 @@ class ResponseCache {
 
     /**
      *  Read cached repository data.
-     *
      *  @param name The name of the repo to be cached.
      *  @param user The login name of the repositories owner to be read.
-     *
      *  @return Repo if cached data exists, null otherwise.
      */
     fun repo(name: String, user: String): Repo? {
@@ -87,7 +82,6 @@ class ResponseCache {
 
     /**
      * Read cached root endpoints data.
-     *
      * @return RootEndpoints if cached data exists, null otherwise
      */
     fun endpoints(): RootEndpoints? {
