@@ -25,12 +25,16 @@ fun getRepoDir(dir: String = "."): String? {
 
 /**
  * Get the name of the current repository name.
+ * If the directory passed as parameter is not a git repository, or the
+ * repository URL (https or ssh) cannot be found in the config file
+ * both values in the returned pair object are null.
  * @param dir The starting directory, defaults to '.'
- * @return The name of the repository.
+ * @return A pair object of the repository owner login and repository
+ *     name respectively.
  */
 fun getRepoName(dir: String = "."): Pair<String?, String?> {
     val repoRegex = Regex( "[a-zA-Z0-9]+/[a-zA-Z0-9\\-_]+\\.git$", RegexOption.UNIX_LINES)
-    var contents: List<String>
+    val contents: List<String>
 
     try {
         contents = File("${getRepoDir(dir)}/.git/config").readLines()
