@@ -2,8 +2,6 @@ package com.jmeranda.glazy.cli
 
 import java.io.File
 
-import kotlin.system.exitProcess
-
 import com.beust.klaxon.Klaxon
 
 import picocli.CommandLine
@@ -42,6 +40,11 @@ fun getCachedAccessToken(user: String): String? {
     return token
 }
 
+/**
+ * Main command entry point.
+ * @property token The personal access token for the user.
+ * @property repo The repo object from which to gather endpoint urls.
+ */
 @Command(name="glazy", description=["A command line interface to the github api."], mixinStandardHelpOptions=true)
 class Glazy(): Runnable {
     var token: String? = null

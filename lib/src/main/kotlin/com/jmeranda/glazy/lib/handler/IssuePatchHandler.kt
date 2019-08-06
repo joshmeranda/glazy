@@ -23,7 +23,7 @@ class IssuePatchHandler(
         var body: String? = null
 
         try {
-            body = Handler.fieldRenameKlaxon.propertyStrategy(Handler.strategy).toJsonString(this.issueRequest)
+            body = Handler.fieldRenameKlaxon.toJsonString(this.issueRequest)
         } catch(e: Exception) {
             e.printStackTrace()
         }
