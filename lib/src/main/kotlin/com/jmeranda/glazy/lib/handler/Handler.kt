@@ -1,16 +1,13 @@
 package com.jmeranda.glazy.lib.handler
 
 import khttp.get
-import kotlin.reflect.KProperty
 
 import com.beust.klaxon.FieldRenamer
 import com.beust.klaxon.Klaxon
-import com.beust.klaxon.PropertyStrategy
 
 import com.jmeranda.glazy.lib.ROOT_ENDPOINT
 import com.jmeranda.glazy.lib.RootEndpoints
 import com.jmeranda.glazy.lib.exception.BadEndpoint
-import kotlin.reflect.full.valueParameters
 
 /**
  * Get klaxon parser for renaming camel case to snake case.
@@ -31,11 +28,13 @@ fun getKlaxonFieldRenamer(): Klaxon {
  * @param cache ResponseCache instance to store the api response.
  * @return Endpoint? deserialize json response
  */
-private fun getRootEndpoints(klaxonParser: Klaxon, cache: ResponseCache): RootEndpoints {
-    val endpointsAsJson: String = get(ROOT_ENDPOINT).text
+fun getRootEndpoints(rootUrl: String, klaxonParser: Klaxon,
+                             cache: ResponseCache
+): RootEndpoints {
     var rootEndpoints: RootEndpoints?
 
     try {
+        val endpointsAsJson: String = get(rootUrl).text
         rootEndpoints = klaxonParser.parse<RootEndpoints>(endpointsAsJson)
     } catch (e: Exception) {
         rootEndpoints = null
@@ -79,15 +78,9 @@ abstract class Handler(private val token: String?) {
     protected companion object {
         val fieldRenameKlaxon: Klaxon = getKlaxonFieldRenamer()
 
-        val strategy = object: PropertyStrategy {
-            override fun accept(property: KProperty<*>): Boolean {
-                return true
-            }
-        }
-
         val cache = ResponseCache()
 
         val endpoints: RootEndpoints = cache.endpoints()
-                ?: getRootEndpoints(fieldRenameKlaxon, cache)
+                ?: getRootEndpoints(ROOT_ENDPOINT, fieldRenameKlaxon, cache)
     }
 }
