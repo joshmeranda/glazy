@@ -19,7 +19,7 @@ class RepoGetHandler(
     /**
      * Send the request and return the response repository.
      * @return Repo? The repository object received from the API, null
-     * if there are json parsing errors.
+     *     if there are json parsing errors.
      */
     override fun handleRequest(): Repo? {
         var repo: Repo? = Handler.cache.repo(repoRequest.name, repoRequest.owner)

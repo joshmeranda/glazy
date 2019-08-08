@@ -13,7 +13,16 @@ import com.beust.klaxon.Klaxon
 import com.jmeranda.glazy.lib.Repo
 import com.jmeranda.glazy.lib.RootEndpoints
 
-val CACHE_DIR = "${System.getProperty("user.home")}/.cache/glazy"
+
+/**
+ * Data class used for parsing cached access-token pairs
+ * @param user The user login key for each token.
+ * @param token The token mapped to each user.
+ */
+data class UserTokenPair(
+        val user: String,
+        val token: String
+)
 
 /**
  * Reads and Writes cached API data in json format.
@@ -66,6 +75,15 @@ class ResponseCache {
     }
 
     /**
+     * Write access tokens to .cache/glazy/access_tokens.json
+     * @param user The user login to be associated with the token.
+     * @param token The personal access token.
+     */
+    fun write(user: String, token: String) {
+        /* TODO Not yet implemented */
+    }
+
+    /**
      *  Read cached repository data.
      *  @param name The name of the repo to be cached.
      *  @param user The login name of the repositories owner to be read.
@@ -81,6 +99,23 @@ class ResponseCache {
     }
 
     /**
+     * Get the cached private access token of the user.
+     * @param user The name of the user whose access token to parse from the file.
+     * @return The access token associated with the specified user.
+     */
+    fun token(user: String): String? {
+        val tokenFile = File("$CACHE_DIR/access_tokens.json")
+        val tokenArray = Klaxon().parseArray<UserTokenPair>(tokenFile)
+        var token: String? = null
+
+        for (pair: UserTokenPair in tokenArray ?: listOf(UserTokenPair("", ""))) {
+            if (pair.user == user) { token = pair.token }
+        }
+
+        return token
+    }
+
+    /**
      * Read cached root endpoints data.
      * @return RootEndpoints if cached data exists, null otherwise
      */
@@ -90,5 +125,9 @@ class ResponseCache {
         val target = File(fileName)
 
         return Klaxon().parse<RootEndpoints>(target)
+    }
+
+    companion object {
+        val CACHE_DIR = "${System.getProperty("user.home")}/.cache/glazy"
     }
 }
