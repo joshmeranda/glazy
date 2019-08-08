@@ -6,7 +6,6 @@ import kotlin.test.assertNull
 
 import com.jmeranda.glazy.lib.exception.NoSuchIssue
 import com.jmeranda.glazy.lib.handler.ResponseCache
-import com.jmeranda.glazy.lib.service.IssueService
 import com.jmeranda.glazy.lib.service.RepoService
 
 class RepoServicetest {
