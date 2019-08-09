@@ -12,8 +12,6 @@ import com.jmeranda.glazy.lib.request.RepoGetRequest
 open class RepoService(
         private var token: String?
 ){
-    private lateinit var repo: Repo
-
     /**
      * Get a repo with the specified name, and owner.
      */
@@ -21,8 +19,6 @@ open class RepoService(
         val repoRequest = RepoGetRequest(name, user)
         val repoHandler = RepoGetHandler(repoRequest, token)
 
-        this.repo = repoHandler.handleRequest() ?: throw NoSuchRepo(name)
-
-        return this.repo
+        return repoHandler.handleRequest() ?: throw NoSuchRepo(name)
     }
 }

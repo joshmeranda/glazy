@@ -36,7 +36,7 @@ fun displayIssue(issue: Issue) {
 /**
  * Parent command for all issue operations.
  *
- * @parent Reference to the parent command instance.
+ * @property parent Reference to the parent command instance.
  * @property service The issue service used to interact with the github api.
  */
 @Command(name="issue",
@@ -44,20 +44,21 @@ fun displayIssue(issue: Issue) {
         mixinStandardHelpOptions=true)
 class IssueParent(): Runnable {
     @ParentCommand
-    private val parent: Glazy? = null
+    var parent: Glazy? = null
     var service: IssueService? = null
 
     /**
      * Instantiate the service required by sub-commands.
+     *
      * Any sub-command which requires the use of an issue service will
-     * be required to call this method or service will be null.
-     * e.g
-     *     this.paren?.startService()
+     * be required to call this method or error will be thrown.
      */
     override fun run() {
         this.parent?.run()
-        this.service = IssueService(this.parent?.repo ?: return,
-                this.parent.token)
+        val user = this.parent?.user ?: return
+        val name = this.parent?.name ?: return
+        this.service = IssueService(this.parent?.repoService?.getRepo(name, user) ?: return,
+                this.parent?.token)
     }
 }
 
