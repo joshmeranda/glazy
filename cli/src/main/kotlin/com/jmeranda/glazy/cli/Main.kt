@@ -10,5 +10,7 @@ fun main(args: Array<String>) {
                     .addSubcommand(IssueList())
                     .addSubcommand(IssueAdd())
                     .addSubcommand(IssuePatch()))
+            .addSubcommand(CommandLine(RepoParent())
+                    .addSubcommand(RepoShow()))
             .execute(*args)
 }
