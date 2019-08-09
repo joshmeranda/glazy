@@ -13,17 +13,17 @@ data class RepoGetRequest(
  */
 data class RepoPostRequest(
         val name: String,
-        val description: String?,
-        val homepage: String?,
+        val description: String? = null,
+        val homepage: String? = null,
         val private: Boolean = false,
         val hasIssues: Boolean = true,
         val hasProject: Boolean = true,
         val hasWiki: Boolean = true,
         val isTemplate: Boolean = false,
-        val teamId: Int?,
+        val teamId: Int? = null,
         val autoInit: Boolean = false,
-        val gitignoreTemplate: String?,
-        val licenseTemplate: String?,
+        val gitignoreTemplate: String? = null,
+        val licenseTemplate: String? = null,
         val allowSquashMerge: Boolean = true,
         val allowMergeCommit: Boolean = true,
         val allowRebaseMerge: Boolean = true

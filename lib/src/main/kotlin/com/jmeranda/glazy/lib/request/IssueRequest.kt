@@ -27,8 +27,8 @@ data class IssuePostRequest (
         val title: String,
         val body: String? = null,
         val milestone: Int? = null,
-        val labels: List<String>? = listOf(),
-        val assignees: List<String>? = listOf()
+        val labels: List<String>? = null,
+        val assignees: List<String>? = null
 )
 
 /**
@@ -39,10 +39,10 @@ data class IssuePatchRequest (
         val repo: Repo,
         @Json(ignored = true)
         val number: Int,
-        val title: String ,
-        val body: String,
-        val state: String,
-        val milestone: Int,
-        val labels: List<String>,
-        val assignees: List<String>
+        val title: String,
+        val body: String? = null,
+        val state: String? = null,
+        val milestone: Int? = null,
+        val labels: List<String>? = null,
+        val assignees: List<String>? = null
 )
