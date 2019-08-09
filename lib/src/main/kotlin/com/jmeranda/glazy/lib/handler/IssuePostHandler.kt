@@ -8,6 +8,7 @@ import khttp.responses.Response
 
 /**
  * Handle a POST request for a new issue.
+ *
  * @property issueRequest The request object used by the handler.
  * @property token The personal access token of the user.
  */
