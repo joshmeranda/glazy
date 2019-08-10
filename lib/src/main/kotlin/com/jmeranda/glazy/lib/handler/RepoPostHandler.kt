@@ -1,10 +1,12 @@
 package com.jmeranda.glazy.lib.handler
 
+import com.fasterxml.jackson.module.kotlin.readValue
+
 import khttp.post
+import khttp.responses.Response
 
 import com.jmeranda.glazy.lib.Repo
 import com.jmeranda.glazy.lib.request.RepoPostRequest
-import khttp.responses.Response
 
 /**
  * Handle a POST request for a new repository.
@@ -22,7 +24,7 @@ class RepoPostHandler(
         var body: String? = null
 
         try {
-            body = Handler.fieldRenameKlaxon.toJsonString(this.repoRequest)
+            body = Handler.mapper.writeValueAsString(this.repoRequest)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -32,7 +34,7 @@ class RepoPostHandler(
                 headers = this.getAuthorizationHeaders()
         )
 
-        return Handler.fieldRenameKlaxon.parse(response.text)
+        return Handler.mapper.readValue(response.text)
     }
 
     /**
