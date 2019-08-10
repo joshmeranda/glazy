@@ -2,6 +2,8 @@ package com.jmeranda.glazy.lib.handler
 
 import khttp.get
 
+import com.fasterxml.jackson.module.kotlin.readValue
+
 import com.jmeranda.glazy.lib.Issue
 import com.jmeranda.glazy.lib.request.IssueGetAllRequest
 
@@ -22,7 +24,7 @@ class IssueAllGetHandler(
         var allIssues: List<Issue>?
 
         try {
-            allIssues = Handler.fieldRenameKlaxon.parseArray(issueAsJson)
+            allIssues = Handler.mapper.readValue(issueAsJson)
         } catch (e: Exception) {
             allIssues = null
             e.printStackTrace()
