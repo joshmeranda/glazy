@@ -2,16 +2,16 @@
 Git web API wrapper written in Kotlin. Its git, but all command line for when a gui is just too much effort.
 
 # First Steps
-- [ ] ~~Initial Project Setup~~
-- [ ] Basic API usage
-  - [ ] Parse JSON to Kotlin class
-  - [ ] Parse Kotlin class to JSON
-  - [ ] Basic GET requests
-  - [ ] Basic POST Requests
+- [ ] ~~Initial Project Setup~~~~
+- [ ] ~~Basic API usage~~
+  - [ ] ~~Parse JSON to Kotlin class~~
+  - [ ] ~~Parse Kotlin class to JSON~~
+  - [ ] ~~Basic GET requests~~
+  - [ ] ~~Basic POST Requests~~
 - [ ] Basic request handling
   - [ ] Test for internet connection
   - [ ] Request Stack
-- [ ] CLI
+- [ ] ~~CLI~~
 
 # Development resources
 [Kotlin Coding Conventions](https://kotlinlang.org/docs/reference/coding-conventions.html)
