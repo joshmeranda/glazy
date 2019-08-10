@@ -24,8 +24,6 @@ Git web API wrapper written in Kotlin. Its git, but all command line for when a 
 
 [khhtp Docs](https://khttp.readthedocs.io/en/latest/)
 
-[Klaxon Docs (Github)](https://github.com/cbeust/klaxon)
-
-~~[Clikt Docs](https://ajalt.github.io/clikt/)~~
-
 [Picocli Docs](https://picocli.info/)
+
+[Jackson Docs](https://github.com/FasterXML/jackson-docs)
