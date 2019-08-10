@@ -94,7 +94,90 @@ class RepoShow(): Runnable {
     }
 }
 
-class RepoInit() {
+@Command(name = "init",
+        description = ["Create a new remot repository"],
+        mixinStandardHelpOptions = true)
+class RepoInit(): Runnable {
+    @ParentCommand
+    private val parent: RepoParent? = null
+
+    @Option(names=["-n", "--name"],
+            description = ["The name for the new repository."],
+            paramLabel = "NAME",
+            required = true)
+    var name: String = ""
+
+    @Option(names = ["-d", "--description"],
+            description = ["THe description for the new repository"],
+            paramLabel = "DESCRIPTION")
+    var description: String? = null
+
+    @Option(names = ["--homepage"],
+            description = ["The url to the repositories homepage"],
+            paramLabel = "URL")
+    var homepage: String? = null
+
+    @Option(names = ["-p", "--private"],
+            description = ["Mark the new repository as private."])
+    var private: Boolean = false
+
+    @Option(names = ["-i", "--has-issues"],
+            description = ["Enable issues for the repository."])
+    var hasIssues: Boolean = true
+    
+    @Option(names = ["--has-project"],
+            description = ["Enable projects for the repository."])
+    var hasProject: Boolean = true
+
+    @Option(names = ["-w", "--has-wiki"],
+            description = ["Enable wiki for the repository."])
+    var hasWiki: Boolean = true
+
+    @Option(names = ["--is-template"],
+            description = ["Mark the repository as a template"])
+    var isTemplate: Boolean = false
+
+    @Option(names = ["--team-id"],
+            description = ["The id of the team to have access to the repository"],
+            paramLabel = "ID")
+    var teamId: Int? = null
+
+    @Option(names = ["-a", "--auto-init"],
+            description = ["Create an initial commit with an empty README"])
+    var autoInit: Boolean = false
+
+    @Option(names = ["--gitignore-template"],
+            description = ["The language gitignore template to use."],
+            paramLabel = "LANG")
+    var gitignoreTemplate: String? = null
+
+    @Option(names = ["--license-template"],
+            description = ["The license to use for the repository (MIT, GPL, etc.)."],
+            paramLabel = "LICENSE")
+    var licenseTemplate: String? = null
+
+    @Option(names = ["--allow-squash"],
+            description = ["Allow squash merging pull requests"])
+    var allowSquashMerge: Boolean = true
+
+    @Option(names = ["--allow_merge"],
+            description = ["Allow merging pull requests with a commit."])
+    var allowMergeCommit: Boolean = true
+
+    @Option(names = ["--allow-rebase"],
+            description = ["Allow rebase merging pull requests."])
+    var allowRebaseMerge: Boolean = true
+
+    override fun run() {
+        this.parent?.run()
+
+        this.parent?.service?.createRepo(this.name, this.description,
+                this.homepage, this.private, this.hasIssues,
+                this.hasProject, this.hasWiki, this.isTemplate,
+                this.teamId, this.autoInit, this.gitignoreTemplate,
+                this.licenseTemplate, this.allowSquashMerge,
+                this.allowMergeCommit, this.allowRebaseMerge)
+    }
 }
 
 class RepoPatch() {
