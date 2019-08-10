@@ -171,46 +171,39 @@ class IssuePatch(): Runnable {
 
     @Option(names=["-n", "--number"],
             description=["The number of the issue to patch."],
-            paramLabel="N",
-            required=true)
+            paramLabel="N")
     private var number: Int = -1
 
     @Option(names=["-t", "--title"],
             description=["The patched issue of the issue."],
-            paramLabel="STRING",
-            required=true)
-    private var title: String = ""
+            paramLabel="STRING")
+    private var title: String? = null
 
     @Option(names=["-b", "--body"],
             description=["The patched body of the issue."],
-            paramLabel="STRING",
-            required=true)
-    private var body: String = ""
+            paramLabel="STRING")
+    private var body: String? = null
 
     @Option(names=["-s", "--state"],
             description=["The patched state of the issue."],
-            paramLabel="[open,closed,all]",
-            required=true)
-    private var state: State = State.OPEN
+            paramLabel="[open,closed,all]")
+    private var state: State? = null
 
     @Option(names=["-m", "--milestone"],
             description=["The patched number of the milestone for the issue."],
-            paramLabel="N",
-            required=true)
-    private var milestone: Int = -1
+            paramLabel="N")
+    private var milestone: Int? = null
 
     @Option(names=["-l", "--labels"],
             description=["The patched labels for the issue, as comma separated strings."],
-            paramLabel="[LABELS...]",
-            required=true)
-    private var labels: List<String> = listOf()
+            paramLabel="[LABELS...]")
+    private var labels: List<String>? = null
 
     @Option(names=["-a", "--assignees"],
             description=["The patched user logins for users to be assigned to the issue, as comma separated strings."],
             paramLabel="[LOGIN...]",
-            split=",",
-            required=true)
-    private var assignees: List<String> = listOf()
+            split=",")
+    private var assignees: List<String>? = null
 
     override fun run() {
         this.parent?.run()

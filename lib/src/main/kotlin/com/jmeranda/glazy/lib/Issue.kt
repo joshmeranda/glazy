@@ -38,7 +38,7 @@ data class Milestone(
  * Describes a repo issue
  */
 data class Issue (
-        val url: String,
+        val url: String? = null,
         val repositoryUrl: String,
         val labelsUrl: String,
         val commentsUrl: String,
