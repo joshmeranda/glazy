@@ -2,47 +2,37 @@ package com.jmeranda.glazy.lib.handler
 
 import khttp.get
 
-import com.beust.klaxon.FieldRenamer
-import com.beust.klaxon.Klaxon
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 
 import com.jmeranda.glazy.lib.ROOT_ENDPOINT
 import com.jmeranda.glazy.lib.RootEndpoints
 import com.jmeranda.glazy.lib.exception.BadEndpoint
 
 /**
- * Get klaxon parser for renaming camel case to snake case.
- * @return field renaming Klaxon instance.
- */
-fun getKlaxonFieldRenamer(): Klaxon {
-    val fieldRenamer: FieldRenamer = object: FieldRenamer {
-        override fun toJson(fieldName: String) = FieldRenamer.camelToUnderscores(fieldName)
-        override fun fromJson(fieldName: String) = FieldRenamer.underscoreToCamel(fieldName)
-    }
-
-    return Klaxon().fieldRenamer(fieldRenamer)
-}
-
-/**
  * Get a all available github endpoints as of v3.
- * @param klaxonParser used to parse api root endpoint response.
+ *
+ * @param mapper Used to parse api root endpoint response.
  * @param cache ResponseCache instance to store the api response.
  * @return Endpoint? deserialize json response
  */
-fun getRootEndpoints(rootUrl: String, klaxonParser: Klaxon,
-                             cache: ResponseCache
+fun getRootEndpoints(rootUrl: String, mapper: ObjectMapper,
+                     cache: ResponseCache
 ): RootEndpoints {
-    var rootEndpoints: RootEndpoints?
+    val rootEndpoints: RootEndpoints
 
     try {
         val endpointsAsJson: String = get(rootUrl).text
-        rootEndpoints = klaxonParser.parse<RootEndpoints>(endpointsAsJson)
+        rootEndpoints = mapper.readValue(endpointsAsJson)
     } catch (e: Exception) {
-        rootEndpoints = null
+        throw BadEndpoint()
     }
 
-    if (rootEndpoints != null) { cache.write(rootEndpoints) }
+    cache.write(rootEndpoints)
 
-    return rootEndpoints ?: throw BadEndpoint()
+    return rootEndpoints
 }
 
 /**
@@ -76,11 +66,12 @@ abstract class Handler(private val token: String?) {
     abstract fun getRequestUrl(): String
 
     protected companion object {
-        val fieldRenameKlaxon: Klaxon = getKlaxonFieldRenamer()
+        val mapper = jacksonObjectMapper()
+                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
 
         val cache = ResponseCache()
 
         val endpoints: RootEndpoints = cache.endpoints()
-                ?: getRootEndpoints(ROOT_ENDPOINT, fieldRenameKlaxon, cache)
+                ?: getRootEndpoints(ROOT_ENDPOINT, mapper, cache)
     }
 }

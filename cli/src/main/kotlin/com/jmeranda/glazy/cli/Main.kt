@@ -2,8 +2,6 @@ package com.jmeranda.glazy.cli
 
 import java.io.File
 
-import com.beust.klaxon.Klaxon
-
 import picocli.CommandLine
 import picocli.CommandLine.Command
 

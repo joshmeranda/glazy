@@ -8,7 +8,8 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 
-import com.beust.klaxon.Klaxon
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 
 import com.jmeranda.glazy.lib.Repo
 import com.jmeranda.glazy.lib.RootEndpoints
@@ -16,6 +17,7 @@ import com.jmeranda.glazy.lib.RootEndpoints
 
 /**
  * Data class used for parsing cached access-token pairs
+ *
  * @param user The user login key for each token.
  * @param token The token mapped to each user.
  */
@@ -26,6 +28,7 @@ data class UserTokenPair(
 
 /**
  * Reads and Writes cached API data in json format.
+ *
  * All cached data is stored in .cache/lazy in the users HOME directory.
  */
 class ResponseCache {
@@ -37,17 +40,17 @@ class ResponseCache {
 
     /**
      * Write repository data to .cache/glazy in HOME directory.
+     *
      * @param data Repo to be cached.
      */
     fun write(data: Repo) {
-
         if (! Files.exists(Paths.get("$CACHE_DIR/${data.owner.login}"))) {
             File("$CACHE_DIR/${data.owner.login}").mkdir()
         }
 
         val fileName = "$CACHE_DIR/${data.fullName}.json"
         val dest = File(fileName)
-        val repoAsJson: String = Klaxon().toJsonString(data)
+        val repoAsJson = ResponseCache.mapper.writeValueAsString(data)
 
         try {
             dest.createNewFile()
@@ -64,7 +67,7 @@ class ResponseCache {
     fun write(data: RootEndpoints) {
         val fileName = "$CACHE_DIR/root_endpoints.json"
         val dest = File(fileName)
-        val endpointsAsJson: String = Klaxon().toJsonString(data)
+        val endpointsAsJson = ResponseCache.mapper.writeValueAsString(data)
 
         try {
             dest.createNewFile()
@@ -94,8 +97,7 @@ class ResponseCache {
         if (!Files.exists(Paths.get(fileName))) { return null }
         val target = File(fileName)
 
-        return Klaxon().parse<Repo>(target)
-
+        return ResponseCache.mapper.readValue(target)
     }
 
     /**
@@ -105,10 +107,10 @@ class ResponseCache {
      */
     fun token(user: String): String? {
         val tokenFile = File("$CACHE_DIR/access_tokens.json")
-        val tokenArray = Klaxon().parseArray<UserTokenPair>(tokenFile)
+        val tokenArray: List<UserTokenPair> = ResponseCache.mapper.readValue(tokenFile)
         var token: String? = null
 
-        for (pair: UserTokenPair in tokenArray ?: listOf(UserTokenPair("", ""))) {
+        for (pair: UserTokenPair in tokenArray) {
             if (pair.user == user) { token = pair.token }
         }
 
@@ -124,10 +126,12 @@ class ResponseCache {
         if (! Files.exists(Paths.get(fileName))) { return null }
         val target = File(fileName)
 
-        return Klaxon().parse<RootEndpoints>(target)
+        return ResponseCache.mapper.readValue(target)
     }
 
     companion object {
         val CACHE_DIR = "${System.getProperty("user.home")}/.cache/glazy"
+
+        val mapper = jacksonObjectMapper()
     }
 }
