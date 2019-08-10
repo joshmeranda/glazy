@@ -11,6 +11,8 @@ fun main(args: Array<String>) {
                     .addSubcommand(IssueAdd())
                     .addSubcommand(IssuePatch()))
             .addSubcommand(CommandLine(RepoParent())
-                    .addSubcommand(RepoShow()))
+                    .addSubcommand(RepoShow())
+                    .addSubcommand(RepoInit())
+                    .setToggleBooleanFlags(true))
             .execute(*args)
 }
