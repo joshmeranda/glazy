@@ -1,6 +1,8 @@
 package com.jmeranda.glazy.lib.request
 
-import com.beust.klaxon.Json
+import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonInclude.Include
 import com.jmeranda.glazy.lib.Repo
 
 /**
@@ -22,8 +24,7 @@ data class IssueGetAllRequest (
  * Request class for POST requests to create an issue.
  */
 data class IssuePostRequest (
-        @Json(ignored = true)
-        val repo: Repo,
+        @JsonIgnore val repo: Repo,
         val title: String,
         val body: String? = null,
         val milestone: Int? = null,
@@ -34,15 +35,14 @@ data class IssuePostRequest (
 /**
  * Request class for PATCH requests to edit an issue.
  */
+@JsonInclude(Include.NON_NULL)
 data class IssuePatchRequest (
-        @Json(ignored = true)
-        val repo: Repo,
-        @Json(ignored = true)
-        val number: Int,
-        val title: String ,
-        val body: String,
-        val state: String,
-        val milestone: Int,
-        val labels: List<String>,
-        val assignees: List<String>
+        @JsonIgnore val repo: Repo,
+        @JsonIgnore val number: Int,
+        val title: String? = null,
+        val body: String? = null,
+        val state: String? = null,
+        val milestone: Int? = null,
+        val labels: List<String>? = null,
+        val assignees: List<String>? = null
 )

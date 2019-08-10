@@ -3,6 +3,8 @@ package com.jmeranda.glazy.lib.handler
 import khttp.patch
 import khttp.responses.Response
 
+import com.fasterxml.jackson.module.kotlin.readValue
+
 import com.jmeranda.glazy.lib.Issue
 import com.jmeranda.glazy.lib.request.IssuePatchRequest
 
@@ -23,7 +25,7 @@ class IssuePatchHandler(
         var body: String? = null
 
         try {
-            body = Handler.fieldRenameKlaxon.toJsonString(this.issueRequest)
+            body = Handler.mapper.writeValueAsString(this.issueRequest)
         } catch(e: Exception) {
             e.printStackTrace()
         }
@@ -32,7 +34,7 @@ class IssuePatchHandler(
                 data = body,
                 headers = this.getAuthorizationHeaders())
 
-        return Handler.fieldRenameKlaxon.parse(response.text)
+        return Handler.mapper.readValue(response.text)
     }
 
     override fun getRequestUrl(): String = this.issueUrl
