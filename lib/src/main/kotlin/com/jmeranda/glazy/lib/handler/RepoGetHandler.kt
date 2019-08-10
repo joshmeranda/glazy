@@ -2,6 +2,8 @@ package com.jmeranda.glazy.lib.handler
 
 import khttp.get
 
+import com.fasterxml.jackson.module.kotlin.readValue
+
 import com.jmeranda.glazy.lib.Repo
 import com.jmeranda.glazy.lib.request.RepoGetRequest
 
@@ -29,7 +31,7 @@ class RepoGetHandler(
                 get(this.getRequestUrl(), headers=this.getAuthorizationHeaders()).text
 
         try {
-            repo = Handler.fieldRenameKlaxon.parse<Repo>(repoAsJson)
+            repo = Handler.mapper.readValue(repoAsJson)
         } catch(e:  Exception) {
             repo = null
         }

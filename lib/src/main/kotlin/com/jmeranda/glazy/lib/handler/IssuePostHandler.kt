@@ -1,10 +1,12 @@
 package com.jmeranda.glazy.lib.handler
 
-import com.jmeranda.glazy.lib.Issue
 import khttp.post
-
-import com.jmeranda.glazy.lib.request.IssuePostRequest
 import khttp.responses.Response
+
+import com.fasterxml.jackson.module.kotlin.readValue
+
+import com.jmeranda.glazy.lib.Issue
+import com.jmeranda.glazy.lib.request.IssuePostRequest
 
 /**
  * Handle a POST request for a new issue.
@@ -22,7 +24,7 @@ class IssuePostHandler(
         var body: String? = null
 
         try {
-            body = Handler.fieldRenameKlaxon.toJsonString(this.issueRequest)
+            body = Handler.mapper.writeValueAsString(this.issueRequest)
         } catch(e: Exception) {
             e.printStackTrace()
         }
@@ -32,7 +34,7 @@ class IssuePostHandler(
                 headers = this.getAuthorizationHeaders()
                 )
 
-        return Handler.fieldRenameKlaxon.parse(response.text)
+        return Handler.mapper.readValue(response.text)
     }
 
     override fun getRequestUrl(): String = this.issueUrl
