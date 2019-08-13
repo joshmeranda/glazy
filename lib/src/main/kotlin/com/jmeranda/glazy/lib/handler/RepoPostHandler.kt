@@ -17,7 +17,7 @@ import com.jmeranda.glazy.lib.request.RepoPostRequest
 class RepoPostHandler(
         private val repoRequest: RepoPostRequest,
         token: String?
-): Handler(token) {
+): Handler<Repo>(token) {
     private val repoUrl = endpoints.currentUserRepositoriesUrl
 
     override fun handleRequest(): Repo? {
