@@ -35,8 +35,12 @@ private data class TestData(
 class HandlerTest {
     private val nullHandler = ConcreteHandler(null)
     private val nonNullHandler = ConcreteHandler("bar")
-    private val dataJson = """{"first_name":"foo"}"""
-    private val dataClass = TestData(firstName = "foo")
+
+    private val dataJson = """{"first_name":"foo","last_name":"bar"}"""
+    private val dataClass = TestData(firstName ="foo", lastName = "bar")
+
+    private val dataJsonIgnoreNull = """{"first_name":"foo"}"""
+    private val dataClassIgnoreNull = TestData(firstName = "foo")
 
     @Test
     fun testAuthorizationHeaders() {
@@ -57,7 +61,7 @@ class HandlerTest {
         val data: TestData = reader.readValue(this.dataJson)
 
         assertEquals("foo", data.firstName)
-        assertNull(data.lastName)
+        assertEquals("bar", data.lastName)
     }
 
     @Test
@@ -66,5 +70,22 @@ class HandlerTest {
         val data = writer.writeValueAsString(this.dataClass)
 
         assertEquals(this.dataJson, data)
+    }
+
+    @Test
+    fun testHandlerReaderIgnoreNull() {
+        val reader = Handler.mapper
+        val data: TestData = reader.readValue(this.dataJsonIgnoreNull)
+
+        assertEquals("foo", data.firstName)
+        assertNull(data.lastName)
+    }
+
+    @Test
+    fun testHandlerWriterIgnoreNull() {
+        val writer = Handler.mapper
+        val data = writer.writeValueAsString(this.dataClassIgnoreNull)
+
+        assertEquals(this.dataJsonIgnoreNull, data)
     }
 }
