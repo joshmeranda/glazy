@@ -25,7 +25,7 @@ class IssueGetHandler(
         var issue: Issue?
 
         try {
-            issue = Handler.reader().readValue(issueAsJson)
+            issue = Handler.mapper.readValue(issueAsJson)
         } catch (e: Exception) {
             issue = null
         }

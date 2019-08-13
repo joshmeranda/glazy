@@ -50,7 +50,7 @@ abstract class Handler<T>(private val token: String?) {
      */
     protected fun getAuthorizationHeaders(): Map<String, String> {
         return if (this.token == null) {
-            mapOf("" to "")
+            emptyMap()
         } else {
             mapOf("Authorization" to "token ${this.token}")
             }
@@ -70,18 +70,9 @@ abstract class Handler<T>(private val token: String?) {
      */
     abstract fun getRequestUrl(): String
 
-    protected companion object {
-        private val mapper = jacksonObjectMapper()
-
-        fun reader(): ObjectMapper {
-            return mapper
-                    .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-        }
-        
-        fun writer(): ObjectMapper {
-            return mapper
-                    .setPropertyNamingStrategy(PropertyNamingStrategy.LOWER_CAMEL_CASE)
-        }
+    companion object {
+        val mapper: ObjectMapper = jacksonObjectMapper()
+                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
 
         val cache = ResponseCache()
 

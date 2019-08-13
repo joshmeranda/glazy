@@ -24,7 +24,7 @@ class RepoPostHandler(
         var body: String? = null
 
         try {
-            body = Handler.writer().writeValueAsString(this.repoRequest)
+            body = Handler.mapper.writeValueAsString(this.repoRequest)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -34,7 +34,7 @@ class RepoPostHandler(
                 headers = this.getAuthorizationHeaders()
         )
 
-        return Handler.reader().readValue(response.text)
+        return Handler.mapper.readValue(response.text)
     }
 
     /**

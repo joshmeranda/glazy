@@ -53,7 +53,7 @@ class ResponseCache {
 
         val fileName = "$CACHE_DIR/${data.fullName}.json"
         val dest = File(fileName)
-        val repoAsJson = ResponseCache.writer().writeValueAsString(data)
+        val repoAsJson = ResponseCache.mapper.writeValueAsString(data)
 
         try {
             dest.createNewFile()
@@ -71,7 +71,7 @@ class ResponseCache {
     fun write(data: RootEndpoints) {
         val fileName = "$CACHE_DIR/root_endpoints.json"
         val dest = File(fileName)
-        val endpointsAsJson = ResponseCache.writer().writeValueAsString(data)
+        val endpointsAsJson = ResponseCache.mapper.writeValueAsString(data)
 
         try {
             dest.createNewFile()
@@ -98,7 +98,7 @@ class ResponseCache {
         if (!Files.exists(Paths.get(fileName))) { return null }
         val target = File(fileName)
 
-        return ResponseCache.reader().readValue(target)
+        return ResponseCache.mapper.readValue(target)
     }
 
     /**
@@ -108,7 +108,7 @@ class ResponseCache {
      */
     fun token(user: String): String? {
         val tokenFile = File("$CACHE_DIR/access_tokens.json")
-        val tokenArray: List<UserTokenPair> = ResponseCache.reader().readValue(tokenFile)
+        val tokenArray: List<UserTokenPair> = ResponseCache.mapper.readValue(tokenFile)
         var token: String? = null
 
         for (pair: UserTokenPair in tokenArray) {
@@ -128,22 +128,13 @@ class ResponseCache {
         if (! Files.exists(Paths.get(fileName))) { return null }
         val target = File(fileName)
 
-        return ResponseCache.reader().readValue(target)
+        return ResponseCache.mapper.readValue(target)
     }
 
     companion object {
         val CACHE_DIR = "${System.getProperty("user.home")}/.cache/glazy"
 
-        val mapper = jacksonObjectMapper()
-
-        fun reader(): ObjectMapper {
-            return mapper
-                    .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-        }
-
-        fun writer(): ObjectMapper {
-            return mapper
-                    .setPropertyNamingStrategy(PropertyNamingStrategy.LOWER_CAMEL_CASE)
-        }
+        val mapper: ObjectMapper = jacksonObjectMapper()
+                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
     }
 }

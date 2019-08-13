@@ -34,7 +34,7 @@ class RepoGetHandler(
                 get(this.getRequestUrl(), headers=this.getAuthorizationHeaders()).text
 
         try {
-            repo = Handler.reader().readValue(repoAsJson)
+            repo = Handler.mapper.readValue(repoAsJson)
         } catch(e:  Exception) {
             repo = null
             e.printStackTrace()
