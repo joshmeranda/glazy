@@ -13,6 +13,7 @@ fun main(args: Array<String>) {
             .addSubcommand(CommandLine(RepoParent())
                     .addSubcommand(RepoShow())
                     .addSubcommand(RepoInit())
+                    .addSubcommand(RepoPatch())
                     .setToggleBooleanFlags(true))
             .execute(*args)
 }

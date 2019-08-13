@@ -3,8 +3,10 @@ package com.jmeranda.glazy.lib.service
 import com.jmeranda.glazy.lib.Repo
 import com.jmeranda.glazy.lib.exception.NoSuchRepo
 import com.jmeranda.glazy.lib.handler.RepoGetHandler
+import com.jmeranda.glazy.lib.handler.RepoPatchHandler
 import com.jmeranda.glazy.lib.handler.RepoPostHandler
 import com.jmeranda.glazy.lib.request.RepoGetRequest
+import com.jmeranda.glazy.lib.request.RepoPatchRequest
 import com.jmeranda.glazy.lib.request.RepoPostRequest
 
 /**
@@ -15,7 +17,7 @@ open class RepoService(
         private var token: String?
 ){
     /**
-     * Get a repo with the specified name, and owner.
+     * Get a repo with the specified [name], and [user].
      */
     fun getRepo(name: String, user: String): Repo {
         val repoRequest = RepoGetRequest(name, user)
@@ -24,6 +26,9 @@ open class RepoService(
         return repoHandler.handleRequest() ?: throw NoSuchRepo(name)
     }
 
+    /**
+     * Create a remote repository.
+     */
     fun createRepo(name: String, description: String?, homepage: String?,
                    private: Boolean, hasIssues: Boolean, hasProject: Boolean,
                    hasWiki: Boolean, isTemplate: Boolean, teamId: Int?,
@@ -38,5 +43,24 @@ open class RepoService(
         val repoHandler = RepoPostHandler(repoRequest, token)
 
         return repoHandler.handleRequest() ?: throw Exception("Could not create repository")
+    }
+
+    /**
+     * Edit a remote repository.
+     */
+    fun editRepo(owner: String, currentName: String, name: String?,
+                 description: String?, homepage: String?, private: Boolean?,
+                 hasIssues: Boolean?, hasProjects: Boolean?, hasWiki: Boolean?,
+                 isTemplate: Boolean?, defaultBranch: String?, allowSquashMerge: Boolean?,
+                 allowMergeCommit: Boolean?, allowRebaseMerge: Boolean?,
+                 archived: Boolean?
+    ): Repo {
+        val request = RepoPatchRequest(owner, currentName, name, description,
+                homepage, private, hasIssues, hasProjects, hasWiki,
+                isTemplate, defaultBranch, allowSquashMerge, allowMergeCommit,
+                allowRebaseMerge, archived)
+        val handler = RepoPatchHandler(request, this.token)
+
+        return handler.handleRequest()
     }
 }

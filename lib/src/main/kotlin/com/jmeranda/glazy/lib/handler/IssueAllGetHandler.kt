@@ -15,7 +15,7 @@ import com.jmeranda.glazy.lib.request.IssueGetAllRequest
 class IssueAllGetHandler(
         private val issueRequest: IssueGetAllRequest,
         token: String?
-): Handler(token) {
+): Handler<Issue>(token) {
     private val issueUrl: String = this.issueRequest.repo.issuesUrl
 
     override fun handleRequest(): List<Issue>? {

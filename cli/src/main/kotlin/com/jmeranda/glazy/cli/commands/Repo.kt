@@ -7,11 +7,31 @@ import picocli.CommandLine.ParentCommand
 import com.jmeranda.glazy.lib.Repo
 import com.jmeranda.glazy.lib.service.RepoService
 
+/**
+ * Display information about the given [repo].
+ */
 fun displayRepo(repo: Repo) {
     println("name: ${repo.name}")
     println("owner: ${repo.owner.login}")
     println("created: ${repo.createdAt}")
     println("clone url: ${repo.cloneUrl}")
+}
+
+/**
+ * Class to be inherited by all sub-classes to RepoParent.
+ */
+open class RepoCommand() {
+    @Option(names = ["-u", "--user"],
+            description = ["The user login for the desired repository."],
+            paramLabel = "LOGIN"
+    )
+    var user: String? = null
+
+    @Option(names = ["-n", "--name"],
+            description = ["The name of the desired repository"],
+            paramLabel = "NAME"
+    )
+    var name: String? = null
 }
 
 /**
@@ -44,7 +64,7 @@ class RepoParent(): Runnable {
 /**
  * Sub-command to show information about a repository.
  *
- * If no user or name arguments are passed as arguments, the values
+ * If no [user] or [name] arguments are passed as arguments, the values
  * parsed in the glazy command are used to show the current repo.
  *
  * @property parent Reference to the parent command instance.
@@ -55,38 +75,16 @@ class RepoParent(): Runnable {
         description = ["Show details about a repository"],
         mixinStandardHelpOptions = true
 )
-class RepoShow(): Runnable {
+ class RepoShow(): Runnable, RepoCommand() {
     @ParentCommand
     private val parent: RepoParent? = null
 
-    @Option(names = ["-u", "--user"],
-            description = ["The user login for the desired repository."],
-            paramLabel = "LOGIN"
-    )
-    var user: String? = null
-
-    @Option(names = ["-n", "--name"],
-            description = ["The name of the desired repository"],
-            paramLabel = "NAME"
-    )
-    var name: String? = null
-
     override fun run() {
         this.parent?.run()
-
-        /* use the value parsed in the Glazy parent command if non */
-        /* passed as argument */
-        this.user = if (this.user == null) {
-            this.parent?.parent?.user
-        } else {
-            this.user
-        }
-
-        this.name = if ( this.name == null) {
-            this.parent?.parent?.name
-        } else {
-            this.name
-        }
+        /* use the value parsed in the Glazy parent command if non
+         * passed as argument */
+        if (this.user == null) { this.user = this.parent?.parent?.user }
+        if (this.name == null) { this.name = this.parent?.parent?.name }
 
         val repo = this.parent?.service?.getRepo(this.name?: return,
                 this.user ?: return)
@@ -94,6 +92,9 @@ class RepoShow(): Runnable {
     }
 }
 
+/**
+ * Sub-command used to create a remote repository.
+ */
 @Command(name = "init",
         description = ["Create a new remot repository"],
         mixinStandardHelpOptions = true)
@@ -180,7 +181,83 @@ class RepoInit(): Runnable {
     }
 }
 
-class RepoPatch() {
+@Command(name = "patch",
+        description = ["Edit an existing repository"],
+        mixinStandardHelpOptions = true)
+class RepoPatch(): Runnable, RepoCommand() {
+    @ParentCommand
+    private val parent: RepoParent? = null
+
+    @Option(names = ["--new-name"],
+            description = ["The new name for the repository."],
+            paramLabel = "NAME")
+    var newName: String? = null
+
+    @Option(names = ["-d", "--description"],
+            description = ["THe new description for the repo."],
+            paramLabel = "DESCRIPTION")
+    var description: String? = null
+
+    @Option(names = ["--homepage"],
+            description = ["The new homepage url for the repo."],
+            paramLabel = "URL")
+    var homepage: String? = null
+
+    @Option(names = ["-p", "--private"],
+            description = ["Make the repository private."])
+    var private: Boolean? = null
+
+    @Option(names = ["--has-issues"],
+            description = ["Allow issue for the repo."])
+    var hasIssues: Boolean? = null
+
+    @Option(names = ["--has-projects"],
+            description = ["Allow projects for the repo."])
+    var hasProjects: Boolean? = null
+
+    @Option(names = ["--has-wiki"],
+            description = ["Allow wiki for the repo."])
+    var hasWiki: Boolean? = null
+
+    @Option(names = ["--is-tempalte"],
+            description = ["Mark the repository as a template"])
+    var isTemplate: Boolean? = null
+
+    @Option(names = ["-b", "--default-branch"],
+            description = ["The new default branch for the repo."],
+            paramLabel = "BRANCH")
+    var defaultBranch: String? = null
+
+    @Option(names = ["--allow-squash"],
+            description = ["Allow squash merging for the repo."])
+    var allowSquashMerge: Boolean? = null
+
+    @Option(names = ["--allow-merge"],
+            description = ["Allow merge commits for the repo."])
+    var allowMergeCommit: Boolean? = null
+
+    @Option(names = ["--allow-rebase"],
+            description = ["Allow rebase merges for the repo."])
+    var allowRebaseMerge: Boolean? = null
+
+    @Option(names = ["-a", "--archive"],
+            description = ["Archive the repo."])
+    var archived: Boolean? = null
+
+    override fun run() {
+        this.parent?.run()
+        if (this.user == null) { this.user = this.parent?.parent?.user }
+        if (this.name == null) { this.name = this.parent?.parent?.name }
+
+        /* TODO Make NoRepo exception */
+        if (this.user == null || this.name == null) { throw Exception("NO REPO") }
+        
+        this.parent?.service?.editRepo(this.user ?: return , this.name ?: return,
+                this.newName, this.description, this.homepage, this.private,
+                this.hasIssues, this.hasProjects, this.hasWiki, this.isTemplate,
+                this.defaultBranch, this.allowSquashMerge, this.allowMergeCommit,
+                this.allowRebaseMerge, this.archived)
+    }
 }
 
 class RepoDelete() {
