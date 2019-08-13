@@ -8,6 +8,9 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 
+
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 
@@ -50,7 +53,7 @@ class ResponseCache {
 
         val fileName = "$CACHE_DIR/${data.fullName}.json"
         val dest = File(fileName)
-        val repoAsJson = ResponseCache.mapper.writeValueAsString(data)
+        val repoAsJson = ResponseCache.writer().writeValueAsString(data)
 
         try {
             dest.createNewFile()
@@ -62,12 +65,13 @@ class ResponseCache {
 
     /**
      * Write root endpoints dat to .cache/glazy in HOME directory.
+     *
      * @param data Root endpoints to be cached.
      */
     fun write(data: RootEndpoints) {
         val fileName = "$CACHE_DIR/root_endpoints.json"
         val dest = File(fileName)
-        val endpointsAsJson = ResponseCache.mapper.writeValueAsString(data)
+        val endpointsAsJson = ResponseCache.writer().writeValueAsString(data)
 
         try {
             dest.createNewFile()
@@ -78,18 +82,15 @@ class ResponseCache {
     }
 
     /**
-     * Write access tokens to .cache/glazy/access_tokens.json
-     * @param user The user login to be associated with the token.
-     * @param token The personal access token.
+     * Write access [token] to .cache/glazy/access_tokens.json given a [user].
      */
     fun write(user: String, token: String) {
         /* TODO Not yet implemented */
     }
 
     /**
-     *  Read cached repository data.
-     *  @param name The name of the repo to be cached.
-     *  @param user The login name of the repositories owner to be read.
+     *  Read cached repository data, give the repo [name] and [user].
+     *
      *  @return Repo if cached data exists, null otherwise.
      */
     fun repo(name: String, user: String): Repo? {
@@ -97,17 +98,17 @@ class ResponseCache {
         if (!Files.exists(Paths.get(fileName))) { return null }
         val target = File(fileName)
 
-        return ResponseCache.mapper.readValue(target)
+        return ResponseCache.reader().readValue(target)
     }
 
     /**
-     * Get the cached private access token of the user.
-     * @param user The name of the user whose access token to parse from the file.
+     * Get the cached private access token of the [user].
+     *
      * @return The access token associated with the specified user.
      */
     fun token(user: String): String? {
         val tokenFile = File("$CACHE_DIR/access_tokens.json")
-        val tokenArray: List<UserTokenPair> = ResponseCache.mapper.readValue(tokenFile)
+        val tokenArray: List<UserTokenPair> = ResponseCache.reader().readValue(tokenFile)
         var token: String? = null
 
         for (pair: UserTokenPair in tokenArray) {
@@ -119,6 +120,7 @@ class ResponseCache {
 
     /**
      * Read cached root endpoints data.
+     *
      * @return RootEndpoints if cached data exists, null otherwise
      */
     fun endpoints(): RootEndpoints? {
@@ -126,12 +128,22 @@ class ResponseCache {
         if (! Files.exists(Paths.get(fileName))) { return null }
         val target = File(fileName)
 
-        return ResponseCache.mapper.readValue(target)
+        return ResponseCache.reader().readValue(target)
     }
 
     companion object {
         val CACHE_DIR = "${System.getProperty("user.home")}/.cache/glazy"
 
         val mapper = jacksonObjectMapper()
+
+        fun reader(): ObjectMapper {
+            return mapper
+                    .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+        }
+
+        fun writer(): ObjectMapper {
+            return mapper
+                    .setPropertyNamingStrategy(PropertyNamingStrategy.LOWER_CAMEL_CASE)
+        }
     }
 }

@@ -24,7 +24,7 @@ class RepoPatchHandler(
         var body: String? = null
 
         try {
-            body = Handler.mapper.writeValueAsString(this.repoRequest)
+            body = Handler.writer().writeValueAsString(this.repoRequest)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -33,7 +33,7 @@ class RepoPatchHandler(
                 data = body,
                 headers = this.getAuthorizationHeaders())
 
-        return Handler.mapper.readValue(response.text)
+        return Handler.reader().readValue(response.text)
     }
 
     override fun getRequestUrl(): String = this.repositoryUrl

@@ -37,12 +37,15 @@ fun getRootEndpoints(rootUrl: String, mapper: ObjectMapper,
 
 /**
  * A http request handler.
+ *
  * Send http request to github api, and deserialize the Json response.
+ *
  * @property token The personal access token of the user.
  */
 abstract class Handler<T>(private val token: String?) {
     /**
      * Get request header for authorizing with personal access token.
+     *
      * @return A map of the header field to the personal access token.
      */
     protected fun getAuthorizationHeaders(): Map<String, String> {
@@ -55,27 +58,28 @@ abstract class Handler<T>(private val token: String?) {
 
     /**
      * Handle the request.
+     *
      * @return The object response from the api.
      */
     abstract fun handleRequest(): Any?
 
     /**
      * Get the endpoint url for the request.
+     *
      * @return The url to query.
      */
     abstract fun getRequestUrl(): String
 
     protected companion object {
-        val mapper = jacksonObjectMapper()
-                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+        private val mapper = jacksonObjectMapper()
 
         fun reader(): ObjectMapper {
-            return jacksonObjectMapper()
+            return mapper
                     .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
         }
         
         fun writer(): ObjectMapper {
-            return jacksonObjectMapper()
+            return mapper
                     .setPropertyNamingStrategy(PropertyNamingStrategy.LOWER_CAMEL_CASE)
         }
 

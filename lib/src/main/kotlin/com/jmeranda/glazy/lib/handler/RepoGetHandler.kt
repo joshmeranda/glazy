@@ -9,6 +9,7 @@ import com.jmeranda.glazy.lib.request.RepoGetRequest
 
 /**
  * Handle request for a repository.
+ *
  * @property repoRequest The repository request.
  * @property token The personal access token of the user.
  */
@@ -20,6 +21,7 @@ class RepoGetHandler(
 
     /**
      * Send the request and return the response repository.
+     *
      * @return Repo? The repository object received from the API, null
      *     if there are json parsing errors.
      */

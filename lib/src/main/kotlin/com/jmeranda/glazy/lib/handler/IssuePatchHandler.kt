@@ -26,7 +26,7 @@ class IssuePatchHandler(
         var body: String? = null
 
         try {
-            body = Handler.mapper.writeValueAsString(this.issueRequest)
+            body = Handler.writer().writeValueAsString(this.issueRequest)
         } catch(e: Exception) {
             e.printStackTrace()
         }
@@ -35,7 +35,7 @@ class IssuePatchHandler(
                 data = body,
                 headers = this.getAuthorizationHeaders())
 
-        return Handler.mapper.readValue(response.text)
+        return Handler.reader().readValue(response.text)
     }
 
     override fun getRequestUrl(): String = this.issueUrl
