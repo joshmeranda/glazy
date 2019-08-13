@@ -25,7 +25,7 @@ class IssueAllGetHandler(
         var allIssues: List<Issue>?
 
         try {
-            allIssues = Handler.reader().readValue(issueAsJson)
+            allIssues = Handler.mapper.readValue(issueAsJson)
         } catch (e: Exception) {
             allIssues = null
             e.printStackTrace()
