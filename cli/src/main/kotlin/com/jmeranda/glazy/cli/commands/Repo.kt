@@ -203,9 +203,13 @@ class RepoPatch(): Runnable, RepoCommand() {
             paramLabel = "URL")
     var homepage: String? = null
 
-    @Option(names = ["-p", "--private"],
+    @Option(names = ["--private"],
             description = ["Make the repository private."])
     var private: Boolean? = null
+
+    @Option(names = ["--public"],
+            description = ["Make the repository public."])
+    var public: Boolean? = null
 
     @Option(names = ["--has-issues"],
             description = ["Allow issue for the repo."])
@@ -251,9 +255,9 @@ class RepoPatch(): Runnable, RepoCommand() {
 
         /* TODO Make NoRepo exception */
         if (this.user == null || this.name == null) { throw Exception("NO REPO") }
-        
+
         this.parent?.service?.editRepo(this.user ?: return , this.name ?: return,
-                this.newName, this.description, this.homepage, this.private,
+                this.newName, this.description, this.homepage, this.private ?: this.public?.not(),
                 this.hasIssues, this.hasProjects, this.hasWiki, this.isTemplate,
                 this.defaultBranch, this.allowSquashMerge, this.allowMergeCommit,
                 this.allowRebaseMerge, this.archived)
@@ -261,9 +265,6 @@ class RepoPatch(): Runnable, RepoCommand() {
 }
 
 class RepoDelete() {
-}
-
-class RepoArchive() {
 }
 
 class RepoTransfer() {
