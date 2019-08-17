@@ -2,9 +2,11 @@ package com.jmeranda.glazy.lib.service
 
 import com.jmeranda.glazy.lib.Repo
 import com.jmeranda.glazy.lib.exception.NoSuchRepo
+import com.jmeranda.glazy.lib.handler.RepoDeleteHandler
 import com.jmeranda.glazy.lib.handler.RepoGetHandler
 import com.jmeranda.glazy.lib.handler.RepoPatchHandler
 import com.jmeranda.glazy.lib.handler.RepoPostHandler
+import com.jmeranda.glazy.lib.request.RepoDeleteRequest
 import com.jmeranda.glazy.lib.request.RepoGetRequest
 import com.jmeranda.glazy.lib.request.RepoPatchRequest
 import com.jmeranda.glazy.lib.request.RepoPostRequest
@@ -62,5 +64,14 @@ open class RepoService(
         val handler = RepoPatchHandler(request, this.token)
 
         return handler.handleRequest()
+    }
+
+    /**
+     * Delete a remote repository.
+     */
+    fun deleteRepo(name: String, user: String) {
+        val request = RepoDeleteRequest(name, user)
+        val handler = RepoDeleteHandler(request, this.token)
+        handler.handleRequest()
     }
 }

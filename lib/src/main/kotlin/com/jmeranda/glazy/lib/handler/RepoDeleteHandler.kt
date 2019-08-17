@@ -1,0 +1,31 @@
+package com.jmeranda.glazy.lib.handler
+
+import khttp.delete
+import khttp.responses.Response
+
+import com.jmeranda.glazy.lib.Repo
+import com.jmeranda.glazy.lib.request.RepoDeleteRequest
+
+/**
+ * Handle DELETE request a specific repository, admin access is required.
+ */
+class RepoDeleteHandler(
+        private val request: RepoDeleteRequest,
+        token: String?
+): Handler<Repo>(token) {
+    override fun handleRequest() {
+        val response: Response = delete(this.getRequestUrl(),
+                headers = this.getAuthorizationHeaders())
+
+        if (response.statusCode != 204) {
+            // TODO parse response.text and print the message
+            println(response.text)
+        } else {
+            println("Repository deleted")
+        }
+    }
+
+    override fun getRequestUrl(): String = Handler.endpoints.repositoryUrl
+            .replace("{owner}", this.request.owner)
+            .replace("{repo}", this.request.name)
+}

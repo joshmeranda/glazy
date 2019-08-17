@@ -5,6 +5,7 @@ import picocli.CommandLine.Command
 import picocli.CommandLine.ParentCommand
 
 import com.jmeranda.glazy.lib.Repo
+import com.jmeranda.glazy.lib.request.RepoDeleteRequest
 import com.jmeranda.glazy.lib.service.RepoService
 
 /**
@@ -94,6 +95,8 @@ class RepoParent(): Runnable {
 
 /**
  * Sub-command used to create a remote repository.
+ *
+ * TODO document properties
  */
 @Command(name = "init",
         description = ["Create a new remot repository"],
@@ -181,6 +184,9 @@ class RepoInit(): Runnable {
     }
 }
 
+/**
+ * TODO document
+ */
 @Command(name = "patch",
         description = ["Edit an existing repository"],
         mixinStandardHelpOptions = true)
@@ -264,7 +270,16 @@ class RepoPatch(): Runnable, RepoCommand() {
     }
 }
 
-class RepoDelete() {
+@Command(name = "delete")
+class RepoDelete(): Runnable, RepoCommand() {
+    @ParentCommand
+    private val parent: RepoParent? = null
+
+    override fun run() {
+        this.parent?.run()
+        this.parent?.service?.deleteRepo(this.name ?: return,
+                this.user ?: return)
+    }
 }
 
 class RepoTransfer() {
