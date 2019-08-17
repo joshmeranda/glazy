@@ -5,7 +5,7 @@ import picocli.CommandLine.Command
 import picocli.CommandLine.ParentCommand
 
 import com.jmeranda.glazy.lib.Repo
-import com.jmeranda.glazy.lib.request.RepoDeleteRequest
+import com.jmeranda.glazy.lib.exception.NotInRepo
 import com.jmeranda.glazy.lib.service.RepoService
 
 /**
@@ -69,8 +69,6 @@ class RepoParent(): Runnable {
  * parsed in the glazy command are used to show the current repo.
  *
  * @property parent Reference to the parent command instance.
- * @property user The repository owner login.
- * @property name The name of the repository.
  */
 @Command(name = "show",
         description = ["Show details about a repository"],
@@ -86,6 +84,8 @@ class RepoParent(): Runnable {
          * passed as argument */
         if (this.user == null) { this.user = this.parent?.parent?.user }
         if (this.name == null) { this.name = this.parent?.parent?.name }
+
+        if (this.name == null || this.user == null) { throw NotInRepo() }
 
         val repo = this.parent?.service?.getRepo(this.name?: return,
                 this.user ?: return)
@@ -259,8 +259,7 @@ class RepoPatch(): Runnable, RepoCommand() {
         if (this.user == null) { this.user = this.parent?.parent?.user }
         if (this.name == null) { this.name = this.parent?.parent?.name }
 
-        /* TODO Make NoRepo exception */
-        if (this.user == null || this.name == null) { throw Exception("NO REPO") }
+        if (this.user == null || this.name == null) { throw NotInRepo() }
 
         this.parent?.service?.editRepo(this.user ?: return , this.name ?: return,
                 this.newName, this.description, this.homepage, this.private ?: this.public?.not(),
