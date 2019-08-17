@@ -69,9 +69,10 @@ open class RepoService(
     /**
      * Delete a remote repository.
      */
-    fun deleteRepo(name: String, user: String) {
-        val request = RepoDeleteRequest(name, user)
+    fun deleteRepo(owner: String, name: String) {
+        val request = RepoDeleteRequest(name, owner)
         val handler = RepoDeleteHandler(request, this.token)
-        handler.handleRequest()
+
+        return handler.handleRequest()
     }
 }
