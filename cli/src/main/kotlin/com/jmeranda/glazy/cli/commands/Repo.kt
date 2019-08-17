@@ -279,8 +279,6 @@ class RepoDelete(): Runnable, RepoCommand() {
 
     override fun run() {
         this.parent?.run()
-        this.parent?.service?.deleteRepo(this.name ?: return,
-                this.user ?: return)
         this.parent?.service?.deleteRepo(this.user ?: return, 
                 this.name ?: return)
     }
