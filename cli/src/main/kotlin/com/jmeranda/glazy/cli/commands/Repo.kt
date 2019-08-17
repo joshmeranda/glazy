@@ -270,7 +270,10 @@ class RepoPatch(): Runnable, RepoCommand() {
     }
 }
 
-@Command(name = "delete")
+
+@Command(name = "delete",
+        description = ["Delete a remote repository."],
+        mixinStandardHelpOptions = true)
 class RepoDelete(): Runnable, RepoCommand() {
     @ParentCommand
     private val parent: RepoParent? = null
@@ -279,6 +282,8 @@ class RepoDelete(): Runnable, RepoCommand() {
         this.parent?.run()
         this.parent?.service?.deleteRepo(this.name ?: return,
                 this.user ?: return)
+        this.parent?.service?.deleteRepo(this.user ?: return, 
+                this.name ?: return)
     }
 }
 

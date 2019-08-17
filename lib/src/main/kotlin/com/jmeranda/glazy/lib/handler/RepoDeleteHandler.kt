@@ -18,10 +18,9 @@ class RepoDeleteHandler(
                 headers = this.getAuthorizationHeaders())
 
         if (response.statusCode != 204) {
-            // TODO parse response.text and print the message
-            println(response.text)
+            println(response.jsonObject.get("message"))
         } else {
-            println("Repository deleted")
+            println("deleted")
         }
     }
 
