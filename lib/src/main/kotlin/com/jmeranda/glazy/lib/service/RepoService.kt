@@ -13,7 +13,7 @@ import com.jmeranda.glazy.lib.request.RepoPostRequest
 
 /**
  * Client service to construct requests and return response data.
- * @property repo A repository object, defaults to null.
+ * @property token The personal access token for the user
  */
 open class RepoService(
         private var token: String?
