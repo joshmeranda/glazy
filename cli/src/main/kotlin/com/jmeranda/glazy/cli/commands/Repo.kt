@@ -14,6 +14,7 @@ import com.jmeranda.glazy.lib.service.RepoService
 fun displayRepo(repo: Repo) {
     println("name: ${repo.name}")
     println("owner: ${repo.owner.login}")
+    println("private: ${repo.private}")
     println("created: ${repo.createdAt}")
     println("clone url: ${repo.cloneUrl}")
 }
