@@ -8,7 +8,7 @@ import com.jmeranda.glazy.lib.Issue
 import com.jmeranda.glazy.lib.request.IssueGetRequest
 
 /**
- * Handle GET request for a specific.
+ * Handle GET request for a specific issue.
  *
  * @property issueRequest The request object used by the handler.
  * @property token The personal access token of the user.

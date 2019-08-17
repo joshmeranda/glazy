@@ -122,6 +122,5 @@ data class RepoPatchRequest(
  */
 data class RepoDeleteRequest(
         val name: String,
-
         val owner: String
 )
