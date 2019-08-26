@@ -270,7 +270,9 @@ class RepoPatch(): Runnable, RepoCommand() {
     }
 }
 
-
+/**
+ * TODO document
+ */
 @Command(name = "delete",
         description = ["Delete a remote repository."],
         mixinStandardHelpOptions = true)
@@ -285,5 +287,30 @@ class RepoDelete(): Runnable, RepoCommand() {
     }
 }
 
-class RepoTransfer() {
+/**
+ * TODO document
+ */
+@Command(name = "transfer",
+        description = ["Transfer a repository to another user."],
+        mixinStandardHelpOptions = true)
+class RepoTransfer(): Runnable, RepoCommand() {
+    @ParentCommand
+    private val parent: RepoParent? = null
+
+    @Option(names = ["-o", "--new-owner"],
+            description = ["The login of the new owner."],
+            paramLabel = "LOGIN")
+    var newOwner: String? = null
+
+    @Option(names = ["-t", "--team-ids"],
+            description = ["Team id(s) to add to the repository."],
+            split = ",",
+            paramLabel = "IDS")
+    var teamIds: List<Int>? = null
+
+    override fun run() {
+        this.parent?.run()
+        this.parent?.service?.transferRepo(this.name ?: return,
+                this.newOwner?: return, this.teamIds)
+    }
 }

@@ -15,6 +15,7 @@ fun main(args: Array<String>) {
                     .addSubcommand(RepoInit())
                     .addSubcommand(RepoPatch())
                     .addSubcommand(RepoDelete())
+                    .addSubcommand(RepoTransfer())
                     .setToggleBooleanFlags(true))
             .execute(*args)
 }

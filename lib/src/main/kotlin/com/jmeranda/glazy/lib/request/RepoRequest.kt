@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include
  */
 data class RepoGetRequest(
         val name: String,
-
         val owner: String
 )
 
@@ -39,6 +38,7 @@ data class RepoPostRequest(
  * Request class for POST transfer requests.
  */
 data class RepoTransferRequest(
+        val name: String,
         val newOwner: String,
         val teamIds: List<Int>? = null
 )

@@ -2,14 +2,8 @@ package com.jmeranda.glazy.lib.service
 
 import com.jmeranda.glazy.lib.Repo
 import com.jmeranda.glazy.lib.exception.NoSuchRepo
-import com.jmeranda.glazy.lib.handler.RepoDeleteHandler
-import com.jmeranda.glazy.lib.handler.RepoGetHandler
-import com.jmeranda.glazy.lib.handler.RepoPatchHandler
-import com.jmeranda.glazy.lib.handler.RepoPostHandler
-import com.jmeranda.glazy.lib.request.RepoDeleteRequest
-import com.jmeranda.glazy.lib.request.RepoGetRequest
-import com.jmeranda.glazy.lib.request.RepoPatchRequest
-import com.jmeranda.glazy.lib.request.RepoPostRequest
+import com.jmeranda.glazy.lib.handler.*
+import com.jmeranda.glazy.lib.request.*
 
 /**
  * Client service to construct requests and return response data.
@@ -72,6 +66,13 @@ open class RepoService(
     fun deleteRepo(owner: String, name: String) {
         val request = RepoDeleteRequest(name, owner)
         val handler = RepoDeleteHandler(request, this.token)
+
+        return handler.handleRequest()
+    }
+
+    fun transferRepo(name: String, newOwner: String, teamIds: List<Int>?) {
+        val request = RepoTransferRequest(name, newOwner, teamIds)
+        val handler = RepoTransferHandler(request, this.token)
 
         return handler.handleRequest()
     }
