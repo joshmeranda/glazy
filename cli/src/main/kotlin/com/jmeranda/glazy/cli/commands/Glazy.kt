@@ -9,10 +9,6 @@ import com.jmeranda.glazy.lib.Repo
 import com.jmeranda.glazy.lib.handler.ResponseCache
 import com.jmeranda.glazy.lib.service.RepoService
 
-fun getRepo() {
-
-}
-
 /**
  * Main command entry point.s
  *
@@ -40,16 +36,19 @@ class Glazy(): Runnable {
     var token: String? = null
     lateinit var repoService: RepoService
 
-    override fun run() {
-        if (user == null || name == null) {
-            val repoName = getRepoName()
-            this.user = repoName.first
-            this.name = repoName.second
-            if (this.user == null || this.name == null) { return }
-        }
-        val user = this.user ?: return
+//    override fun run() {
+//        if (user == null || name == null) {
+//            val repoName = getRepoName()
+//            this.user = repoName.first
+//            this.name = repoName.second
+//            if (this.user == null || this.name == null) { return }
+//        }
+//        val user = this.user ?: return
+//
+//        this.token = this.cache.token(user)
+//        this.repoService = RepoService(this.token)
+//    }
 
-        this.token = this.cache.token(user)
-        this.repoService = RepoService(this.token)
+    override fun run() {
     }
 }
