@@ -1,11 +1,13 @@
 package com.jmeranda.glazy.cli.commands
 
+import com.jmeranda.glazy.cli.getRepoName
 import picocli.CommandLine.Option
 import picocli.CommandLine.Command
 import picocli.CommandLine.ParentCommand
 
 import com.jmeranda.glazy.lib.Repo
 import com.jmeranda.glazy.lib.exception.NotInRepo
+import com.jmeranda.glazy.lib.handler.ResponseCache
 import com.jmeranda.glazy.lib.service.RepoService
 
 /**
@@ -22,7 +24,7 @@ fun displayRepo(repo: Repo) {
 /**
  * Class to be inherited by all sub-classes to RepoParent.
  */
-open class RepoCommand() {
+open class RepoCommand {
     @Option(names = ["-u", "--user"],
             description = ["The user login for the desired repository."],
             paramLabel = "LOGIN"
@@ -34,22 +36,48 @@ open class RepoCommand() {
             paramLabel = "NAME"
     )
     var name: String? = null
+
+    protected val cache: ResponseCache = ResponseCache()
+    protected var token: String? = null
+    protected var service: RepoService? = null
+
+    /**
+     * Use the values parsed from the current or parent repository directory, if either is null.
+     */
+    fun useDefaultRepoInfo() {
+        val repoName = getRepoName()
+
+        if (this.user == null) { this.user = repoName.first }
+        if (this.name == null) { this.name = repoName.second }
+
+        /* If not in a repository directory or sub-directory */
+        if (this.user == null && this.name == null) { throw NotInRepo() }
+
+        this.setToken()
+        this.setService()
+    }
+
+    private fun setToken() {
+        this.token = this.cache.token(this.user ?: return)
+    }
+
+    private fun setService() {
+        this.service = RepoService(this.token)
+    }
 }
 
 /**
  * Parent command for all repo operations.
  *
  * @property parent Reference to the parent command instance.
- * @property service The repo service used to interact with the github api.
  */
 @Command(name = "repo",
         description = ["Perform operations on a  repository."],
         mixinStandardHelpOptions = true
 )
-class RepoParent(): Runnable {
+class RepoParent: Runnable {
     @ParentCommand
     val parent: Glazy? = null
-    lateinit var service: RepoService
 
     /**
      * Instantiate the service required by sub-commands.
@@ -59,7 +87,6 @@ class RepoParent(): Runnable {
      */
     override fun run() {
         this.parent?.run()
-        this.service = this.parent?.repoService ?: return
     }
 }
 
@@ -75,20 +102,19 @@ class RepoParent(): Runnable {
         description = ["Show details about a repository"],
         mixinStandardHelpOptions = true
 )
- class RepoShow(): Runnable, RepoCommand() {
+ class RepoShow: Runnable, RepoCommand() {
     @ParentCommand
     private val parent: RepoParent? = null
 
     override fun run() {
         this.parent?.run()
-        /* use the value parsed in the Glazy parent command if non
-         * passed as argument */
-        if (this.user == null) { this.user = this.parent?.parent?.user }
-        if (this.name == null) { this.name = this.parent?.parent?.name }
+        if (this.user == null || this.name == null) {
+            this.useDefaultRepoInfo()
+        }
 
         if (this.name == null || this.user == null) { throw NotInRepo() }
 
-        val repo = this.parent?.service?.getRepo(this.name?: return,
+        val repo = this.service?.getRepo(this.name?: return,
                 this.user ?: return)
         displayRepo(repo ?: return)
     }
@@ -102,15 +128,9 @@ class RepoParent(): Runnable {
 @Command(name = "init",
         description = ["Create a new remot repository"],
         mixinStandardHelpOptions = true)
-class RepoInit(): Runnable {
+class RepoInit(): Runnable, RepoCommand() {
     @ParentCommand
     private val parent: RepoParent? = null
-
-    @Option(names=["-n", "--name"],
-            description = ["The name for the new repository."],
-            paramLabel = "NAME",
-            required = true)
-    var name: String = ""
 
     @Option(names = ["-d", "--description"],
             description = ["THe description for the new repository"],
@@ -175,8 +195,11 @@ class RepoInit(): Runnable {
 
     override fun run() {
         this.parent?.run()
+        if (this.user == null || this.name == null) {
+            this.useDefaultRepoInfo()
+        }
 
-        this.parent?.service?.createRepo(this.name, this.description,
+        this.service?.createRepo(this.name ?: return, this.description,
                 this.homepage, this.private, this.hasIssues,
                 this.hasProject, this.hasWiki, this.isTemplate,
                 this.teamId, this.autoInit, this.gitignoreTemplate,
@@ -191,7 +214,7 @@ class RepoInit(): Runnable {
 @Command(name = "patch",
         description = ["Edit an existing repository"],
         mixinStandardHelpOptions = true)
-class RepoPatch(): Runnable, RepoCommand() {
+class RepoPatch: Runnable, RepoCommand() {
     @ParentCommand
     private val parent: RepoParent? = null
 
@@ -257,12 +280,11 @@ class RepoPatch(): Runnable, RepoCommand() {
 
     override fun run() {
         this.parent?.run()
-        if (this.user == null) { this.user = this.parent?.parent?.user }
-        if (this.name == null) { this.name = this.parent?.parent?.name }
+        if (this.user == null || this.name == null) {
+            this.useDefaultRepoInfo()
+        }
 
-        if (this.user == null || this.name == null) { throw NotInRepo() }
-
-        this.parent?.service?.editRepo(this.user ?: return , this.name ?: return,
+        this.service?.editRepo(this.user ?: return , this.name ?: return,
                 this.newName, this.description, this.homepage, this.private ?: this.public?.not(),
                 this.hasIssues, this.hasProjects, this.hasWiki, this.isTemplate,
                 this.defaultBranch, this.allowSquashMerge, this.allowMergeCommit,
@@ -274,16 +296,20 @@ class RepoPatch(): Runnable, RepoCommand() {
 @Command(name = "delete",
         description = ["Delete a remote repository."],
         mixinStandardHelpOptions = true)
-class RepoDelete(): Runnable, RepoCommand() {
+class RepoDelete: Runnable, RepoCommand() {
     @ParentCommand
     private val parent: RepoParent? = null
 
     override fun run() {
         this.parent?.run()
-        this.parent?.service?.deleteRepo(this.user ?: return, 
+        if (this.user == null || this.name == null) {
+            this.useDefaultRepoInfo()
+        }
+
+        this.service?.deleteRepo(this.user ?: return,
                 this.name ?: return)
     }
 }
 
-class RepoTransfer() {
+class RepoTransfer {
 }
