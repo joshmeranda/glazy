@@ -109,8 +109,6 @@ class RepoParent: Runnable {
 
     override fun run() {
         this.parent?.run()
-
-        /* Neither the repo name or owner is specified */
         if (this.user == null || this.name == null) {
             this.useDefaultRepoInfo()
         }
@@ -198,6 +196,9 @@ class RepoInit(): Runnable, RepoCommand() {
 
     override fun run() {
         this.parent?.run()
+        if (this.user == null || this.name == null) {
+            this.useDefaultRepoInfo()
+        }
 
         this.service?.createRepo(this.name ?: return, this.description,
                 this.homepage, this.private, this.hasIssues,
@@ -280,11 +281,9 @@ class RepoPatch: Runnable, RepoCommand() {
 
     override fun run() {
         this.parent?.run()
-
-        if (this.user == null) { this.user = this.parent?.parent?.user }
-        if (this.name == null) { this.name = this.parent?.parent?.name }
-
-        if (this.user == null || this.name == null) { throw NotInRepo() }
+        if (this.user == null || this.name == null) {
+            this.useDefaultRepoInfo()
+        }
 
         this.service?.editRepo(this.user ?: return , this.name ?: return,
                 this.newName, this.description, this.homepage, this.private ?: this.public?.not(),
@@ -304,6 +303,10 @@ class RepoDelete: Runnable, RepoCommand() {
 
     override fun run() {
         this.parent?.run()
+        if (this.user == null || this.name == null) {
+            this.useDefaultRepoInfo()
+        }
+
         this.service?.deleteRepo(this.user ?: return,
                 this.name ?: return)
     }

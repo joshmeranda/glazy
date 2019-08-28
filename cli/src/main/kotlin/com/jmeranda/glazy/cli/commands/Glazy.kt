@@ -36,19 +36,6 @@ class Glazy(): Runnable {
     var token: String? = null
     lateinit var repoService: RepoService
 
-//    override fun run() {
-//        if (user == null || name == null) {
-//            val repoName = getRepoName()
-//            this.user = repoName.first
-//            this.name = repoName.second
-//            if (this.user == null || this.name == null) { return }
-//        }
-//        val user = this.user ?: return
-//
-//        this.token = this.cache.token(user)
-//        this.repoService = RepoService(this.token)
-//    }
-
     override fun run() {
     }
 }
