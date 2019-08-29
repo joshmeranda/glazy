@@ -2,10 +2,7 @@ package com.jmeranda.glazy.cli.commands
 
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
-import picocli.CommandLine.ArgGroup
 
-import com.jmeranda.glazy.cli.getRepoName
-import com.jmeranda.glazy.lib.Repo
 import com.jmeranda.glazy.lib.handler.ResponseCache
 import com.jmeranda.glazy.lib.service.RepoService
 
