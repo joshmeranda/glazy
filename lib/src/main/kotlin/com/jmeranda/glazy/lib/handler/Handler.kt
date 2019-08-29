@@ -78,5 +78,17 @@ abstract class Handler<T>(private val token: String?) {
 
         val endpoints: RootEndpoints = cache.endpoints()
                 ?: getRootEndpoints(ROOT_ENDPOINT, mapper, cache)
+
+        /**
+         * Notify user with message depending on the value of [statusCode].
+         */
+        fun handleCode(statusCode: Int) {
+            when (statusCode) {
+                404 -> println("Resource could not be found or accessed.\n" +
+                        "Please ensure that you have proper permissions, and that it exists")
+                403 -> println("Resource could not be found or accessed.\n" +
+                        "Please ensure that you have proper permissions, and that it exists")
+            }
+        }
     }
 }

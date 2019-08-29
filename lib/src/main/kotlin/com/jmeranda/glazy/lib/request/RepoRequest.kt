@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include
  */
 data class RepoGetRequest(
         val name: String,
-
         val owner: String
 )
 

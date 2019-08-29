@@ -11,11 +11,11 @@ import com.jmeranda.glazy.lib.request.RepoPostRequest
 /**
  * Handle a POST request for a new repository.
  *
- * @property repoRequest The request object used by the handler.
+ * @property request The request object used by the handler.
  * @property token The personal access token of the user.
  */
 class RepoPostHandler(
-        private val repoRequest: RepoPostRequest,
+        private val request: RepoPostRequest,
         token: String?
 ): Handler<Repo>(token) {
     private val repoUrl = endpoints.currentUserRepositoriesUrl
@@ -24,7 +24,7 @@ class RepoPostHandler(
         var body: String? = null
 
         try {
-            body = Handler.mapper.writeValueAsString(this.repoRequest)
+            body = mapper.writeValueAsString(this.request)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -34,7 +34,9 @@ class RepoPostHandler(
                 headers = this.getAuthorizationHeaders()
         )
 
-        return Handler.mapper.readValue(response.text)
+        handleCode(response.statusCode)
+
+        return mapper.readValue(response.text)
     }
 
     /**
