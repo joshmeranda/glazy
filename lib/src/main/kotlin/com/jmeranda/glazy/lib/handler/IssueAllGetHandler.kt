@@ -10,22 +10,23 @@ import com.jmeranda.glazy.lib.request.IssueGetAllRequest
 /**
  * Handle a GET request for every available issue in a repository
  *
- * @property issueRequest The request object used by the handler.
+ * @property request The request object used by the handler.
  * @property token The personal access token of the user.
  */
 class IssueAllGetHandler(
-        private val issueRequest: IssueGetAllRequest,
+        private val request: IssueGetAllRequest,
         token: String?
 ): Handler<Issue>(token) {
-    private val issueUrl: String = this.issueRequest.repo.issuesUrl
+    private val issueUrl: String = this.request.repo.issuesUrl
 
     override fun handleRequest(): List<Issue>? {
-        val issueAsJson = get(this.getRequestUrl(), headers=this.getAuthorizationHeaders())
-                        .text
+        val response = get(this.getRequestUrl(), headers=this.getAuthorizationHeaders())
         var allIssues: List<Issue>?
 
+        handleCode(response.statusCode)
+
         try {
-            allIssues = Handler.mapper.readValue(issueAsJson)
+            allIssues = mapper.readValue(response.text)
         } catch (e: Exception) {
             allIssues = null
             e.printStackTrace()
@@ -35,7 +36,7 @@ class IssueAllGetHandler(
     }
 
     override fun getRequestUrl(): String = this.issueUrl
-            .replace("{owner}", this.issueRequest.repo.owner.login)
-            .replace("{repo}", this.issueRequest.repo.name)
+            .replace("{owner}", this.request.repo.owner.login)
+            .replace("{repo}", this.request.repo.name)
             .replace("{/number}","")
 }
