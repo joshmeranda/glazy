@@ -11,11 +11,20 @@ class RepoTransferHandler(
         token: String?
 ): Handler<Repo>(token) {
     override fun handleRequest() {
-        val data = this.getAuthorizationHeaders()
-                .toMutableMap<String, Any?>()
-                .put("team_ids", this.request.teamIds)
+        var body: String? = null
+        val headers = this.getAuthorizationHeaders()
+                .toMutableMap()
+        headers.put("Accept", "application/vnd.github.nightshade-preview+json")
+
+        try {
+            body = Handler.mapper.writeValueAsString(this.request)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
         val response: Response = post(this.getRequestUrl(),
-                data = data)
+                data = body,
+                headers = headers)
 
         if (response.statusCode != 202) {
             println(response.jsonObject.get("message"))
