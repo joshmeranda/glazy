@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 
+import kotlin.system.exitProcess
+
 import com.jmeranda.glazy.lib.ROOT_ENDPOINT
 import com.jmeranda.glazy.lib.RootEndpoints
 import com.jmeranda.glazy.lib.exception.BadEndpoint
@@ -88,6 +90,10 @@ abstract class Handler<T>(private val token: String?) {
                         "Please ensure that you have proper permissions, and that it exists")
                 403 -> println("Resource could not be found or accessed.\n" +
                         "Please ensure that you have proper permissions, and that it exists")
+            }
+
+            if (statusCode >= 400) {
+                exitProcess(1)
             }
         }
     }
