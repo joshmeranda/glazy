@@ -11,20 +11,20 @@ import com.jmeranda.glazy.lib.request.RepoPatchRequest
 /**
  * Handle a PATCH request to edit a repository
  *
- * @property repoRequest The request object used by the handler.
+ * @property request The request object used by the handler.
  * @property token The personal access token of the user.
  */
 class RepoPatchHandler(
-        private val repoRequest: RepoPatchRequest,
+        private val request: RepoPatchRequest,
         token: String?
 ): Handler<Repo>(token) {
-    private val repositoryUrl: String = Handler.endpoints.repositoryUrl
+    private val repositoryUrl: String = endpoints.repositoryUrl
 
     override fun handleRequest(): Repo {
         var body: String? = null
 
         try {
-            body = Handler.mapper.writeValueAsString(this.repoRequest)
+            body = mapper.writeValueAsString(this.request)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -33,10 +33,12 @@ class RepoPatchHandler(
                 data = body,
                 headers = this.getAuthorizationHeaders())
 
-        return Handler.mapper.readValue(response.text)
+        handleCode(response.statusCode)
+
+        return mapper.readValue(response.text)
     }
 
     override fun getRequestUrl(): String = this.repositoryUrl
-            .replace("{owner}", this.repoRequest.owner)
-            .replace("{repo}", this.repoRequest.currentName)
+            .replace("{owner}", this.request.owner)
+            .replace("{repo}", this.request.currentName)
 }

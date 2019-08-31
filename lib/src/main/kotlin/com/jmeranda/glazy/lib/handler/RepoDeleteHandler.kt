@@ -17,6 +17,8 @@ class RepoDeleteHandler(
         val response: Response = delete(this.getRequestUrl(),
                 headers = this.getAuthorizationHeaders())
 
+        handleCode(response.statusCode)
+
         if (response.statusCode != 204) {
             println(response.jsonObject.get("message"))
         } else {

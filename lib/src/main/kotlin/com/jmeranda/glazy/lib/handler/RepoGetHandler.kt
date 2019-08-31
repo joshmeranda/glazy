@@ -10,11 +10,11 @@ import com.jmeranda.glazy.lib.request.RepoGetRequest
 /**
  * Handle request for a repository.
  *
- * @property repoRequest The repository request.
+ * @property request The repository request.
  * @property token The personal access token of the user.
  */
 class RepoGetHandler(
-        private val repoRequest: RepoGetRequest,
+        private val request: RepoGetRequest,
         token: String? = null
 ): Handler<Repo>(token) {
     private val repositoryUrl: String = Handler.endpoints.repositoryUrl
@@ -26,26 +26,25 @@ class RepoGetHandler(
      *     if there are json parsing errors.
      */
     override fun handleRequest(): Repo? {
-//        var repo: Repo? = Handler.cache.repo(repoRequest.name, repoRequest.owner)
-//        if (repo != null) { return repo }
         var repo: Repo?
 
-        val repoAsJson: String =
-                get(this.getRequestUrl(), headers=this.getAuthorizationHeaders()).text
+        val response = get(this.getRequestUrl(), headers=this.getAuthorizationHeaders())
+
+        handleCode(response.statusCode)
 
         try {
-            repo = Handler.mapper.readValue(repoAsJson)
+            repo = mapper.readValue(response.text)
         } catch(e:  Exception) {
             repo = null
             e.printStackTrace()
         }
 
-        if (repo != null) { Handler.cache.write(repo) }
+        if (repo != null) { cache.write(repo) }
 
         return repo
     }
 
     override fun getRequestUrl(): String = this.repositoryUrl
-            .replace("{owner}", this.repoRequest.owner)
-            .replace("{repo}", this.repoRequest.name)
+            .replace("{owner}", this.request.owner)
+            .replace("{repo}", this.request.name)
 }
