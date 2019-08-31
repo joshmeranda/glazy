@@ -1,6 +1,7 @@
 package com.jmeranda.glazy.cli.commands
 
 import com.jmeranda.glazy.cli.getRepoName
+
 import picocli.CommandLine.Option
 import picocli.CommandLine.Command
 import picocli.CommandLine.ParentCommand
@@ -40,6 +41,11 @@ open class RepoCommand {
     private val cache: ResponseCache = ResponseCache()
     private var token: String? = null
     protected var service: RepoService? = null
+
+    init {
+        this.setToken()
+        this.setService()
+    }
 
     /**
      * Use the values parsed from the current or parent repository directory, if either is null.

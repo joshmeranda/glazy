@@ -11,22 +11,22 @@ import com.jmeranda.glazy.lib.request.IssuePatchRequest
 /**
  * Handle a PATCH request to edit an issue.
  *
- * @property issueRequest The request object used by the handler.
+ * @property request The request object used by the handler.
  * @property number The number of the issue to edit.
  * @property token The personal access token of the user.
  */
 class IssuePatchHandler(
-        private val issueRequest: IssuePatchRequest,
+        private val request: IssuePatchRequest,
         private val number: Int,
         token: String?
 ): Handler<Issue>(token) {
-    private val issueUrl: String = this.issueRequest.repo.issuesUrl
+    private val issueUrl: String = this.request.repo.issuesUrl
 
     override fun handleRequest(): Issue? {
         var body: String? = null
 
         try {
-            body = Handler.mapper.writeValueAsString(this.issueRequest)
+            body = mapper.writeValueAsString(this.request)
         } catch(e: Exception) {
             e.printStackTrace()
         }
@@ -35,11 +35,13 @@ class IssuePatchHandler(
                 data = body,
                 headers = this.getAuthorizationHeaders())
 
-        return Handler.mapper.readValue(response.text)
+        handleCode(response.statusCode)
+
+        return mapper.readValue(response.text)
     }
 
     override fun getRequestUrl(): String = this.issueUrl
-            .replace("{owner}", this.issueRequest.repo.owner.login)
-            .replace("{repo}", this.issueRequest.repo.name)
+            .replace("{owner}", this.request.repo.owner.login)
+            .replace("{repo}", this.request.repo.name)
             .replace("{/number}", "/$number")
 }
