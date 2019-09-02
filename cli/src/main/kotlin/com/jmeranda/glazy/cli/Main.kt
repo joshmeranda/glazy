@@ -12,6 +12,7 @@ fun main(args: Array<String>) {
                     .addSubcommand(IssuePatch()))
             .addSubcommand(CommandLine(RepoParent())
                     .addSubcommand(RepoShow())
+                    .addSubcommand(RepoList())
                     .addSubcommand(RepoInit())
                     .addSubcommand(RepoPatch())
                     .addSubcommand(RepoDelete())

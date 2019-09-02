@@ -21,14 +21,13 @@ class IssueAllGetHandler(
 
     override fun handleRequest(): List<Issue>? {
         val response = get(this.getRequestUrl(), headers=this.getAuthorizationHeaders())
-        var allIssues: List<Issue>?
+        var allIssues: List<Issue>? = null
 
         handleCode(response.statusCode)
 
         try {
             allIssues = mapper.readValue(response.text)
         } catch (e: Exception) {
-            allIssues = null
             e.printStackTrace()
         }
 

@@ -2,14 +2,8 @@ package com.jmeranda.glazy.lib.service
 
 import com.jmeranda.glazy.lib.Repo
 import com.jmeranda.glazy.lib.exception.NoSuchRepo
-import com.jmeranda.glazy.lib.handler.RepoDeleteHandler
-import com.jmeranda.glazy.lib.handler.RepoGetHandler
-import com.jmeranda.glazy.lib.handler.RepoPatchHandler
-import com.jmeranda.glazy.lib.handler.RepoPostHandler
-import com.jmeranda.glazy.lib.request.RepoDeleteRequest
-import com.jmeranda.glazy.lib.request.RepoGetRequest
-import com.jmeranda.glazy.lib.request.RepoPatchRequest
-import com.jmeranda.glazy.lib.request.RepoPostRequest
+import com.jmeranda.glazy.lib.handler.*
+import com.jmeranda.glazy.lib.request.*
 
 /**
  * Client service to construct requests and return response data.
@@ -26,6 +20,17 @@ open class RepoService(
         val repoHandler = RepoGetHandler(repoRequest, token)
 
         return repoHandler.handleRequest() ?: throw NoSuchRepo(name)
+    }
+
+
+    /**
+     * Get all repos owned by a user.
+     */
+    fun getAllRepos(user: String): List<Repo> {
+        val request = RepoAllGetRequest(user)
+        val handler = RepoAllGetHandler(request, token)
+
+        return handler.handleRequest() ?: throw Exception("No such user ${request.user}")
     }
 
     /**

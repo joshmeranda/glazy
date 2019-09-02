@@ -108,9 +108,9 @@ class RepoParent: Runnable {
         description = ["Show details about a repository"],
         mixinStandardHelpOptions = true
 )
- class RepoShow: Runnable, RepoCommand() {
+open class RepoShow: Runnable, RepoCommand() {
     @ParentCommand
-    private val parent: RepoParent? = null
+    protected val parent: RepoParent? = null
 
     override fun run() {
         this.parent?.run()
@@ -123,6 +123,29 @@ class RepoParent: Runnable {
         val repo = this.service?.getRepo(this.name?: return,
                 this.user ?: return)
         displayRepo(repo ?: return)
+    }
+}
+
+@Command(name = "list",
+        description = ["List names of user repositories."],
+        mixinStandardHelpOptions = true)
+class RepoList: RepoShow() {
+    override fun run() {
+        if (this.name != null) {
+            this.parent?.run()
+            return
+        }
+
+        this.parent?.run()
+        if (this.user == null) {
+            this.useDefaultRepoInfo()
+        }
+
+        val repoList = this.service?.getAllRepos(this.user ?: return)
+
+        for (repo: Repo? in repoList ?: listOf()) {
+            println(repo?.fullName)
+        }
     }
 }
 
