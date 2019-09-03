@@ -46,6 +46,7 @@ data class RepoPostRequest(
  */
 @JsonInclude(Include.NON_NULL)
 data class RepoTransferRequest(
+        @JsonIgnore val user: String,
         @JsonIgnore val name: String,
         val newOwner: String,
         val teamIds: List<Int>? = null

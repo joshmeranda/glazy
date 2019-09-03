@@ -81,8 +81,8 @@ open class RepoService(
         return handler.handleRequest()
     }
 
-    fun transferRepo(name: String, newOwner: String, teamIds: List<Int>?) {
-        val request = RepoTransferRequest(name, newOwner, teamIds)
+    fun transferRepo(user: String, name: String, newOwner: String, teamIds: List<Int>?) {
+        val request = RepoTransferRequest(user, name, newOwner, teamIds)
         val handler = RepoTransferHandler(request, this.token)
 
         return handler.handleRequest()
