@@ -1,12 +1,15 @@
 package com.jmeranda.glazy.cli.commands
 
-import com.jmeranda.glazy.cli.getRepoName
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
 import picocli.CommandLine.ParentCommand
 
 import com.jmeranda.glazy.lib.Issue
 import com.jmeranda.glazy.lib.service.IssueService
+import com.jmeranda.glazy.lib.service.RepoService
+
+import com.jmeranda.glazy.cli.getRepoName
+import com.jmeranda.glazy.lib.handler.ResponseCache
 
 enum class State(val state: String) {
     OPEN("open"),
@@ -23,36 +26,31 @@ fun displayIssue(issue: Issue) {
     println("[${issue.number}] ${issue.title}")
 }
 
+open class IssueCommand() {
+    var service: IssueService? = null
+    var token: String? = null
+    var cache = ResponseCache()
+
+    init {
+        val (user, name) = getRepoName()
+
+        if (user != null) { token = this.cache.token(user) }
+
+        if (name != null && user != null) {
+            this.service = IssueService(
+                    RepoService(this.token).getRepo(name, user),
+                    token)
+        }
+    }
+}
+
 /**
  * Parent command for all issue operations.
- *
- * @property parent Reference to the parent command instance.
- * @property service The issue service used to interact with the github api.
  */
 @Command(name="issue",
         description=["Perform operations on repository issues"],
         mixinStandardHelpOptions=true)
-class IssueParent(): Runnable {
-    @ParentCommand
-    var parent: Glazy? = null
-    var service: IssueService? = null
-
-    /**
-     * Instantiate the service required by sub-commands.
-     *
-     * Any sub-command which requires the use of an issue service will
-     * be required to call this method or error will be thrown.
-     */
-    override fun run() {
-        this.parent?.run()
-
-        val (user, name) = getRepoName()
-        if (user == null || name == null) { return }
-
-        this.service = IssueService(
-                this.parent?.repoService?.getRepo(name, user) ?: return,
-                this.parent?.token)
-    }
+class IssueParent() {
 }
 
 /**
@@ -65,7 +63,7 @@ class IssueParent(): Runnable {
 @Command(name="list",
         description=["List repository issues."],
         mixinStandardHelpOptions=true)
-class IssueList(): Runnable {
+class IssueList(): Runnable, IssueCommand() {
     @ParentCommand
     private val parent: IssueParent? = null
 
@@ -75,11 +73,10 @@ class IssueList(): Runnable {
     private val number: Int? = null
 
     override fun run() {
-        this.parent?.run()
         val issueList: List<Issue?>? = if (this.number == null) {
-            this.parent?.service?.getAllIssues()
+            this.service?.getAllIssues()
         } else  {
-            listOf(this.parent?.service?.getIssue(this.number))
+            listOf(this.service?.getIssue(this.number))
         }
 
         for (issue: Issue? in issueList ?: listOf()) {
@@ -100,8 +97,8 @@ class IssueList(): Runnable {
  */
 @Command(name="add",
         description=["Create a new issue in the repository."],
-        mixinStandardHelpOptions=true)
-class IssueAdd(): Runnable {
+        mixinStandardHelpOptions = true)
+class IssueAdd(): Runnable, IssueCommand() {
     @ParentCommand
     private val parent: IssueParent? = null
 
@@ -134,8 +131,7 @@ class IssueAdd(): Runnable {
     private var assignees: List<String>? = null
 
     override fun run() {
-        this.parent?.run()
-        val issue = this.parent?.service?.createIssue(title, body, milestone, labels, assignees)
+        val issue = this.service?.createIssue(title, body, milestone, labels, assignees)
         displayIssue(issue ?: return)
     }
 }
@@ -158,7 +154,7 @@ class IssueAdd(): Runnable {
 @Command(name="patch",
         description=["Send a patch to an issue."],
         mixinStandardHelpOptions=true)
-class IssuePatch(): Runnable {
+class IssuePatch(): Runnable, IssueCommand() {
     @ParentCommand
     private val parent: IssueParent? = null
 
@@ -199,8 +195,7 @@ class IssuePatch(): Runnable {
     private var assignees: List<String>? = null
 
     override fun run() {
-        this.parent?.run()
-        val issue = this.parent?.service?.editIssue(this.number, this.title, this.body,
+        val issue = this.service?.editIssue(this.number, this.title, this.body,
                 this.state.toString(), this.milestone, this.labels, this.assignees)
         displayIssue(issue ?: return)
     }
