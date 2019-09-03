@@ -86,7 +86,6 @@ class RepoParent: Runnable, RepoCommand(){
      * be required to call this method or service erro will be thrown.
      */
     override fun run() {
-        this.parent?.run()
     }
 }
 
