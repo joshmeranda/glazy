@@ -42,19 +42,14 @@ open class RepoCommand {
     protected var token: String? = null
     protected var service: RepoService? = null
 
-    init {
-        this.setToken()
-        this.setService()
-    }
-
     /**
      * Use the values parsed from the current or parent repository directory, if either is null.
      */
     fun useDefaultRepoInfo() {
-        val repoName = getRepoName()
+        val (user, name) = getRepoName()
 
-        if (this.user == null) { this.user = repoName.first }
-        if (this.name == null) { this.name = repoName.second }
+        this.user = user
+        this.name = name
 
         /* If not in a repository directory or sub-directory */
         if (this.user == null && this.name == null) { throw NotInRepo() }
@@ -63,11 +58,11 @@ open class RepoCommand {
         this.setService()
     }
 
-    private fun setToken() {
+    protected fun setToken() {
         this.token = this.cache.token(this.user ?: return)
     }
 
-    private fun setService() {
+    protected fun setService() {
         this.service = RepoService(this.token)
     }
 }
@@ -79,9 +74,8 @@ open class RepoCommand {
  */
 @Command(name = "repo",
         description = ["Perform operations on a  repository."],
-        mixinStandardHelpOptions = true
-)
-class RepoParent: Runnable {
+        mixinStandardHelpOptions = true)
+class RepoParent: Runnable, RepoCommand(){
     @ParentCommand
     val parent: Glazy? = null
 
@@ -106,19 +100,19 @@ class RepoParent: Runnable {
  */
 @Command(name = "show",
         description = ["Show details about a repository"],
-        mixinStandardHelpOptions = true
-)
+        mixinStandardHelpOptions = true)
 open class RepoShow: Runnable, RepoCommand() {
     @ParentCommand
     protected val parent: RepoParent? = null
 
     override fun run() {
         this.parent?.run()
+        this.setToken()
+        this.setService()
+
         if (this.user == null || this.name == null) {
             this.useDefaultRepoInfo()
         }
-
-        if (this.name == null || this.user == null) { throw NotInRepo() }
 
         val repo = this.service?.getRepo(this.name?: return,
                 this.user ?: return)
@@ -132,11 +126,14 @@ open class RepoShow: Runnable, RepoCommand() {
 class RepoList: RepoShow() {
     override fun run() {
         if (this.name != null) {
-            this.parent?.run()
+            super.run()
             return
         }
 
         this.parent?.run()
+        this.setToken()
+        this.setService()
+
         if (this.user == null) {
             this.useDefaultRepoInfo()
         }
@@ -224,6 +221,8 @@ class RepoInit(): Runnable, RepoCommand() {
 
     override fun run() {
         this.parent?.run()
+        this.setToken()
+        this.setService()
         if (this.user == null || this.name == null) {
             this.useDefaultRepoInfo()
         }
@@ -309,6 +308,8 @@ class RepoPatch: Runnable, RepoCommand() {
 
     override fun run() {
         this.parent?.run()
+        this.setToken()
+        this.setService()
         if (this.user == null || this.name == null) {
             this.useDefaultRepoInfo()
         }
@@ -321,7 +322,6 @@ class RepoPatch: Runnable, RepoCommand() {
     }
 }
 
-
 @Command(name = "delete",
         description = ["Delete a remote repository."],
         mixinStandardHelpOptions = true)
@@ -331,6 +331,8 @@ class RepoDelete: Runnable, RepoCommand() {
 
     override fun run() {
         this.parent?.run()
+        this.setToken()
+        this.setService()
         if (this.user == null || this.name == null) {
             this.useDefaultRepoInfo()
         }

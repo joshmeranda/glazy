@@ -17,18 +17,6 @@ import com.jmeranda.glazy.lib.service.RepoService
         description = ["A command line interface to the github api."],
         mixinStandardHelpOptions = true)
 class Glazy(): Runnable {
-    @Option(names = ["-u", "--user"],
-            description = ["The user login for the desired repository."],
-            paramLabel = "LOGIN"
-    )
-    var user: String? = null
-
-    @Option(names = ["-n", "--name"],
-            description = ["The name of the desired repository"],
-            paramLabel = "NAME"
-    )
-    var name: String? = null
-
     private val cache = ResponseCache()
     var token: String? = null
     lateinit var repoService: RepoService
