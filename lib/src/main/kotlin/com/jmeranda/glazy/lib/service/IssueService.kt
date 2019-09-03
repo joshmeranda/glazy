@@ -23,18 +23,8 @@ class IssueService(
         private val token: String?
 ) {
     /**
-     * Get every issue in the current repository.
-     * @return A list of all the issues received from the api.
-     */
-    fun getAllIssues(): List<Issue> {
-        val issueAllRequest = IssueGetAllRequest(this.repo)
-        val issueAllGetHandler = IssueAllGetHandler(issueAllRequest, this.token)
-
-        return issueAllGetHandler.handleRequest() ?: throw Exception()
-    }
-
-    /**
      * Get a specific issue by number from the repository.
+     *
      * @param number The number of the issue.
      * @return The issue received from the api.
      */
@@ -46,7 +36,20 @@ class IssueService(
     }
 
     /**
+     * Get every issue in the current repository.
+     *
+     *  @return A list of all the issues received from the api.
+     */
+    fun getAllIssues(): List<Issue> {
+        val issueAllRequest = IssueGetAllRequest(this.repo)
+        val issueAllGetHandler = IssueAllGetHandler(issueAllRequest, this.token)
+
+        return issueAllGetHandler.handleRequest() ?: throw Exception()
+    }
+
+    /**
      * Create a new issue in the repository.
+     *
      * @param title The name of the new issue.
      * @param body The body of the new issue.
      * @param milestone The number of the milestone this issue is
@@ -67,6 +70,7 @@ class IssueService(
 
     /**
      * Edit an already existing issue.
+     *
      * @param number The number of the issue to be edited.
      * @param title The name of the issue.
      * @param body The body of the issue.

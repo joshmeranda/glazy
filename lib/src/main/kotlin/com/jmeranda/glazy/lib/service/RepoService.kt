@@ -22,6 +22,17 @@ open class RepoService(
         return repoHandler.handleRequest() ?: throw NoSuchRepo(name)
     }
 
+
+    /**
+     * Get all repos owned by a user.
+     */
+    fun getAllRepos(user: String): List<Repo> {
+        val request = RepoAllGetRequest(user)
+        val handler = RepoAllGetHandler(request, token)
+
+        return handler.handleRequest() ?: throw Exception("No such user ${request.user}")
+    }
+
     /**
      * Create a remote repository.
      */
