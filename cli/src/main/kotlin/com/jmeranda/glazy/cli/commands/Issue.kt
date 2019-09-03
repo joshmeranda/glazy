@@ -1,5 +1,6 @@
 package com.jmeranda.glazy.cli.commands
 
+import com.jmeranda.glazy.cli.getRepoName
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
 import picocli.CommandLine.ParentCommand
@@ -11,17 +12,6 @@ enum class State(val state: String) {
     OPEN("open"),
     CLOSED("closed"),
     ALL("all"),
-}
-
-enum class Sort(val sortByValue: String) {
-    CREATED("created"),
-    UPDATED("updated"),
-    COMMENTS("comments"),
-}
-
-enum class SortDirection(val direction: String) {
-    ASCEND("asc"),
-    DESCEND("desc"),
 }
 
 /**
@@ -55,9 +45,12 @@ class IssueParent(): Runnable {
      */
     override fun run() {
         this.parent?.run()
-        val user = this.parent?.user ?: return
-        val name = this.parent?.name ?: return
-        this.service = IssueService(this.parent?.repoService?.getRepo(name, user) ?: return,
+
+        val (user, name) = getRepoName()
+        if (user == null || name == null) { return }
+
+        this.service = IssueService(
+                this.parent?.repoService?.getRepo(name, user) ?: return,
                 this.parent?.token)
     }
 }
