@@ -27,15 +27,13 @@ fun displayRepo(repo: Repo) {
 open class RepoCommand {
     @Option(names = ["-u", "--user"],
             description = ["The user login for the desired repository."],
-            paramLabel = "LOGIN"
-    )
-    var user: String? = null
+            paramLabel = "LOGIN")
+    open var user: String? = null
 
     @Option(names = ["-n", "--name"],
             description = ["The name of the desired repository"],
-            paramLabel = "NAME"
-    )
-    var name: String? = null
+            paramLabel = "NAME")
+    open var name: String? = null
 
     private val cache: ResponseCache = ResponseCache()
     private var token: String? = null
@@ -133,6 +131,18 @@ class RepoList: RepoShow() {
         description = ["Create a new remot repository"],
         mixinStandardHelpOptions = true)
 class RepoInit(): Runnable, RepoCommand() {
+    @Option(names = ["-u", "--user"],
+            description = ["The user login for the desired repository."],
+            paramLabel = "LOGIN",
+            required = true)
+    override var user: String? = null
+
+    @Option(names = ["-n", "--name"],
+            description = ["The name of the desired repository"],
+            paramLabel = "NAME",
+            required = true)
+    override var name: String? = null
+
     @Option(names = ["-d", "--description"],
             description = ["THe description for the new repository"],
             paramLabel = "DESCRIPTION")
