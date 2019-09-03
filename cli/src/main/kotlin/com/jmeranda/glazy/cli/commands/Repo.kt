@@ -4,7 +4,6 @@ import com.jmeranda.glazy.cli.getRepoName
 
 import picocli.CommandLine.Option
 import picocli.CommandLine.Command
-import picocli.CommandLine.ParentCommand
 
 import com.jmeranda.glazy.lib.Repo
 import com.jmeranda.glazy.lib.exception.NotInRepo
@@ -69,24 +68,11 @@ open class RepoCommand {
 
 /**
  * Parent command for all repo operations.
- *
- * @property parent Reference to the parent command instance.
  */
 @Command(name = "repo",
         description = ["Perform operations on a  repository."],
         mixinStandardHelpOptions = true)
-class RepoParent: Runnable, RepoCommand(){
-    @ParentCommand
-    val parent: Glazy? = null
-
-    /**
-     * Instantiate the service required by sub-commands.
-     *
-     * Any sub-command which requires the use of an issue service will
-     * be required to call this method or service erro will be thrown.
-     */
-    override fun run() {
-    }
+class RepoParent {
 }
 
 /**
@@ -94,18 +80,12 @@ class RepoParent: Runnable, RepoCommand(){
  *
  * If no [user] or [name] arguments are passed as arguments, the values
  * parsed in the glazy command are used to show the current repo.
- *
- * @property parent Reference to the parent command instance.
  */
 @Command(name = "show",
         description = ["Show details about a repository"],
         mixinStandardHelpOptions = true)
 open class RepoShow: Runnable, RepoCommand() {
-    @ParentCommand
-    protected val parent: RepoParent? = null
-
     override fun run() {
-        this.parent?.run()
         this.setToken()
         this.setService()
 
@@ -129,7 +109,6 @@ class RepoList: RepoShow() {
             return
         }
 
-        this.parent?.run()
         this.setToken()
         this.setService()
 
@@ -154,9 +133,6 @@ class RepoList: RepoShow() {
         description = ["Create a new remot repository"],
         mixinStandardHelpOptions = true)
 class RepoInit(): Runnable, RepoCommand() {
-    @ParentCommand
-    private val parent: RepoParent? = null
-
     @Option(names = ["-d", "--description"],
             description = ["THe description for the new repository"],
             paramLabel = "DESCRIPTION")
@@ -219,7 +195,6 @@ class RepoInit(): Runnable, RepoCommand() {
     var allowRebaseMerge: Boolean = true
 
     override fun run() {
-        this.parent?.run()
         this.setToken()
         this.setService()
         if (this.user == null || this.name == null) {
@@ -242,9 +217,6 @@ class RepoInit(): Runnable, RepoCommand() {
         description = ["Edit an existing repository"],
         mixinStandardHelpOptions = true)
 class RepoPatch: Runnable, RepoCommand() {
-    @ParentCommand
-    private val parent: RepoParent? = null
-
     @Option(names = ["--new-name"],
             description = ["The new name for the repository."],
             paramLabel = "NAME")
@@ -306,7 +278,6 @@ class RepoPatch: Runnable, RepoCommand() {
     var archived: Boolean? = null
 
     override fun run() {
-        this.parent?.run()
         this.setToken()
         this.setService()
         if (this.user == null || this.name == null) {
@@ -325,11 +296,7 @@ class RepoPatch: Runnable, RepoCommand() {
         description = ["Delete a remote repository."],
         mixinStandardHelpOptions = true)
 class RepoDelete: Runnable, RepoCommand() {
-    @ParentCommand
-    private val parent: RepoParent? = null
-
     override fun run() {
-        this.parent?.run()
         this.setToken()
         this.setService()
         if (this.user == null || this.name == null) {
