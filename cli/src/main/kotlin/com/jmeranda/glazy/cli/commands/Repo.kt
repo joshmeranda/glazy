@@ -320,7 +320,8 @@ class RepoDelete: Runnable, RepoCommand() {
 class RepoTransfer(): Runnable, RepoCommand() {
     @Option(names = ["-o", "--new-owner"],
             description = ["The login of the new owner."],
-            paramLabel = "LOGIN")
+            paramLabel = "LOGIN",
+            required = true)
     var newOwner: String? = null
 
     @Option(names = ["-t", "--team-ids"],
@@ -333,7 +334,7 @@ class RepoTransfer(): Runnable, RepoCommand() {
         this.setToken()
         this.setService()
 
-        this.service?.transferRepo(this.name ?: return,
-                this.newOwner?: return, this.teamIds)
+        this.service?.transferRepo(this.user ?: return,this.name ?: return,
+                this.newOwner!!, this.teamIds)
     }
 }

@@ -14,10 +14,10 @@ class RepoTransferHandler(
         var body: String? = null
         val headers = this.getAuthorizationHeaders()
                 .toMutableMap()
-        headers.put("Accept", "application/vnd.github.nightshade-preview+json")
+        headers["Accept"] = "application/vnd.github.nightshade-preview+json"
 
         try {
-            body = Handler.mapper.writeValueAsString(this.request)
+            body = mapper.writeValueAsString(this.request)
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -34,7 +34,7 @@ class RepoTransferHandler(
     }
     
     override fun getRequestUrl(): String = Handler.endpoints.repositoryUrl
-            .replace("{owner}", this.request.newOwner)
+            .replace("{owner}", this.request.user)
             .replace("{repo}", this.request.name)
             .plus("/transfer")
 }
