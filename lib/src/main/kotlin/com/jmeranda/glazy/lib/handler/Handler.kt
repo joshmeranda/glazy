@@ -17,12 +17,9 @@ import com.jmeranda.glazy.lib.exception.BadEndpoint
  * Get a all available github endpoints as of v3.
  *
  * @param mapper Used to parse api root endpoint response.
- * @param cache ResponseCache instance to store the api response.
  * @return Endpoint? deserialize json response
  */
-fun getRootEndpoints(rootUrl: String, mapper: ObjectMapper,
-                     cache: ResponseCache
-): RootEndpoints {
+fun getRootEndpoints(rootUrl: String, mapper: ObjectMapper): RootEndpoints {
     val rootEndpoints: RootEndpoints
 
     try {
@@ -32,7 +29,7 @@ fun getRootEndpoints(rootUrl: String, mapper: ObjectMapper,
         throw BadEndpoint()
     }
 
-    cache.write(rootEndpoints)
+    ResponseCache.write(rootEndpoints)
 
     return rootEndpoints
 }
@@ -76,10 +73,8 @@ abstract class Handler<T>(private val token: String?) {
         val mapper: ObjectMapper = jacksonObjectMapper()
                 .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
 
-        val cache = ResponseCache()
-
-        val endpoints: RootEndpoints = cache.endpoints()
-                ?: getRootEndpoints(ROOT_ENDPOINT, mapper, cache)
+        val endpoints: RootEndpoints = ResponseCache.endpoints()
+                ?: getRootEndpoints(ROOT_ENDPOINT, mapper)
 
         /**
          * Notify user with message depending on the value of [statusCode].
@@ -90,10 +85,6 @@ abstract class Handler<T>(private val token: String?) {
                         "Please ensure that you have proper permissions, and that it exists")
                 403 -> println("Resource could not be found or accessed.\n" +
                         "Please ensure that you have proper permissions, and that it exists")
-            }
-
-            if (statusCode >= 400) {
-                exitProcess(1)
             }
         }
     }

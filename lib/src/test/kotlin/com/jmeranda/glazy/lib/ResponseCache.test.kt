@@ -8,15 +8,13 @@ import kotlin.test.assertNull
 import com.jmeranda.glazy.lib.handler.ResponseCache
 
 class ResponseCacheTest {
-    private val cache = ResponseCache()
-
     @Test
     fun testGetCachedAccessToken() {
-        assertEquals("bar", this.cache.token("foo"))
+        assertEquals("bar", ResponseCache.token("foo"))
     }
 
     @Test
     fun testGetCachedAccessTokenBAD() {
-        assertNull(this.cache.token("I_DO_NOT_EXIST"))
+        assertNull(ResponseCache.token("I_DO_NOT_EXIST"))
     }
 }

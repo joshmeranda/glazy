@@ -22,7 +22,9 @@ fun displayRepo(repo: Repo) {
 }
 
 /**
- * Class to be inherited by all sub-classes to RepoParent.
+ * Class to be inherited by all sub-classes to RepoParent
+ *
+ * Despite not being a 'lateinit' (since it may be null) treat [token] a lateinit.
  */
 open class RepoCommand {
     @Option(names = ["-u", "--user"],
@@ -37,7 +39,7 @@ open class RepoCommand {
 
     private val cache: ResponseCache = ResponseCache()
     private var token: String? = null
-    protected var service: RepoService? = null
+    protected lateinit var service: RepoService
 
     /**
      * Use the values parsed from the current or parent repository directory, if either is null.
@@ -56,7 +58,7 @@ open class RepoCommand {
     }
 
     protected fun setToken() {
-        this.token = this.cache.token(this.user ?: return)
+        this.token = ResponseCache.token(this.user ?: return)
     }
 
     protected fun setService() {
@@ -131,18 +133,6 @@ class RepoList: RepoShow() {
         description = ["Create a new remot repository"],
         mixinStandardHelpOptions = true)
 class RepoInit(): Runnable, RepoCommand() {
-    @Option(names = ["-u", "--user"],
-            description = ["The user login for the desired repository."],
-            paramLabel = "LOGIN",
-            required = true)
-    override var user: String? = null
-
-    @Option(names = ["-n", "--name"],
-            description = ["The name of the desired repository"],
-            paramLabel = "NAME",
-            required = true)
-    override var name: String? = null
-
     @Option(names = ["-d", "--description"],
             description = ["THe description for the new repository"],
             paramLabel = "DESCRIPTION")
