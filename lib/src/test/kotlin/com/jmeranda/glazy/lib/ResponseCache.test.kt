@@ -6,8 +6,13 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 import com.jmeranda.glazy.lib.handler.ResponseCache
+import java.io.File
 
 class ResponseCacheTest {
+    init {
+        ResponseCache.setCacheLocation(File("src/test/resource").canonicalPath)
+    }
+
     @Test
     fun testGetCachedAccessToken() {
         assertEquals("bar", ResponseCache.token("foo"))
