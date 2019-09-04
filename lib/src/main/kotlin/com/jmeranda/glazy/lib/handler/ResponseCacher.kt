@@ -43,7 +43,7 @@ class ResponseCache {
          */
         fun repo(name: String, user: String): Repo? {
             val fileName = "$CACHE_DIR/$user/$name.json"
-            if (!Files.exists(Paths.get(fileName))) { return null }
+            if (!Files.exists(Paths.get(fileName))) return null
             val target = File(fileName)
 
             return mapper.readValue(target)
@@ -55,6 +55,8 @@ class ResponseCache {
          * @return The access token associated with the specified user.
          */
         fun token(user: String): String? {
+            if (! Files.exists(Paths.get(TOKEN_FILE))) return null
+
             val tokenFile = File(TOKEN_FILE)
             val tokenArray: List<UserTokenPair> = mapper.readValue(tokenFile)
             var token: String? = null
@@ -72,9 +74,9 @@ class ResponseCache {
          * @return RootEndpoints if cached data exists, null otherwise
          */
         fun endpoints(): RootEndpoints? {
-            val fileName = ENDPOINTS_FILE
-            if (! Files.exists(Paths.get(fileName))) { return null }
-            val target = File(fileName)
+            if (! Files.exists(Paths.get(ENDPOINTS_FILE))) return null
+
+            val target = File(ENDPOINTS_FILE)
 
             return mapper.readValue(target)
         }
