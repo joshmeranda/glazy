@@ -41,7 +41,7 @@ class RepoGetHandler(
             e.printStackTrace()
         }
 
-        if (repo != null) { ResponseCache.write(repo) }
+        if (repo != null) ResponseCache.write(repo)
 
         return repo
     }
