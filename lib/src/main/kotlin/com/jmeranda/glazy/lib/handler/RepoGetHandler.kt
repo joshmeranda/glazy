@@ -17,7 +17,7 @@ class RepoGetHandler(
         private val request: RepoGetRequest,
         token: String? = null
 ): Handler<Repo>(token) {
-    private val repositoryUrl: String = Handler.endpoints.repositoryUrl
+    private val repositoryUrl: String = endpoints.repositoryUrl
 
     /**
      * Send the request and return the response repository.
@@ -26,20 +26,22 @@ class RepoGetHandler(
      *     if there are json parsing errors.
      */
     override fun handleRequest(): Repo? {
-        var repo: Repo?
+        /* Initialize repo from cached value */
+        var repo: Repo? = ResponseCache.repo(request.name, request.owner)
 
-        val response = get(this.getRequestUrl(), headers=this.getAuthorizationHeaders())
-
-        handleCode(response.statusCode)
-
+        /* TODO Move conditional outside of try block by returning string from cache*/
         try {
-            repo = mapper.readValue(response.text)
+            if (repo == null) {
+                val response = get(this.getRequestUrl(), headers = this.getAuthorizationHeaders())
+                handleCode(response.statusCode)
+                repo = mapper.readValue(response.text)
+            }
         } catch(e:  Exception) {
             repo = null
             e.printStackTrace()
         }
 
-        if (repo != null) { cache.write(repo) }
+        if (repo != null) { ResponseCache.write(repo) }
 
         return repo
     }

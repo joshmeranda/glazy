@@ -28,5 +28,10 @@ fun main(args: Array<String>) {
                     .addSubcommand(RepoDelete())
                     .addSubcommand(RepoTransfer())
                     .setToggleBooleanFlags(true))
+            .addSubcommand(CommandLine(CacheParent())
+                    .addSubcommand(ClearCache())
+                    .addSubcommand(RefreshCache())
+                    .addSubcommand(TokenCache())
+                    .setToggleBooleanFlags(true))
             .execute(*args)
 }
