@@ -1,6 +1,3 @@
-/**
- * Store some API responses to limit the amount of requests made.
- */
 package com.jmeranda.glazy.lib.handler
 
 import java.lang.System
@@ -19,23 +16,36 @@ import com.jmeranda.glazy.lib.RootEndpoints
 import com.jmeranda.glazy.lib.service.RepoService
 
 /**
- * Data class used for parsing cached access-token pairs
- *
- * @param user The user login key for each token.
- * @param token The token mapped to each user.
- */
-data class UserTokenPair(
-        val user: String,
-        val token: String
-)
-
-/**
- * Reads and Writes cached API data in json format.
- *
- * All cached data is stored in .cache/lazy in the users HOME directory.
+ * Static class used for cache operations.
  */
 class ResponseCache {
     companion object {
+        /**
+         * Data class which associates a [user] to an access [token].
+         */
+        data class UserTokenPair(
+                val user: String,
+                val token: String
+        )
+
+        private var CACHE_DIR = "${System.getProperty("user.home")}/.cache/glazy"
+
+        private var TOKEN_FILE = "$CACHE_DIR/access_tokens.json"
+
+        private var ENDPOINTS_FILE = "$CACHE_DIR/root_endpoints.json"
+
+        val mapper: ObjectMapper = jacksonObjectMapper()
+                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+
+        /**
+         * Change the location of the cache to [path] from the default.
+         */
+        fun setCacheLocation(path: String) {
+            CACHE_DIR = path
+            TOKEN_FILE = "$CACHE_DIR/access_tokens.json"
+            ENDPOINTS_FILE = "$CACHE_DIR/root_endpoints.json"
+        }
+
         /**
          *  Read cached repository data, give the repo [name] and [user].
          *
@@ -185,14 +195,5 @@ class ResponseCache {
 
             }
         }
-
-        val CACHE_DIR = "${System.getProperty("user.home")}/.cache/glazy"
-
-        private val TOKEN_FILE = "$CACHE_DIR/access_tokens.json"
-
-        private val ENDPOINTS_FILE = "$CACHE_DIR/root_endpoints.json"
-
-        val mapper: ObjectMapper = jacksonObjectMapper()
-                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
     }
 }
