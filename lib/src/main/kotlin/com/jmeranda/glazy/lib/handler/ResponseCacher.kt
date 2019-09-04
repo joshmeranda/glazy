@@ -28,22 +28,37 @@ class ResponseCache {
                 val token: String
         )
 
-        private var CACHE_DIR = "${System.getProperty("user.home")}/.cache/glazy"
+        private var CACHE_PATH = "${System.getProperty("user.home")}/.cache/glazy"
 
-        private var TOKEN_FILE = "$CACHE_DIR/access_tokens.json"
+        private var TOKEN_CACHE_PATH = "$CACHE_PATH/access_tokens.json"
 
-        private var ENDPOINTS_FILE = "$CACHE_DIR/root_endpoints.json"
+        private var ENDPOINT_CACHE_PATH = "$CACHE_PATH/root_endpoints.json"
 
         val mapper: ObjectMapper = jacksonObjectMapper()
                 .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
 
         /**
+         * Check if CACHE_DIR exists and create it if not.
+         */
+        private fun ensureCache(cachePath: String, isDir: Boolean = false) {
+            if (!  Files.exists(Paths.get(cachePath))) {
+                val cacheFile = File(cachePath)
+                if (isDir) {
+                    cacheFile.mkdirs()
+                } else {
+                    cacheFile.parentFile.mkdirs()
+                    File(cachePath).createNewFile()
+                }
+            }
+        }
+
+        /**
          * Change the location of the cache to [path] from the default.
          */
         fun setCacheLocation(path: String) {
-            CACHE_DIR = path
-            TOKEN_FILE = "$CACHE_DIR/access_tokens.json"
-            ENDPOINTS_FILE = "$CACHE_DIR/root_endpoints.json"
+            CACHE_PATH = path
+            TOKEN_CACHE_PATH = "$CACHE_PATH/access_tokens.json"
+            ENDPOINT_CACHE_PATH = "$CACHE_PATH/root_endpoints.json"
         }
 
         /**
@@ -52,7 +67,7 @@ class ResponseCache {
          *  @return Repo if cached data exists, null otherwise.
          */
         fun repo(name: String, user: String): Repo? {
-            val fileName = "$CACHE_DIR/$user/$name.json"
+            val fileName = "$CACHE_PATH/$user/$name.json"
             if (!Files.exists(Paths.get(fileName))) return null
             val target = File(fileName)
 
@@ -65,9 +80,9 @@ class ResponseCache {
          * @return The access token associated with the specified user.
          */
         fun token(user: String): String? {
-            if (! Files.exists(Paths.get(TOKEN_FILE))) return null
+            if (! Files.exists(Paths.get(TOKEN_CACHE_PATH))) return null
 
-            val tokenFile = File(TOKEN_FILE)
+            val tokenFile = File(TOKEN_CACHE_PATH)
             val tokenArray: List<UserTokenPair> = mapper.readValue(tokenFile)
             var token: String? = null
 
@@ -84,9 +99,9 @@ class ResponseCache {
          * @return RootEndpoints if cached data exists, null otherwise
          */
         fun endpoints(): RootEndpoints? {
-            if (! Files.exists(Paths.get(ENDPOINTS_FILE))) return null
+            if (! Files.exists(Paths.get(ENDPOINT_CACHE_PATH))) return null
 
-            val target = File(ENDPOINTS_FILE)
+            val target = File(ENDPOINT_CACHE_PATH)
 
             return mapper.readValue(target)
         }
@@ -97,17 +112,14 @@ class ResponseCache {
          * @param data Repo to be cached.
          */
         fun write(data: Repo) {
-            if (! Files.exists(Paths.get("$CACHE_DIR/${data.owner.login}"))) {
-                File("$CACHE_DIR/${data.owner.login}").mkdir()
-            }
+            val repoCachePath = "$CACHE_PATH/${data.fullName}.json"
 
-            val fileName = "$CACHE_DIR/${data.fullName}.json"
-            val dest = File(fileName)
+            ensureCache(repoCachePath)
+
             val repoAsJson = mapper.writeValueAsString(data)
 
             try {
-                dest.createNewFile()
-                dest.writeText(repoAsJson)
+                File(repoCachePath).writeText(repoAsJson)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -119,11 +131,10 @@ class ResponseCache {
          * @param data Root endpoints to be cached.
          */
         fun write(data: RootEndpoints) {
-            val dest = File(ENDPOINTS_FILE)
+            ensureCache(ENDPOINT_CACHE_PATH)
 
             try {
-                dest.createNewFile()
-                dest.writeText(mapper.writeValueAsString((data)))
+                File(ENDPOINT_CACHE_PATH).writeText(mapper.writeValueAsString((data)))
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -133,7 +144,9 @@ class ResponseCache {
          * Write access [token] to .cache/glazy/access_tokens.json given a [user].
          */
         fun write(user: String, token: String) {
-            val tokenFile = File(TOKEN_FILE)
+            ensureCache(TOKEN_CACHE_PATH)
+
+            val tokenFile = File(TOKEN_CACHE_PATH)
             val tokenList: MutableList<UserTokenPair> = (mapper.readValue(tokenFile) as List<UserTokenPair>)
                     .toMutableList()
             tokenList.add(UserTokenPair(user, token))
@@ -149,13 +162,15 @@ class ResponseCache {
          * Clear the cache of data ignoring access token depending on [ignoreToken].
          */
         fun clear(ignoreToken: Boolean) {
-            val cacheDir = File(CACHE_DIR)
+            if (! Files.exists(Paths.get(CACHE_PATH))) return
+
+            val cacheDir = File(CACHE_PATH)
 
             if (! ignoreToken) {
                 cacheDir.deleteRecursively()
             } else {
                 for (file in cacheDir.listFiles() ?: arrayOf()) {
-                    if (file == File(TOKEN_FILE)) continue
+                    if (file == File(TOKEN_CACHE_PATH)) continue
                     file.deleteRecursively()
                 }
             }
@@ -165,8 +180,10 @@ class ResponseCache {
          * Refresh the cache from the thing in the thing that does the thing.
          */
         fun refresh(user: String, name: String, token: String?, service: RepoService = RepoService(token)) {
+            if (! Files.exists(Paths.get("$CACHE_PATH/user/name")))  return
+
             /* Replace cached repo data */
-            val path = "$CACHE_DIR/$user/$name"
+            val path = "$CACHE_PATH/$user/$name"
             File(path).delete()
             write(service.getRepo(name, user))
         }
@@ -175,8 +192,10 @@ class ResponseCache {
          * Refresh all data using the specified access [token].
          */
         fun refresh(token: String?) {
+            if (! Files.exists(Paths.get(CACHE_PATH))) return
+
             val service = RepoService(token)
-            val cacheDir = File(CACHE_DIR)
+            val cacheDir = File(CACHE_PATH)
 
             /* Iterate through all cached data ignore access tokens */
             for (file in cacheDir.listFiles() ?: arrayOf()) {
@@ -189,7 +208,7 @@ class ResponseCache {
                 }
 
                 /* Refresh endpoints data */
-                if (file.name == ENDPOINTS_FILE) {
+                if (file.name == ENDPOINT_CACHE_PATH) {
                     write(endpoints() ?: continue)
                 }
 
