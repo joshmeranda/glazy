@@ -1,6 +1,6 @@
 package com.jmeranda.glazy.cli.commands
 
-import com.jmeranda.glazy.lib.handler.ResponseCache
+import com.jmeranda.glazy.lib.service.CacheService
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
 
@@ -19,7 +19,7 @@ class ClearCache: Runnable {
     private var ignoreToken = true
 
     override fun run() {
-        ResponseCache.clear(this.ignoreToken)
+        CacheService.clear(this.ignoreToken)
     }
 }
 
@@ -39,12 +39,12 @@ class RefreshCache: Runnable {
     private var name: String? = null
 
     override fun run() {
-        val token = ResponseCache.token(this.user)
+        val token = CacheService.token(this.user)
 
         if (name == null) {
-            ResponseCache.refresh(token)
+            CacheService.refresh(token)
         } else {
-            ResponseCache.refresh(this.user, this.name ?: return, token)
+            CacheService.refresh(this.user, this.name ?: return, token)
         }
     }
 }
@@ -66,6 +66,6 @@ class TokenCache: Runnable {
     private var user = String()
 
     override fun run() {
-        ResponseCache.write(this.user, this.token)
+        CacheService.write(this.user, this.token)
     }
 }

@@ -9,7 +9,7 @@ import com.jmeranda.glazy.lib.service.IssueService
 import com.jmeranda.glazy.lib.service.RepoService
 
 import com.jmeranda.glazy.cli.getRepoName
-import com.jmeranda.glazy.lib.handler.ResponseCache
+import com.jmeranda.glazy.lib.service.CacheService
 
 enum class State(val state: String) {
     OPEN("open"),
@@ -28,13 +28,12 @@ fun displayIssue(issue: Issue) {
 
 open class IssueCommand() {
     var service: IssueService? = null
-    var token: String? = null
-    var cache = ResponseCache()
+    private var token: String? = null
 
     init {
         val (user, name) = getRepoName()
 
-        if (user != null) { token = ResponseCache.token(user) }
+        if (user != null) { token = CacheService.token(user) }
 
         if (name != null && user != null) {
             this.service = IssueService(

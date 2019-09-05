@@ -6,6 +6,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 
 import com.jmeranda.glazy.lib.Repo
 import com.jmeranda.glazy.lib.request.RepoGetRequest
+import com.jmeranda.glazy.lib.service.CacheService
 
 /**
  * Handle request for a repository.
@@ -27,7 +28,7 @@ class RepoGetHandler(
      */
     override fun handleRequest(): Repo? {
         /* Initialize repo from cached value */
-        var repo: Repo? = ResponseCache.repo(request.name, request.owner)
+        var repo: Repo? = CacheService.repo(request.name, request.owner)
 
         /* TODO Move conditional outside of try block by returning string from cache*/
         try {
@@ -41,7 +42,7 @@ class RepoGetHandler(
             e.printStackTrace()
         }
 
-        if (repo != null) ResponseCache.write(repo)
+        if (repo != null) CacheService.write(repo)
 
         return repo
     }

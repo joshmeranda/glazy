@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy
 
 import com.jmeranda.glazy.lib.exception.BadEndpoint
 import com.jmeranda.glazy.lib.handler.getRootEndpoints
-import com.jmeranda.glazy.lib.handler.ResponseCache
 
 class RootEndpointsTest {
     private val mapper = jacksonObjectMapper()
