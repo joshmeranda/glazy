@@ -7,7 +7,7 @@ import picocli.CommandLine.Command
 
 import com.jmeranda.glazy.lib.Repo
 import com.jmeranda.glazy.lib.exception.NotInRepo
-import com.jmeranda.glazy.lib.handler.ResponseCache
+import com.jmeranda.glazy.lib.service.CacheService
 import com.jmeranda.glazy.lib.service.RepoService
 
 /**
@@ -37,7 +37,7 @@ open class RepoCommand {
             paramLabel = "NAME")
     open var name: String? = null
 
-    private val cache: ResponseCache = ResponseCache()
+    private val cache: CacheService = CacheService()
     private var token: String? = null
     protected lateinit var service: RepoService
 
@@ -58,7 +58,7 @@ open class RepoCommand {
     }
 
     protected fun setToken() {
-        this.token = ResponseCache.token(this.user ?: return)
+        this.token = CacheService.token(this.user ?: return)
     }
 
     protected fun setService() {
@@ -72,8 +72,7 @@ open class RepoCommand {
 @Command(name = "repo",
         description = ["Perform operations on a  repository."],
         mixinStandardHelpOptions = true)
-class RepoParent {
-}
+class RepoParent
 
 /**
  * Sub-command to show information about a repository.
@@ -93,9 +92,9 @@ open class RepoShow: Runnable, RepoCommand() {
             this.useDefaultRepoInfo()
         }
 
-        val repo = this.service?.getRepo(this.name?: return,
+        val repo = this.service.getRepo(this.name?: return,
                 this.user ?: return)
-        displayRepo(repo ?: return)
+        displayRepo(repo)
     }
 }
 
@@ -116,9 +115,9 @@ class RepoList: RepoShow() {
             this.useDefaultRepoInfo()
         }
 
-        val repoList = this.service?.getAllRepos(this.user ?: return)
+        val repoList = this.service.getAllRepos(this.user ?: return)
 
-        for (repo: Repo? in repoList ?: listOf()) {
+        for (repo: Repo? in repoList) {
             println(repo?.fullName)
         }
     }
@@ -130,9 +129,9 @@ class RepoList: RepoShow() {
  * TODO document properties
  */
 @Command(name = "init",
-        description = ["Create a new remot repository"],
+        description = ["Create a new remote repository"],
         mixinStandardHelpOptions = true)
-class RepoInit(): Runnable, RepoCommand() {
+class RepoInit: Runnable, RepoCommand() {
     @Option(names = ["-d", "--description"],
             description = ["THe description for the new repository"],
             paramLabel = "DESCRIPTION")
@@ -201,7 +200,7 @@ class RepoInit(): Runnable, RepoCommand() {
             this.useDefaultRepoInfo()
         }
 
-        this.service?.createRepo(this.name ?: return, this.description,
+        this.service.createRepo(this.name ?: return, this.description,
                 this.homepage, this.private, this.hasIssues,
                 this.hasProject, this.hasWiki, this.isTemplate,
                 this.teamId, this.autoInit, this.gitignoreTemplate,
@@ -284,7 +283,7 @@ class RepoPatch: Runnable, RepoCommand() {
             this.useDefaultRepoInfo()
         }
 
-        this.service?.editRepo(this.user ?: return , this.name ?: return,
+        this.service.editRepo(this.user ?: return , this.name ?: return,
                 this.newName, this.description, this.homepage, this.private ?: this.public?.not(),
                 this.hasIssues, this.hasProjects, this.hasWiki, this.isTemplate,
                 this.defaultBranch, this.allowSquashMerge, this.allowMergeCommit,
@@ -306,7 +305,7 @@ class RepoDelete: Runnable, RepoCommand() {
             this.useDefaultRepoInfo()
         }
 
-        this.service?.deleteRepo(this.user ?: return,
+        this.service.deleteRepo(this.user ?: return,
                 this.name ?: return)
     }
 }
@@ -334,7 +333,7 @@ class RepoTransfer(): Runnable, RepoCommand() {
         this.setToken()
         this.setService()
 
-        this.service?.transferRepo(this.user ?: return,this.name ?: return,
+        this.service.transferRepo(this.user ?: return,this.name ?: return,
                 this.newOwner!!, this.teamIds)
     }
 }

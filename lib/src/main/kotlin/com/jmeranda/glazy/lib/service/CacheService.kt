@@ -1,4 +1,4 @@
-package com.jmeranda.glazy.lib.handler
+package com.jmeranda.glazy.lib.service
 
 import java.lang.System
 import java.io.File
@@ -13,12 +13,11 @@ import com.fasterxml.jackson.module.kotlin.readValue
 
 import com.jmeranda.glazy.lib.Repo
 import com.jmeranda.glazy.lib.RootEndpoints
-import com.jmeranda.glazy.lib.service.RepoService
 
 /**
  * Static class used for cache operations.
  */
-class ResponseCache {
+class CacheService {
     companion object {
         /**
          * Data class which associates a [user] to an access [token].
@@ -209,7 +208,8 @@ class ResponseCache {
 
                 /* Refresh endpoints data */
                 if (file.name == ENDPOINT_CACHE_PATH) {
-                    write(endpoints() ?: continue)
+                    write(endpoints()
+                            ?: continue)
                 }
 
             }

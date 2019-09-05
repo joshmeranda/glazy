@@ -7,11 +7,10 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 
-import kotlin.system.exitProcess
-
 import com.jmeranda.glazy.lib.ROOT_ENDPOINT
 import com.jmeranda.glazy.lib.RootEndpoints
 import com.jmeranda.glazy.lib.exception.BadEndpoint
+import com.jmeranda.glazy.lib.service.CacheService
 
 /**
  * Get a all available github endpoints as of v3.
@@ -29,7 +28,7 @@ fun getRootEndpoints(rootUrl: String, mapper: ObjectMapper): RootEndpoints {
         throw BadEndpoint()
     }
 
-    ResponseCache.write(rootEndpoints)
+    CacheService.write(rootEndpoints)
 
     return rootEndpoints
 }
@@ -73,7 +72,7 @@ abstract class Handler<T>(private val token: String?) {
         val mapper: ObjectMapper = jacksonObjectMapper()
                 .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
 
-        val endpoints: RootEndpoints = ResponseCache.endpoints()
+        val endpoints: RootEndpoints = CacheService.endpoints()
                 ?: getRootEndpoints(ROOT_ENDPOINT, mapper)
 
         /**

@@ -5,11 +5,11 @@ import org.junit.Test
 import kotlin.test.assertNull
 
 import com.jmeranda.glazy.lib.exception.NoSuchRepo
-import com.jmeranda.glazy.lib.handler.ResponseCache
+import com.jmeranda.glazy.lib.service.CacheService
 import com.jmeranda.glazy.lib.service.RepoService
 
 class RepoServiceTest {
-    private val service = RepoService(ResponseCache.token("foo"))
+    private val service = RepoService(CacheService.token("foo"))
 
     @Test
     fun testGetRepoBad() {
