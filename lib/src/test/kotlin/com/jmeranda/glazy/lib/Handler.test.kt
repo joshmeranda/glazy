@@ -44,15 +44,14 @@ class HandlerTest {
 
     @Test
     fun testAuthorizationHeaders() {
-        assertTrue(this.nullHandler.getHeaders().isEmpty())
+        assertEquals(
+                mapOf("Authorization" to "token bar"), this.nonNullHandler.getHeaders()
+        )
     }
 
     @Test
-    fun testAuthorizationHeader() {
-        assertEquals(
-                mapOf("Authorization" to "token bar"),
-                this.nonNullHandler.getHeaders()
-        )
+    fun testNullAuthorizationHeaders() {
+        assertTrue(this.nullHandler.getHeaders().isEmpty())
     }
 
     @Test
