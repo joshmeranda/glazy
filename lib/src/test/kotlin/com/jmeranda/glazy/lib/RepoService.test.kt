@@ -15,7 +15,7 @@ class RepoServiceTest {
     fun testGetRepoBad() {
         var repo: Repo? = null
         try {
-            repo = this.service.getRepo("I_DO_NOT_EXIST", "foo")
+            repo = this.service.getRepo("foo", "I_DO_NOT_EXIST")
         } catch (e: NoSuchRepo) {
             assertNull(repo)
         }

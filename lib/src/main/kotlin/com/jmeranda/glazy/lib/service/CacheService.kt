@@ -65,7 +65,7 @@ class CacheService {
          *
          *  @return Repo if cached data exists, null otherwise.
          */
-        fun repo(name: String, user: String): Repo? {
+        fun repo(user: String, name: String): Repo? {
             val fileName = "$CACHE_PATH/$user/$name.json"
             if (!Files.exists(Paths.get(fileName))) return null
             val target = File(fileName)
@@ -184,7 +184,7 @@ class CacheService {
             /* Replace cached repo data */
             val path = "$CACHE_PATH/$user/$name"
             File(path).delete()
-            write(service.getRepo(name, user))
+            write(service.getRepo(user, name))
         }
 
         /**

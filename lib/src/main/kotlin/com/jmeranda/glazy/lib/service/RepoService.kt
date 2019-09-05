@@ -15,8 +15,8 @@ open class RepoService(
     /**
      * Get a repo with the specified [name], and [user].
      */
-    fun getRepo(name: String, user: String): Repo {
-        val repoRequest = RepoGetRequest(name, user)
+    fun getRepo(user: String, name: String): Repo {
+        val repoRequest = RepoGetRequest(user, name)
         val repoHandler = RepoGetHandler(repoRequest, token)
 
         return repoHandler.handleRequest() ?: throw NoSuchRepo(name)
@@ -55,14 +55,14 @@ open class RepoService(
     /**
      * Edit a remote repository.
      */
-    fun editRepo(owner: String, currentName: String, name: String?,
+    fun editRepo(user: String, currentName: String, name: String?,
                  description: String?, homepage: String?, private: Boolean?,
                  hasIssues: Boolean?, hasProjects: Boolean?, hasWiki: Boolean?,
                  isTemplate: Boolean?, defaultBranch: String?, allowSquashMerge: Boolean?,
                  allowMergeCommit: Boolean?, allowRebaseMerge: Boolean?,
                  archived: Boolean?
     ): Repo {
-        val request = RepoPatchRequest(owner, currentName, name, description,
+        val request = RepoPatchRequest(user, currentName, name, description,
                 homepage, private, hasIssues, hasProjects, hasWiki,
                 isTemplate, defaultBranch, allowSquashMerge, allowMergeCommit,
                 allowRebaseMerge, archived)
@@ -74,8 +74,8 @@ open class RepoService(
     /**
      * Delete a remote repository.
      */
-    fun deleteRepo(owner: String, name: String) {
-        val request = RepoDeleteRequest(name, owner)
+    fun deleteRepo(user: String, name: String) {
+        val request = RepoDeleteRequest(user, name)
         val handler = RepoDeleteHandler(request, this.token)
 
         return handler.handleRequest()

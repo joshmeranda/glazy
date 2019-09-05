@@ -1,7 +1,7 @@
 package com.jmeranda.glazy.lib
 
 /**
- * Describes a label to an issue
+ * Describes a label to an issue.
  */
 data class Label (
         val id: Int,

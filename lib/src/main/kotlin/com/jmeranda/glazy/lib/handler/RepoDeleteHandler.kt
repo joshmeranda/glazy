@@ -27,6 +27,6 @@ class RepoDeleteHandler(
     }
 
     override fun getRequestUrl(): String = Handler.endpoints.repositoryUrl
-            .replace("{owner}", this.request.owner)
+            .replace("{owner}", this.request.user)
             .replace("{repo}", this.request.name)
 }
