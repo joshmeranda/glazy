@@ -28,7 +28,7 @@ class RepoGetHandler(
      */
     override fun handleRequest(): Repo? {
         /* Initialize repo from cached value */
-        var repo: Repo? = CacheService.repo(request.name, request.owner)
+        var repo: Repo? = CacheService.repo(request.user, request.name)
 
         /* TODO Move conditional outside of try block by returning string from cache*/
         try {
@@ -48,6 +48,6 @@ class RepoGetHandler(
     }
 
     override fun getRequestUrl(): String = this.repositoryUrl
-            .replace("{owner}", this.request.owner)
+            .replace("{owner}", this.request.user)
             .replace("{repo}", this.request.name)
 }

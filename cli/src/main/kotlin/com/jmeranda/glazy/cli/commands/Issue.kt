@@ -37,7 +37,7 @@ open class IssueCommand() {
 
         if (name != null && user != null) {
             this.service = IssueService(
-                    RepoService(this.token).getRepo(name, user),
+                    RepoService(this.token).getRepo(user, name),
                     token)
         }
     }

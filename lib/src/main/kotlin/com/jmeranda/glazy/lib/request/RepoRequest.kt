@@ -8,8 +8,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include
  * Request class for GET requests.
  */
 data class RepoGetRequest(
-        val name: String,
-        val owner: String
+        val user: String,
+        val name: String
 )
 
 /**
@@ -78,6 +78,6 @@ data class RepoPatchRequest(
  * Request class for DELETE requests
  */
 data class RepoDeleteRequest(
-        val name: String,
-        val owner: String
+        val user: String,
+        val name: String
 )

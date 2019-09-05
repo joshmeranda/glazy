@@ -92,8 +92,8 @@ open class RepoShow: Runnable, RepoCommand() {
             this.useDefaultRepoInfo()
         }
 
-        val repo = this.service.getRepo(this.name?: return,
-                this.user ?: return)
+        val repo = this.service.getRepo(this.user ?: return,
+                this.name?: return)
         displayRepo(repo)
     }
 }
