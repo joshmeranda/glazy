@@ -2,7 +2,6 @@ package com.jmeranda.glazy.cli.commands
 
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
-import picocli.CommandLine.ParentCommand
 
 import com.jmeranda.glazy.lib.Issue
 import com.jmeranda.glazy.lib.service.IssueService
@@ -11,6 +10,9 @@ import com.jmeranda.glazy.lib.service.RepoService
 import com.jmeranda.glazy.cli.getRepoName
 import com.jmeranda.glazy.lib.service.CacheService
 
+/**
+ * State enum for patching issues.
+ */
 enum class State(val state: String) {
     OPEN("open"),
     CLOSED("closed"),
@@ -18,15 +20,17 @@ enum class State(val state: String) {
 }
 
 /**
- * Display an Issue to the console.
- *
- * @param issue The issue to display.
+ * Display an [issue] to the console.
  */
 fun displayIssue(issue: Issue) {
     println("[${issue.number}] ${issue.title}")
 }
 
-open class IssueCommand() {
+/**
+ * Class to provide a [service] to perform operations and a [token] for
+ * authentication. All issue sub-commands must inherit from this class.
+ */
+open class IssueCommand {
     var service: IssueService? = null
     private var token: String? = null
 
@@ -44,40 +48,35 @@ open class IssueCommand() {
 }
 
 /**
- * Parent command for all issue operations.
+ * Parent for all issue sub-commands.
  */
 @Command(name="issue",
         description=["Perform operations on repository issues"],
         mixinStandardHelpOptions=true)
-class IssueParent() {
-}
+class IssueParent
 
 /**
- * Sub-command to list repository issues.
- *
- * @property parent Reference to the parent command instance.
- * @property number The number of the issue to retrieve, if none is
- *     provided then all repository issues are  retrieved.
+ * List repository issues, will list all issues according to the value
+ * of [number], if null all issues are listed.
  */
 @Command(name="list",
         description=["List repository issues."],
         mixinStandardHelpOptions=true)
-class IssueList(): Runnable, IssueCommand() {
-    @ParentCommand
-    private val parent: IssueParent? = null
-
+class IssueList: Runnable, IssueCommand() {
     @Option(names=["-n", "--number"],
             description=["The number of the desired issue."],
             paramLabel="N")
     private val number: Int? = null
 
     override fun run() {
+        // Retrieve repository issues.
         val issueList: List<Issue?>? = if (this.number == null) {
             this.service?.getAllIssues()
         } else  {
             listOf(this.service?.getIssue(this.number))
         }
 
+        // Display all retrieved issues.
         for (issue: Issue? in issueList ?: listOf()) {
             displayIssue(issue ?: continue)
         }
@@ -85,22 +84,13 @@ class IssueList(): Runnable, IssueCommand() {
 }
 
 /**
- * Sub-command to add an issue to the repository.
- *
- * @property parent Reference to the parent command instance.
- * @property title The title for the new issue.
- * @property body The body for the new issue.
- * @property milestone The milestone number for the new issue.
- * @property labels The labels for the new issue.
- * @property assignees The user logins to be assigned to the new issue.
+ * Create repository issues given a [title], [body], [milestone],
+ * [labels], and [assignees].
  */
 @Command(name="add",
         description=["Create a new issue in the repository."],
         mixinStandardHelpOptions = true)
-class IssueAdd(): Runnable, IssueCommand() {
-    @ParentCommand
-    private val parent: IssueParent? = null
-
+class IssueAdd: Runnable, IssueCommand() {
     @Option(names=["-t", "--title"],
             description=["The title of the new issue."],
             paramLabel="STRING",
@@ -130,33 +120,21 @@ class IssueAdd(): Runnable, IssueCommand() {
     private var assignees: List<String>? = null
 
     override fun run() {
+        // Create the issue.
         val issue = this.service?.createIssue(title, body, milestone, labels, assignees)
         displayIssue(issue ?: return)
     }
 }
 
 /**
- * Sub-command to send a patch to a repository issue.
- *
- * Currently all options are required to avoid overwriting fields meant
- * to be ignored with a null value.
- *
- * @property parent Reference to the parent command instance.
- * @property number The number of the issue to patch.
- * @property title The patched title for the issue.
- * @property body The patched body of the issue.
- * @property state The patched state of the issue.
- * @property milestone The patched milestone of  issue.
- * @property labels The patched labels of the issue.
- * @property assignees The patched list of assignees for the issue.
+ * Replace repository issue number [number] by replacing issue content
+ * with values of [title], [body], [state], [milestone], [labels],
+ * and [assignees].
  */
 @Command(name="patch",
         description=["Send a patch to an issue."],
         mixinStandardHelpOptions=true)
-class IssuePatch(): Runnable, IssueCommand() {
-    @ParentCommand
-    private val parent: IssueParent? = null
-
+class IssuePatch: Runnable, IssueCommand() {
     @Option(names=["-n", "--number"],
             description=["The number of the issue to patch."],
             paramLabel="N")
@@ -194,6 +172,7 @@ class IssuePatch(): Runnable, IssueCommand() {
     private var assignees: List<String>? = null
 
     override fun run() {
+        // Patch the issue.
         val issue = this.service?.editIssue(this.number, this.title, this.body,
                 this.state.toString(), this.milestone, this.labels, this.assignees)
         displayIssue(issue ?: return)

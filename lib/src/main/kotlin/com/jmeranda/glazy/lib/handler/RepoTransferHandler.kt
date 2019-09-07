@@ -6,6 +6,10 @@ import khttp.responses.Response
 import com.jmeranda.glazy.lib.Repo
 import com.jmeranda.glazy.lib.request.RepoTransferRequest
 
+/**
+ * Handle a [request] to transfer ownership of a repository using the
+ * specified [token].
+ */
 class RepoTransferHandler(
         private val request: RepoTransferRequest,
         token: String?
@@ -16,6 +20,7 @@ class RepoTransferHandler(
                 .toMutableMap()
         headers["Accept"] = "application/vnd.github.nightshade-preview+json"
 
+        // Deserialize the request.
         try {
             body = mapper.writeValueAsString(this.request)
         } catch (e: Exception) {
@@ -25,6 +30,7 @@ class RepoTransferHandler(
         val response: Response = post(this.getRequestUrl(),
                 data = body,
                 headers = headers)
+
 
         if (response.statusCode != 202) {
             println(response.jsonObject.get("message"))

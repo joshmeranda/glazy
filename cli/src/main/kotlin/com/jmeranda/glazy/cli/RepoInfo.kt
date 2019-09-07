@@ -6,10 +6,8 @@ import java.nio.file.Path
 import java.nio.file.Paths
 
 /**
- * Get the name of the topmost directory in the current repository.
- *
- * @param dir The starting directory, defaults to '.'
- * @return The name of the bottom-most repository directory.
+ * Return the name of the topmost git repository directory, given the
+ * starting [dir].
  */
 fun getRepoDir(dir: String = "."): String? {
     var cwd: Path = Paths.get(dir).toAbsolutePath().normalize()
@@ -25,15 +23,8 @@ fun getRepoDir(dir: String = "."): String? {
 }
 
 /**
- * Get the name of the current repository name.
- *
- * If the directory passed as parameter is not a git repository, or the
- * repository URL (https or ssh) cannot be found in the config file
- * both values in the returned pair object are null.
- *
- * @param dir The starting directory, defaults to '.'
- * @return A pair object of the repository owner login and repository
- *     name respectively.
+ * Determine the user login and name of the current repository, given
+ * the starting [dir].
  */
 fun getRepoName(dir: String = "."): Pair<String?, String?> {
     val repoRegex = Regex( "[a-zA-Z0-9]+/[a-zA-Z0-9\\-_]+\\.git$", RegexOption.UNIX_LINES)

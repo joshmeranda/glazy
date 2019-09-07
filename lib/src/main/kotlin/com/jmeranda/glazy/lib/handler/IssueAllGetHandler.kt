@@ -8,10 +8,7 @@ import com.jmeranda.glazy.lib.Issue
 import com.jmeranda.glazy.lib.request.IssueGetAllRequest
 
 /**
- * Handle a GET request for every available issue in a repository
- *
- * @property request The request object used by the handler.
- * @property token The personal access token of the user.
+ * Handle a [request] for all repository issues using the specified [token].
  */
 class IssueAllGetHandler(
         private val request: IssueGetAllRequest,
@@ -25,6 +22,7 @@ class IssueAllGetHandler(
 
         handleCode(response.statusCode)
 
+        // Serialize the received json.
         try {
             allIssues = mapper.readValue(response.text)
         } catch (e: Exception) {

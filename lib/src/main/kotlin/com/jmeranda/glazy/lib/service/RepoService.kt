@@ -6,8 +6,7 @@ import com.jmeranda.glazy.lib.handler.*
 import com.jmeranda.glazy.lib.request.*
 
 /**
- * Client service to construct requests and return response data.
- * @property token The personal access token for the user
+ * Class to run operations on remote repositories using [token] for authentication.
  */
 open class RepoService(
         private var token: String?
@@ -27,10 +26,9 @@ open class RepoService(
      * Get all repos owned by a user.
      */
     fun getAllRepos(user: String): List<Repo> {
-        val request = RepoAllGetRequest(user)
-        val handler = RepoAllGetHandler(request, token)
+        val handler = RepoAllGetHandler(token ?: String())
 
-        return handler.handleRequest() ?: throw Exception("No such user ${request.user}")
+        return handler.handleRequest() ?: throw Exception("Could not authenticate using specified token")
     }
 
     /**
@@ -68,11 +66,11 @@ open class RepoService(
                 allowRebaseMerge, archived)
         val handler = RepoPatchHandler(request, this.token)
 
-        return handler.handleRequest()
+        return handler.handleRequest() ?: throw NoSuchRepo(currentName)
     }
 
     /**
-     * Delete a remote repository.
+     * Delete the remote repository called [name] owned by [user].
      */
     fun deleteRepo(user: String, name: String) {
         val request = RepoDeleteRequest(user, name)
@@ -81,6 +79,10 @@ open class RepoService(
         return handler.handleRequest()
     }
 
+    /**
+     * Transfer the ownership of the repository called [name] from
+     * [user] fo [newOwner] with optional [teamIds].
+     */
     fun transferRepo(user: String, name: String, newOwner: String, teamIds: List<Int>?) {
         val request = RepoTransferRequest(user, name, newOwner, teamIds)
         val handler = RepoTransferHandler(request, this.token)

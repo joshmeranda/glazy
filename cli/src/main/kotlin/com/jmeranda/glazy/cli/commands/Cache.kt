@@ -1,15 +1,23 @@
 package com.jmeranda.glazy.cli.commands
 
-import com.jmeranda.glazy.lib.service.CacheService
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
 
+import com.jmeranda.glazy.lib.service.CacheService
+import com.jmeranda.glazy.lib.service.RepoService
+
+/**
+ * Parent for all cache sub-commands.
+ */
 @Command(name = "cache",
         description  = ["Perform operations on the glazy cache."],
         mixinStandardHelpOptions = true)
-class CacheParent {
-}
+class CacheParent
 
+/**
+ * Allow the user to clear the cache, ignores the token file according
+ * to [ignoreToken]. By default the tokens are ignored.
+ */
 @Command(name = "clear",
         description = ["Clear the cache."],
         mixinStandardHelpOptions = true)
@@ -19,10 +27,15 @@ class ClearCache: Runnable {
     private var ignoreToken = true
 
     override fun run() {
+        // Clear the cache.
         CacheService.clear(this.ignoreToken)
     }
 }
 
+/**
+ * Refresh the cache, a [user] login must be specified. If no repository
+ * [name] is passed, then all repositories under the [user] are refreshed.
+ */
 @Command(name = "refresh",
         description = ["Refresh the cache."],
         mixinStandardHelpOptions = true)
@@ -39,16 +52,22 @@ class RefreshCache: Runnable {
     private var name: String? = null
 
     override fun run() {
+        // Retrieve the potentially needed access token.
         val token = CacheService.token(this.user)
 
+        // Refresh the cache.
         if (name == null) {
             CacheService.refresh(token)
         } else {
-            CacheService.refresh(this.user, this.name ?: return, token)
+            CacheService.refresh(this.user, this.name ?: return, RepoService(token))
         }
     }
 }
 
+/**
+ * Add a personal access [token] to the cache associated with the given
+ * [user].
+ */
 @Command(name = "token",
         description = ["Add token to the cache."],
         mixinStandardHelpOptions = true)
@@ -66,6 +85,7 @@ class TokenCache: Runnable {
     private var user = String()
 
     override fun run() {
+        // Write the token to the cache.
         CacheService.write(this.user, this.token)
     }
 }

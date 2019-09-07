@@ -9,10 +9,7 @@ import com.jmeranda.glazy.lib.request.RepoGetRequest
 import com.jmeranda.glazy.lib.service.CacheService
 
 /**
- * Handle request for a repository.
- *
- * @property request The repository request.
- * @property token The personal access token of the user.
+ * Handle a [request] for a repository using the specified [token].
  */
 class RepoGetHandler(
         private val request: RepoGetRequest,
@@ -20,12 +17,6 @@ class RepoGetHandler(
 ): Handler<Repo>(token) {
     private val repositoryUrl: String = endpoints.repositoryUrl
 
-    /**
-     * Send the request and return the response repository.
-     *
-     * @return Repo? The repository object received from the API, null
-     *     if there are json parsing errors.
-     */
     override fun handleRequest(): Repo? {
         /* Initialize repo from cached value */
         var repo: Repo? = CacheService.repo(request.user, request.name)
@@ -35,13 +26,16 @@ class RepoGetHandler(
             if (repo == null) {
                 val response = get(this.getRequestUrl(), headers = this.getAuthorizationHeaders())
                 handleCode(response.statusCode)
+
+                // Serialize     the received json.
                 repo = mapper.readValue(response.text)
             }
         } catch(e:  Exception) {
-            repo = null
             e.printStackTrace()
         }
 
+        // Cache the repository if received from the api.
+        // TODO check if received from api rather than simply null
         if (repo != null) CacheService.write(repo)
 
         return repo

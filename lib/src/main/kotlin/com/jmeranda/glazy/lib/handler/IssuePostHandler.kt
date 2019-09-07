@@ -9,10 +9,7 @@ import com.jmeranda.glazy.lib.Issue
 import com.jmeranda.glazy.lib.request.IssuePostRequest
 
 /**
- * Handle a POST request for a new issue.
- *
- * @property request The request object used by the handler.
- * @property token The personal access token of the user.
+ * Handle a [request] to create a new repository issue using the specified [token].
  */
 class IssuePostHandler(
         private val request: IssuePostRequest,
@@ -23,6 +20,7 @@ class IssuePostHandler(
     override fun handleRequest(): Issue? {
         var body: String? = null
 
+        // Serialize the request instance.
         try {
             body = mapper.writeValueAsString(this.request)
         } catch(e: Exception) {
@@ -35,7 +33,16 @@ class IssuePostHandler(
 
         handleCode(response.statusCode)
 
-        return mapper.readValue(response.text)
+        var issue: Issue? = null
+
+        // Serialize the received json.
+        try {
+            issue = mapper.readValue(response.text)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        return issue
     }
 
     override fun getRequestUrl(): String = this.issueUrl
