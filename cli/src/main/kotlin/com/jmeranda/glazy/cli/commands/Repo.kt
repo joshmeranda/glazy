@@ -22,9 +22,10 @@ fun displayRepo(repo: Repo) {
 }
 
 /**
- * Class to be inherited by all sub-classes to RepoParent
- *
- * Despite not being a 'lateinit' (since it may be null) treat [token] a lateinit.
+ * Class to provide the [token] and [service] issue commands, as well
+ * as [user] and [name] options. Despite not being a 'lateinit' (since
+ * it may be null) treat [token] as a lateinit. Due to this please ensure
+ * that setToken and setService are called before either property is used.
  */
 open class RepoCommand {
     @Option(names = ["-u", "--user"],
@@ -37,12 +38,12 @@ open class RepoCommand {
             paramLabel = "NAME")
     open var name: String? = null
 
-    private val cache: CacheService = CacheService()
     private var token: String? = null
     protected lateinit var service: RepoService
 
     /**
-     * Use the values parsed from the current or parent repository directory, if either is null.
+     * Use the values parsed from the current or parent repository
+     * directory, if either is null.
      */
     fun useDefaultRepoInfo() {
         val (user, name) = getRepoName()
@@ -57,17 +58,23 @@ open class RepoCommand {
         this.setService()
     }
 
+    /**
+     * Set the value of the private token.
+     */
     protected fun setToken() {
         this.token = CacheService.token(this.user ?: return)
     }
 
+    /**
+     * Set the value of the private service.
+     */
     protected fun setService() {
         this.service = RepoService(this.token)
     }
 }
 
 /**
- * Parent command for all repo operations.
+ * Parent for all repo sub-commands.
  */
 @Command(name = "repo",
         description = ["Perform operations on a  repository."],
@@ -75,10 +82,8 @@ open class RepoCommand {
 class RepoParent
 
 /**
- * Sub-command to show information about a repository.
- *
- * If no [user] or [name] arguments are passed as arguments, the values
- * parsed in the glazy command are used to show the current repo.
+ * Sub-command to show information about a repository specified via the
+ * [user] and [name] options.
  */
 @Command(name = "show",
         description = ["Show details about a repository"],
@@ -92,6 +97,7 @@ open class RepoShow: Runnable, RepoCommand() {
             this.useDefaultRepoInfo()
         }
 
+        // Retrieve and display a Repo instance.
         val repo = this.service.getRepo(this.user ?: return,
                 this.name?: return)
         displayRepo(repo)
@@ -124,9 +130,7 @@ class RepoList: RepoShow() {
 }
 
 /**
- * Sub-command used to create a remote repository.
- *
- * TODO document properties
+ * Create a remote repository with content specified by class properties.
  */
 @Command(name = "init",
         description = ["Create a new remote repository"],
@@ -200,6 +204,7 @@ class RepoInit: Runnable, RepoCommand() {
             this.useDefaultRepoInfo()
         }
 
+        // Create the remote repository.
         this.service.createRepo(this.name ?: return, this.description,
                 this.homepage, this.private, this.hasIssues,
                 this.hasProject, this.hasWiki, this.isTemplate,
@@ -210,7 +215,7 @@ class RepoInit: Runnable, RepoCommand() {
 }
 
 /**
- * TODO document
+ * Patch a repository with content specified by class properties.
  */
 @Command(name = "patch",
         description = ["Edit an existing repository"],
@@ -283,6 +288,7 @@ class RepoPatch: Runnable, RepoCommand() {
             this.useDefaultRepoInfo()
         }
 
+        // Patch the remote repository.
         this.service.editRepo(this.user ?: return , this.name ?: return,
                 this.newName, this.description, this.homepage, this.private ?: this.public?.not(),
                 this.hasIssues, this.hasProjects, this.hasWiki, this.isTemplate,
@@ -292,10 +298,10 @@ class RepoPatch: Runnable, RepoCommand() {
 }
 
 /**
- * TODO document
+ * Delete a remote repository owned by [user] and called [name].
  */
 @Command(name = "delete",
-        description = ["Delete a remote repository."],
+        description = ["Delete a remote repository, user must have admin privileges."],
         mixinStandardHelpOptions = true)
 class RepoDelete: Runnable, RepoCommand() {
     override fun run() {
@@ -305,18 +311,20 @@ class RepoDelete: Runnable, RepoCommand() {
             this.useDefaultRepoInfo()
         }
 
+        // Delete the remote repository.
         this.service.deleteRepo(this.user ?: return,
                 this.name ?: return)
     }
 }
 
 /**
- * TODO document
+ * Transfer a remote repository owned by [user] called [name], to a new
+ * user [newOwner] with the optional team ids [teamIds].
  */
 @Command(name = "transfer",
         description = ["Transfer a repository to another user."],
         mixinStandardHelpOptions = true)
-class RepoTransfer(): Runnable, RepoCommand() {
+class RepoTransfer: Runnable, RepoCommand() {
     @Option(names = ["-o", "--new-owner"],
             description = ["The login of the new owner."],
             paramLabel = "LOGIN",
@@ -333,6 +341,7 @@ class RepoTransfer(): Runnable, RepoCommand() {
         this.setToken()
         this.setService()
 
+        // Transfer the remote repository.
         this.service.transferRepo(this.user ?: return,this.name ?: return,
                 this.newOwner!!, this.teamIds)
     }

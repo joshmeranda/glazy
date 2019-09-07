@@ -1,6 +1,12 @@
 package com.jmeranda.glazy.lib
 
 /**
+ * The starting endpoint which must be used to determine all other api
+ * endpoints.
+ */
+const val ROOT_ENDPOINT: String = "https://api.github.com/"
+
+/**
  * Represents the available endpoints for the github api v3.
  */
 data class RootEndpoints (
@@ -36,5 +42,3 @@ data class RootEndpoints (
         val userRepositoriesUrl: String,
         val userSearchUrl: String
 )
-
-const val ROOT_ENDPOINT: String = "https://api.github.com/"

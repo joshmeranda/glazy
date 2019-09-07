@@ -13,13 +13,6 @@ data class RepoGetRequest(
 )
 
 /**
- * Request class for all issues.
- */
-data class RepoAllGetRequest(
-        val user: String
-)
-
-/**
  * Request class for POST create requests.
  */
 @JsonInclude(Include.NON_NULL)

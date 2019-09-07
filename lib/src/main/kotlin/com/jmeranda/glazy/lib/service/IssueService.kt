@@ -16,17 +16,15 @@ import com.jmeranda.glazy.lib.request.IssuePatchRequest
 import com.jmeranda.glazy.lib.request.IssuePostRequest
 
 /**
- * Client service to construct requests and return response data.
+ * Class to run remote issue operations for the specified [repo], using
+ * [token] for authentication.
  */
 class IssueService(
         private val repo: Repo,
         private val token: String?
 ) {
     /**
-     * Get a specific issue by number from the repository.
-     *
-     * @param number The number of the issue.
-     * @return The issue received from the api.
+     * Return the repository issue associated with the value of [number].
      */
     fun getIssue(number: Int): Issue {
         val issueRequest = IssueGetRequest(this.repo, number)
@@ -36,9 +34,7 @@ class IssueService(
     }
 
     /**
-     * Get every issue in the current repository.
-     *
-     *  @return A list of all the issues received from the api.
+     * Return a list of every issue in the current repository.
      */
     fun getAllIssues(): List<Issue> {
         val issueAllRequest = IssueGetAllRequest(this.repo)
@@ -48,16 +44,8 @@ class IssueService(
     }
 
     /**
-     * Create a new issue in the repository.
-     *
-     * @param title The name of the new issue.
-     * @param body The body of the new issue.
-     * @param milestone The number of the milestone this issue is
-     *        associated with.
-     * @param labels The labels for the new issue.
-     * @param assignees The login ids for the users to assign to the
-     *        issue.
-     * @return The issue created by the request.
+     * Create and return a new issue in the repository given the issue's
+     * [title], [body], [milestone], [labels], and [assignees].
      */
     fun createIssue(title: String, body: String?, milestone: Int?,
                     labels: List<String>?, assignees: List<String>?
@@ -69,25 +57,16 @@ class IssueService(
     }
 
     /**
-     * Edit an already existing issue.
-     *
-     * @param number The number of the issue to be edited.
-     * @param title The name of the issue.
-     * @param body The body of the issue.
-     * @param state The state of the issue, defaults to
-     *        open if not state specified.
-     * @param milestone The number of the milestone this issue is
-     *        associated with.
-     * @param labels The labels for the issue.
-     * @param assignees The login ids for the users to assign to the issue.
-     * @return The issue edited by the request.
+     * Edit an issue's [title], [body], [state], [milestone], [labels],
+     * or [assignees] given the issue's [number] and return the edited
+     * issue.
      */
     fun editIssue(number: Int, title: String?, body: String?, state: String?,
                   milestone: Int?, labels: List<String>?, assignees: List<String>?
     ): Issue {
         val issueRequest = IssuePatchRequest(this.repo, number, title,
                 body, state, milestone, labels, assignees)
-        val issueHandler = IssuePatchHandler(issueRequest, number, this.token)
+        val issueHandler = IssuePatchHandler(issueRequest, this.token)
 
         return issueHandler.handleRequest() ?: throw BadRequest()
     }

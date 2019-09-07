@@ -13,10 +13,7 @@ import com.jmeranda.glazy.lib.exception.BadEndpoint
 import com.jmeranda.glazy.lib.service.CacheService
 
 /**
- * Get a all available github endpoints as of v3.
- *
- * @param mapper Used to parse api root endpoint response.
- * @return Endpoint? deserialize json response
+ * Return a RootEndpoints instance serialed using [mapper].
  */
 fun getRootEndpoints(rootUrl: String, mapper: ObjectMapper): RootEndpoints {
     val rootEndpoints: RootEndpoints
@@ -34,37 +31,31 @@ fun getRootEndpoints(rootUrl: String, mapper: ObjectMapper): RootEndpoints {
 }
 
 /**
- * A http request handler.
- *
- * Send http request to github api, and deserialize the Json response.
- *
- * @property token The personal access token of the user.
+ * Abstract class for all handler classes used to parse a request object
+ * and send queries to an api. The initial endpoint urls are stored in
+ * [endpoints], and all response json is serialized using [mapper].
+ * Requests are authenticated using the given [token].
  */
 abstract class Handler<T>(private val token: String?) {
     /**
-     * Get request header for authorizing with personal access token.
-     *
-     * @return A map of the header field to the personal access token.
+     * Return a map containing the header used to authenticate with the
+     * instances token.
      */
     protected fun getAuthorizationHeaders(): Map<String, String> {
         return if (this.token == null) {
             emptyMap()
         } else {
             mapOf("Authorization" to "token ${this.token}")
-            }
+        }
     }
 
     /**
-     * Handle the request.
-     *
-     * @return The object response from the api.
+     * Return the requested date received from the api.
      */
     abstract fun handleRequest(): Any?
 
     /**
-     * Get the endpoint url for the request.
-     *
-     * @return The url to query.
+     * Return the endpoint url for the request.
      */
     abstract fun getRequestUrl(): String
 

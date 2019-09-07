@@ -1,7 +1,7 @@
 package com.jmeranda.glazy.lib
 
 /**
- * Describes the owner of a repo
+ * Describes the owner of a repository.
  */
 data class Owner (
         val login: String,
@@ -25,7 +25,7 @@ data class Owner (
 )
 
 /**
- * Describes a license (MIT, GPL, etc)
+ * Describes a license (MIT, GPL, etc).
  */
 data class License(
         val key: String,

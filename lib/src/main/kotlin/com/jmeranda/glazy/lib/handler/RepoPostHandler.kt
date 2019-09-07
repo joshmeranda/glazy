@@ -9,10 +9,7 @@ import com.jmeranda.glazy.lib.Repo
 import com.jmeranda.glazy.lib.request.RepoPostRequest
 
 /**
- * Handle a POST request for a new repository.
- *
- * @property request The request object used by the handler.
- * @property token The personal access token of the user.
+ * Handle a [request] to create a remote repository using the specified [token].
  */
 class RepoPostHandler(
         private val request: RepoPostRequest,
@@ -23,6 +20,7 @@ class RepoPostHandler(
     override fun handleRequest(): Repo? {
         var body: String? = null
 
+        // Deserialize the request.
         try {
             body = mapper.writeValueAsString(this.request)
         } catch (e: Exception) {
@@ -36,7 +34,16 @@ class RepoPostHandler(
 
         handleCode(response.statusCode)
 
-        return mapper.readValue(response.text)
+        var repo: Repo? = null
+
+        // Serialize received json.
+        try {
+            repo = mapper.readValue(response.text)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        return repo
     }
 
     /**

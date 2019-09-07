@@ -5,11 +5,12 @@ import khttp.get
 import com.fasterxml.jackson.module.kotlin.readValue
 
 import com.jmeranda.glazy.lib.Repo
-import com.jmeranda.glazy.lib.request.RepoAllGetRequest
 
-class RepoAllGetHandler(private val request: RepoAllGetRequest,
-                        token: String?
-): Handler<List<Repo>>(token) {
+/**
+ * Handle a request for all repositories associated with an authenticated
+ * user. The [token] must be valid or an error code will be received.
+ */
+class RepoAllGetHandler(token: String): Handler<List<Repo>>(token) {
     private val repoUrl = endpoints.currentUserRepositoriesUrl
 
     override fun handleRequest(): List<Repo>? {
@@ -18,6 +19,7 @@ class RepoAllGetHandler(private val request: RepoAllGetRequest,
 
         handleCode(response.statusCode)
 
+        // Serialize the received json.
         try {
             allRepos = mapper.readValue(response.text)
         } catch (e: Exception) {

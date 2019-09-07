@@ -7,7 +7,9 @@ import com.jmeranda.glazy.lib.Repo
 import com.jmeranda.glazy.lib.request.RepoDeleteRequest
 
 /**
- * Handle DELETE request a specific repository, admin access is required.
+ * Handle a [request] to delete a repository using the specified [token].
+ * Be aware that if the authenticated user does not have admin permissions
+ * to the repository, it will not be deleted.
  */
 class RepoDeleteHandler(
         private val request: RepoDeleteRequest,
@@ -19,6 +21,7 @@ class RepoDeleteHandler(
 
         handleCode(response.statusCode)
 
+        // TODO will be replaced in later update.
         if (response.statusCode != 204) {
             println(response.jsonObject.get("message"))
         } else {

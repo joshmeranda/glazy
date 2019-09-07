@@ -37,11 +37,16 @@ class CacheService {
                 .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
 
         /**
-         * Check if CACHE_DIR exists and create it if not.
+         * Determine if [cachePath] exists and create it if not, the path
+         * is created as either a file or directory depending on the value
+         * of [isDir].
          */
         private fun ensureCache(cachePath: String, isDir: Boolean = false) {
+            // Determine if the path exists.
             if (!  Files.exists(Paths.get(cachePath))) {
                 val cacheFile = File(cachePath)
+
+                // Create the cachePat.
                 if (isDir) {
                     cacheFile.mkdirs()
                 } else {
@@ -61,9 +66,8 @@ class CacheService {
         }
 
         /**
-         *  Read cached repository data, give the repo [name] and [user].
-         *
-         *  @return Repo if cached data exists, null otherwise.
+         * Return a repo instance given the [user] who owns the repository
+         * called [name].
          */
         fun repo(user: String, name: String): Repo? {
             val fileName = "$CACHE_PATH/$user/$name.json"
@@ -74,13 +78,13 @@ class CacheService {
         }
 
         /**
-         * Get the cached private access token of the [user].
-         *
-         * @return The access token associated with the specified user.
+         * Return the cached personal access token of the [user].
          */
         fun token(user: String): String? {
+            // If the token cache file does not exist sdo nothing.
             if (! Files.exists(Paths.get(TOKEN_CACHE_PATH))) return null
 
+            // Deserialize the cache file's content and search for the user.
             val tokenFile = File(TOKEN_CACHE_PATH)
             val tokenArray: List<UserTokenPair> = mapper.readValue(tokenFile)
             var token: String? = null
@@ -93,9 +97,7 @@ class CacheService {
         }
 
         /**
-         * Read cached root endpoints data.
-         *
-         * @return RootEndpoints if cached data exists, null otherwise
+         * Return the cached api root endpoints.
          */
         fun endpoints(): RootEndpoints? {
             if (! Files.exists(Paths.get(ENDPOINT_CACHE_PATH))) return null
@@ -106,13 +108,12 @@ class CacheService {
         }
 
         /**
-         * Write repository data to .cache/glazy in HOME directory.
-         *
-         * @param data Repo to be cached.
+         * Write [data] to the appropriate repository cache.
          */
         fun write(data: Repo) {
             val repoCachePath = "$CACHE_PATH/${data.fullName}.json"
 
+            // Ensure the owner directory as well as the repository file.
             ensureCache(repoCachePath)
 
             val repoAsJson = mapper.writeValueAsString(data)
@@ -125,9 +126,7 @@ class CacheService {
         }
 
         /**
-         * Write root endpoints dat to .cache/glazy in HOME directory.
-         *
-         * @param data Root endpoints to be cached.
+         * Write the [data] to the ENDPOINT_CACHE_PATH.
          */
         fun write(data: RootEndpoints) {
             ensureCache(ENDPOINT_CACHE_PATH)
@@ -140,7 +139,7 @@ class CacheService {
         }
 
         /**
-         * Write access [token] to .cache/glazy/access_tokens.json given a [user].
+         * Write the [user] and [token] pair to the TOKEN_CACHE_PATH.
          */
         fun write(user: String, token: String) {
             ensureCache(TOKEN_CACHE_PATH)
@@ -158,7 +157,8 @@ class CacheService {
         }
 
         /**
-         * Clear the cache of data ignoring access token depending on [ignoreToken].
+         * Clear the cache of data ignoring TOKEN_CACHE_PATH depending
+         * on [ignoreToken].
          */
         fun clear(ignoreToken: Boolean) {
             if (! Files.exists(Paths.get(CACHE_PATH))) return
@@ -176,9 +176,10 @@ class CacheService {
         }
 
         /**
-         * Refresh the cache from the thing in the thing that does the thing.
+         * Refresh the cache of the repository owned by [user] called
+         * [name], using the provided [service].
          */
-        fun refresh(user: String, name: String, token: String?, service: RepoService = RepoService(token)) {
+        fun refresh(user: String, name: String, service: RepoService) {
             if (! Files.exists(Paths.get("$CACHE_PATH/user/name")))  return
 
             /* Replace cached repo data */
@@ -202,7 +203,7 @@ class CacheService {
                 /* If file is a directory, refresh cached repository data */
                 if (file.isDirectory) {
                     for (cachedRepo in file.listFiles() ?: arrayOf()) {
-                        refresh(file.name, cacheDir.name, token, service)
+                        refresh(file.name, cacheDir.name, service)
                     }
                 }
 
