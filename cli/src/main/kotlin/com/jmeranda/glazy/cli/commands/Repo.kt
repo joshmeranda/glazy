@@ -9,16 +9,42 @@ import com.jmeranda.glazy.lib.Repo
 import com.jmeranda.glazy.lib.exception.NotInRepo
 import com.jmeranda.glazy.lib.service.CacheService
 import com.jmeranda.glazy.lib.service.RepoService
+import kotlin.reflect.KProperty
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.memberProperties
 
 /**
- * Display information about the given [repo].
+ * Display information about the given [repo], with optional additional [fields].
  */
-fun displayRepo(repo: Repo) {
-    println("name: ${repo.name}")
-    println("owner: ${repo.owner.login}")
-    println("private: ${repo.private}")
-    println("created: ${repo.createdAt}")
-    println("clone url: ${repo.cloneUrl}")
+fun displayRepo(repo: Repo, fields: List<String>?) {
+    var details = "full name: ${repo.fullName}\n" +
+            "private: ${repo.private}\n" +
+            "created: ${repo.createdAt}\n" +
+            "clone url: ${repo.cloneUrl}"
+
+    val badFields = mutableListOf<String>()
+
+    // Concatenate additional fields to the details string.
+    for (field in fields ?: listOf()) {
+        // If property exists in class add to details, if not add to badFields.
+        try {
+            // Get repo property via input fields.
+            val property = repo::class
+                    .memberProperties
+                    .first { it.name == field }
+                    as? KProperty1<Repo, Any>
+            // Print the field name and value to the console.
+            if (property != null) details += "\n$field: ${property.get(repo)}"
+        } catch (e: Exception) {
+            badFields.add(field)
+        }
+    }
+
+    // Notify user of unrecognized fields
+    if (badFields.size > 0) details += "\n\nglazy: Could not recognize field(s) '${badFields.joinToString()}'.\n" +
+            "Please see 'https://developer.github.com/v3/repos/#list-your-repositories' for available fields"
+
+    println(details)
 }
 
 /**
@@ -89,6 +115,12 @@ class RepoParent
         description = ["Show details about a repository"],
         mixinStandardHelpOptions = true)
 open class RepoShow: Runnable, RepoCommand() {
+    @Option(names = ["-f", "--fields"],
+            description = ["The fields to also show"],
+            split = ",",
+            paramLabel = "FIELD")
+    private var fields: List<String>? = null
+
     override fun run() {
         this.setToken()
         this.setService()
@@ -100,7 +132,7 @@ open class RepoShow: Runnable, RepoCommand() {
         // Retrieve and display a Repo instance.
         val repo = this.service.getRepo(this.user ?: return,
                 this.name?: return)
-        displayRepo(repo)
+        displayRepo(repo, fields)
     }
 }
 
