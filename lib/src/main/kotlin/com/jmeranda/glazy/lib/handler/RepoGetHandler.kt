@@ -25,7 +25,8 @@ class RepoGetHandler(
         try {
             if (repo == null) {
                 val response = get(this.getRequestUrl(), headers = this.getAuthorizationHeaders())
-                handleCode(response.statusCode)
+
+                if (! handleCode(response)) return null
 
                 // Serialize     the received json.
                 repo = mapper.readValue(response.text)

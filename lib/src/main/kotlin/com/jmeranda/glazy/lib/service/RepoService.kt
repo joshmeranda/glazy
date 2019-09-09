@@ -25,7 +25,7 @@ open class RepoService(
     /**
      * Get all repos owned by a user.
      */
-    fun getAllRepos(user: String): List<Repo> {
+    fun getAllRepos(): List<Repo> {
         val handler = RepoAllGetHandler(token ?: String())
 
         return handler.handleRequest() ?: throw Exception("Could not authenticate using specified token")

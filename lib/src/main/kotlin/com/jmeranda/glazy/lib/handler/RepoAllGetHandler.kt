@@ -17,7 +17,7 @@ class RepoAllGetHandler(token: String): Handler<List<Repo>>(token) {
         val response =  get(this.getRequestUrl(), headers = this.getAuthorizationHeaders())
         var allRepos: List<Repo>? = null
 
-        handleCode(response.statusCode)
+        if (! handleCode(response)) return null
 
         // Serialize the received json.
         try {

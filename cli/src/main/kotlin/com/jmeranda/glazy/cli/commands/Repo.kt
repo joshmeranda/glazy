@@ -121,7 +121,7 @@ class RepoList: RepoShow() {
             this.useDefaultRepoInfo()
         }
 
-        val repoList = this.service.getAllRepos(this.user ?: return)
+        val repoList = this.service.getAllRepos()
 
         for (repo: Repo? in repoList) {
             println(repo?.fullName)

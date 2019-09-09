@@ -32,7 +32,7 @@ class RepoPostHandler(
                 headers = this.getAuthorizationHeaders()
         )
 
-        handleCode(response.statusCode)
+        if (! handleCode(response)) return null
 
         var repo: Repo? = null
 

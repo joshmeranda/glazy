@@ -31,7 +31,7 @@ class IssuePostHandler(
                 data = body,
                 headers = this.getAuthorizationHeaders())
 
-        handleCode(response.statusCode)
+        if (! handleCode(response)) return null
 
         var issue: Issue? = null
 
