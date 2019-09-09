@@ -11,6 +11,7 @@ import com.jmeranda.glazy.lib.ROOT_ENDPOINT
 import com.jmeranda.glazy.lib.RootEndpoints
 import com.jmeranda.glazy.lib.exception.BadEndpoint
 import com.jmeranda.glazy.lib.service.CacheService
+import khttp.responses.Response
 
 /**
  * Return a RootEndpoints instance serialed using [mapper].
@@ -67,15 +68,15 @@ abstract class Handler<T>(private val token: String?) {
                 ?: getRootEndpoints(ROOT_ENDPOINT, mapper)
 
         /**
-         * Notify user with message depending on the value of [statusCode].
+         * Handle the http [response] and return true if error code received.
          */
-        fun handleCode(statusCode: Int) {
-            when (statusCode) {
-                404 -> println("Resource could not be found or accessed.\n" +
-                        "Please ensure that you have proper permissions, and that it exists")
-                403 -> println("Resource could not be found or accessed.\n" +
-                        "Please ensure that you have proper permissions, and that it exists")
+        fun handleCode(response: Response): Boolean {
+            if (response.statusCode >= 400) {
+                println(response.jsonObject["message"])
+                return false
             }
+
+            return true
         }
     }
 }

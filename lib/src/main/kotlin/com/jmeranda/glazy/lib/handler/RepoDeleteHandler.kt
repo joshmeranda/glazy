@@ -19,14 +19,7 @@ class RepoDeleteHandler(
         val response: Response = delete(this.getRequestUrl(),
                 headers = this.getAuthorizationHeaders())
 
-        handleCode(response.statusCode)
-
-        // TODO will be replaced in later update.
-        if (response.statusCode != 204) {
-            println(response.jsonObject.get("message"))
-        } else {
-            println("deleted")
-        }
+        if (! handleCode(response)) return
     }
 
     override fun getRequestUrl(): String = Handler.endpoints.repositoryUrl

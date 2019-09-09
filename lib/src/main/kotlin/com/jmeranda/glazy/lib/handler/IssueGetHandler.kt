@@ -20,7 +20,7 @@ class IssueGetHandler(
         val response = get(this.getRequestUrl(), headers=this.getAuthorizationHeaders())
         var issue: Issue? = null
 
-        handleCode(response.statusCode)
+        if (! handleCode(response)) return null
 
         // Serialize received json.
         try {
