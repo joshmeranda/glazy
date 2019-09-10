@@ -12,6 +12,7 @@ import com.jmeranda.glazy.lib.service.RepoService
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
+import kotlin.reflect.jvm.isAccessible
 
 /**
  * Display information about the given [repo], with optional additional [fields].
@@ -293,8 +294,7 @@ class RepoPatch: Runnable, RepoCommand() {
     var isTemplate: Boolean? = null
 
     @Option(names = ["-b", "--default-branch"],
-            description = ["The new default branch for the repo."],
-            paramLabel = "BRANCH")
+            description = ["The new default branch for the repo."])
     var defaultBranch: String? = null
 
     @Option(names = ["--allow-squash"],
@@ -321,11 +321,27 @@ class RepoPatch: Runnable, RepoCommand() {
         }
 
         // Patch the remote repository.
-        this.service.editRepo(this.user ?: return , this.name ?: return,
+        val repo = this.service.editRepo(this.user ?: return , this.name ?: return,
                 this.newName, this.description, this.homepage, this.private ?: this.public?.not(),
                 this.hasIssues, this.hasProjects, this.hasWiki, this.isTemplate,
                 this.defaultBranch, this.allowSquashMerge, this.allowMergeCommit,
                 this.allowRebaseMerge, this.archived)
+
+
+        val patchedFields = mutableListOf<String>()
+        val ignoreProps = arrayOf("service", "user", "name")
+
+        // Determine which fields have been patched.
+        for (prop in RepoPatch::class.memberProperties) {
+            if (prop.name in ignoreProps) continue
+
+            if ((prop as KProperty1<RepoPatch, Any>).get(this) != null) {
+                patchedFields.add(prop.name)
+            }
+        }
+
+        // Display the repository, specifying the patched values
+        displayRepo(repo, patchedFields)
     }
 }
 
