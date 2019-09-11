@@ -2,6 +2,8 @@ package com.jmeranda.glazy.cli
 
 import picocli.CommandLine
 import picocli.CommandLine.Command
+import picocli.CommandLine.Spec
+import picocli.CommandLine.Model.CommandSpec
 
 import com.jmeranda.glazy.cli.commands.*
 
@@ -11,7 +13,14 @@ import com.jmeranda.glazy.cli.commands.*
 @Command(name = "glazy",
         description = ["A command line interface to the github api."],
         mixinStandardHelpOptions = true)
-class Glazy
+class Glazy: Runnable {
+    @Spec lateinit var spec: CommandSpec
+
+    override fun run() {
+        throw CommandLine.ParameterException(this.spec.commandLine(),
+                "Missing required subcommand")
+    }
+}
 
 fun main(args: Array<String>) {
     CommandLine(Glazy())
