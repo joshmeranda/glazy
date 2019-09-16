@@ -4,7 +4,7 @@ import khttp.get
 
 import com.fasterxml.jackson.module.kotlin.readValue
 
-import com.jmeranda.glazy.lib.Repo
+import com.jmeranda.glazy.lib.objects.Repo
 
 /**
  * Handle a request for all repositories associated with an authenticated

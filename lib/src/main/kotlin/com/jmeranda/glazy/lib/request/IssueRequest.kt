@@ -3,7 +3,7 @@ package com.jmeranda.glazy.lib.request
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonInclude.Include
-import com.jmeranda.glazy.lib.Repo
+import com.jmeranda.glazy.lib.objects.Repo
 
 /**
  * Request class for GET requests for a specific issue.
