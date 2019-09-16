@@ -5,7 +5,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import khttp.post
 import khttp.responses.Response
 
-import com.jmeranda.glazy.lib.Repo
+import com.jmeranda.glazy.lib.objects.Repo
 import com.jmeranda.glazy.lib.request.RepoPostRequest
 
 /**

@@ -3,7 +3,7 @@ package com.jmeranda.glazy.cli.commands
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
 
-import com.jmeranda.glazy.lib.Issue
+import com.jmeranda.glazy.lib.objects.Issue
 import com.jmeranda.glazy.lib.service.IssueService
 import com.jmeranda.glazy.lib.service.RepoService
 

@@ -5,14 +5,12 @@ import com.jmeranda.glazy.cli.getRepoName
 import picocli.CommandLine.Option
 import picocli.CommandLine.Command
 
-import com.jmeranda.glazy.lib.Repo
+import com.jmeranda.glazy.lib.objects.Repo
 import com.jmeranda.glazy.lib.exception.NotInRepo
 import com.jmeranda.glazy.lib.service.CacheService
 import com.jmeranda.glazy.lib.service.RepoService
-import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
-import kotlin.reflect.jvm.isAccessible
 
 /**
  * Display information about the given [repo], with optional additional [fields].
