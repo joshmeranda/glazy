@@ -1,7 +1,10 @@
 package com.jmeranda.glazy.cli.commands
 
+import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
+import picocli.CommandLine.Spec
+import picocli.CommandLine.Model.CommandSpec
 
 import com.jmeranda.glazy.lib.service.CacheService
 import com.jmeranda.glazy.lib.service.RepoService
@@ -12,7 +15,14 @@ import com.jmeranda.glazy.lib.service.RepoService
 @Command(name = "cache",
         description  = ["Perform operations on the glazy cache."],
         mixinStandardHelpOptions = true)
-class CacheParent
+class CacheParent: Runnable {
+    @Spec lateinit var spec: CommandSpec
+
+    override fun run() {
+        throw CommandLine.ParameterException(this.spec.commandLine(),
+                "Missing required subcommand")
+    }
+}
 
 /**
  * Allow the user to clear the cache, ignores the token file according
