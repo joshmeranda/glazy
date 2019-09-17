@@ -37,7 +37,7 @@ open class IssueCommand {
     init {
         val (user, name) = getRepoName()
 
-        if (user != null) { token = CacheService.token(user) }
+        if (user != null) token = CacheService.token(user)
 
         if (name != null && user != null) {
             this.service = IssueService(
