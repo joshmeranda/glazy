@@ -8,7 +8,7 @@ data class RefWrapper (val href: String)
 /**
  * Describes classes with pull request links.
  */
-data class PullLinks (
+data class LinkRelations (
         val self: RefWrapper,
         val hmtl: RefWrapper,
         val issue: RefWrapper,
@@ -55,7 +55,7 @@ data class PullRequest (
         val requestedTeams: List<Team>? = null,
         val head: Head,
         val base: Head,
-        val _links: PullLinks,
+        val _links: LinkRelations,
         val authorAssociation: String,
         val draft: Boolean,
         val merged: Boolean,

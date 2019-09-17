@@ -45,5 +45,8 @@ fun main(args: Array<String>) {
                     .addSubcommand(RefreshCache())
                     .addSubcommand(TokenCache())
                     .setToggleBooleanFlags(true))
+            // Pull Request sub-command
+            .addSubcommand(CommandLine(PullParent())
+                    .addSubcommand(PullList()))
             .execute(*args)
 }

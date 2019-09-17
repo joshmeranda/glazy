@@ -8,9 +8,7 @@ import com.jmeranda.glazy.lib.request.*
 /**
  * Class to run operations on remote repositories using [token] for authentication.
  */
-open class RepoService(
-        private var token: String?
-){
+class RepoService(private var token: String?){
     /**
      * Get a repo with the specified [name], and [user].
      */

@@ -31,12 +31,7 @@ class RepoTransferHandler(
                 data = body,
                 headers = headers)
 
-
-        if (response.statusCode != 202) {
-            println(response.jsonObject.get("message"))
-        } else {
-            println("transferred")
-        }
+        handleCode(response)
     }
     
     override fun getRequestUrl(): String = Handler.endpoints.repositoryUrl
