@@ -47,6 +47,7 @@ fun main(args: Array<String>) {
                     .setToggleBooleanFlags(true))
             // Pull Request sub-command
             .addSubcommand(CommandLine(PullParent())
-                    .addSubcommand(PullList()))
+                    .addSubcommand(PullList())
+                    .addSubcommand(PullInit()))
             .execute(*args)
 }

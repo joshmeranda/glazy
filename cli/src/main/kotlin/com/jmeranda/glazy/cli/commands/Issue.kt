@@ -56,8 +56,8 @@ open class IssueCommand {
 class IssueParent
 
 /**
- * List repository issues, will list all issues according to the value
- * of [number], if null all issues are listed.
+ * List repository issues, will list issues according to the value of
+ * [number], if null all issues are listed.
  */
 @Command(name="list",
         description=["List repository issues."],
