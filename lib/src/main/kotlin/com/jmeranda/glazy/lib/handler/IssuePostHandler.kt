@@ -20,7 +20,7 @@ class IssuePostHandler(
     override fun handleRequest(): Issue? {
         var body: String? = null
 
-        // Serialize the request instance.
+        // Deserialize the request instance.
         try {
             body = mapper.writeValueAsString(this.request)
         } catch(e: Exception) {
