@@ -7,6 +7,8 @@ import kotlin.test.assertNotNull
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import com.jmeranda.glazy.lib.objects.ROOT_ENDPOINT
+import com.jmeranda.glazy.lib.objects.RootEndpoints
 
 import com.jmeranda.glazy.lib.exception.BadEndpoint
 import com.jmeranda.glazy.lib.handler.getRootEndpoints

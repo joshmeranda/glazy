@@ -1,7 +1,7 @@
 package com.jmeranda.glazy.lib.service
 
-import com.jmeranda.glazy.lib.Issue
-import com.jmeranda.glazy.lib.Repo
+import com.jmeranda.glazy.lib.objects.Issue
+import com.jmeranda.glazy.lib.objects.Repo
 
 import com.jmeranda.glazy.lib.exception.BadRequest
 import com.jmeranda.glazy.lib.exception.NoSuchIssue

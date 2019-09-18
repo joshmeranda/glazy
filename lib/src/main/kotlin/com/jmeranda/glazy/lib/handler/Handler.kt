@@ -7,8 +7,8 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 
-import com.jmeranda.glazy.lib.ROOT_ENDPOINT
-import com.jmeranda.glazy.lib.RootEndpoints
+import com.jmeranda.glazy.lib.objects.ROOT_ENDPOINT
+import com.jmeranda.glazy.lib.objects.RootEndpoints
 import com.jmeranda.glazy.lib.exception.BadEndpoint
 import com.jmeranda.glazy.lib.service.CacheService
 import khttp.responses.Response

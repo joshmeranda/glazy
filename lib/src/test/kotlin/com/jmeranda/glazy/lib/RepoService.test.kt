@@ -1,5 +1,6 @@
 package com.jmeranda.glazy.lib
 
+import com.jmeranda.glazy.lib.objects.Repo
 import org.junit.Test
 
 import kotlin.test.assertNull

@@ -11,8 +11,8 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 
-import com.jmeranda.glazy.lib.Repo
-import com.jmeranda.glazy.lib.RootEndpoints
+import com.jmeranda.glazy.lib.objects.Repo
+import com.jmeranda.glazy.lib.objects.RootEndpoints
 
 /**
  * Static class used for cache operations.

@@ -1,4 +1,4 @@
-package com.jmeranda.glazy.lib
+package com.jmeranda.glazy.lib.objects
 
 /**
  * The starting endpoint which must be used to determine all other api

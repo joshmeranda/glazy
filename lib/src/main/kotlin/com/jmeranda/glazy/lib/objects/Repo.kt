@@ -1,48 +1,4 @@
-package com.jmeranda.glazy.lib
-
-/**
- * Describes the owner of a repository.
- */
-data class Owner (
-        val login: String,
-        val id: Int,
-        val nodeId: String,
-        val avatarUrl: String,
-        val gravatarId: String? = null,
-        val url: String,
-        val htmlUrl: String,
-        val followersUrl: String,
-        val followingUrl: String,
-        val gistsUrl: String,
-        val starredUrl: String,
-        val subscriptionsUrl: String,
-        val organizationsUrl: String,
-        val reposUrl: String,
-        val eventsUrl: String,
-        val receivedEventsUrl: String,
-        val type: String,
-        val siteAdmin: Boolean
-)
-
-/**
- * Describes a license (MIT, GPL, etc).
- */
-data class License(
-        val key: String,
-        val name: String,
-        val spdxId: String? = null,
-        val url: String? = null,
-        val nodeId: String? = null
-)
-
-/**
- * Describes the permissions on a repository.
- */
-data class Permissions(
-        val admin: Boolean,
-        val push: Boolean,
-        val pull: Boolean
-)
+package com.jmeranda.glazy.lib.objects
 
 /**
  * Describes a github repository.
