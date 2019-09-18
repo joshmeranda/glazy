@@ -5,7 +5,7 @@ import khttp.responses.Response
 
 import com.fasterxml.jackson.module.kotlin.readValue
 
-import com.jmeranda.glazy.lib.Issue
+import com.jmeranda.glazy.lib.objects.Issue
 import com.jmeranda.glazy.lib.request.IssuePatchRequest
 
 /**

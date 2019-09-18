@@ -3,7 +3,7 @@ package com.jmeranda.glazy.lib.handler
 import khttp.delete
 import khttp.responses.Response
 
-import com.jmeranda.glazy.lib.Repo
+import com.jmeranda.glazy.lib.objects.Repo
 import com.jmeranda.glazy.lib.request.RepoDeleteRequest
 
 /**
