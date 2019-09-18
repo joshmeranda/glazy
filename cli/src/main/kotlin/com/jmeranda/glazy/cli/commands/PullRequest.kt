@@ -1,7 +1,10 @@
 package com.jmeranda.glazy.cli.commands
 
+import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
+import picocli.CommandLine.Spec
+import picocli.CommandLine.Model.CommandSpec
 
 import com.jmeranda.glazy.lib.service.PullRequestService
 import com.jmeranda.glazy.cli.getRepoName
@@ -9,7 +12,7 @@ import com.jmeranda.glazy.lib.objects.PullRequest
 import com.jmeranda.glazy.lib.service.CacheService
 
 fun displayPullRequest(pull: PullRequest) {
-    println(pull.base)
+    println("[${pull.number}] ${pull.title}")
 }
 
 open class PullCommand {
@@ -30,7 +33,14 @@ open class PullCommand {
 @Command(name = "pull",
         description = ["Perform operations on pull requests"],
         mixinStandardHelpOptions = true)
-class PullParent
+class PullParent: Runnable {
+    @Spec lateinit var spec: CommandSpec
+
+    override fun run() {
+        throw CommandLine.ParameterException(this.spec.commandLine(),
+                "Missing required subcommand")
+    }
+}
 
 @Command(name = "list",
         description = ["List pull requests"],
