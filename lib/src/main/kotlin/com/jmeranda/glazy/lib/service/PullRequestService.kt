@@ -28,4 +28,18 @@ class PullRequestService(
 
         return handler.handleRequest() ?: throw Exception("Could not authenticate using specified token")
     }
+
+    /**
+     * Create a pull request with the specified [title] or [issue], [head],
+     * [base], [body], [canModify], and [draft].
+     */
+    fun createPullRequest(title:String?, issue: Int?, head: String,
+                          base: String, body: String?, canModify: Boolean?,
+                          draft: Boolean?
+    ): PullRequest {
+        val request = PullPostRequest(user, name, title, issue, head, base, body, canModify, draft)
+        val handler = PullRequestPostHandler(request, this.token)
+
+        return handler.handleRequest() ?: throw Exception("An error occurred")
+    }
 }

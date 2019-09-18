@@ -1,5 +1,8 @@
 package com.jmeranda.glazy.lib.request
 
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonInclude.Include
+
 /**
  * Request class for GET requests for all repository pull requests.
  */
@@ -20,6 +23,7 @@ data class PullGetRequest (
 /**
  * Request class for POST requests to create a pull request.
  */
+@JsonInclude(Include.NON_NULL)
 data class PullPostRequest (
         val owner: String,
         val name: String,

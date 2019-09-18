@@ -35,7 +35,7 @@ class PullRequestPostHandler (
 
         var pullRequest: PullRequest? = null
 
-        // // Serialize the received json.
+        // Serialize the received json.
         try {
             pullRequest = mapper.readValue(response.text)
         } catch (e: Exception) {

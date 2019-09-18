@@ -82,7 +82,7 @@ class PullList: Runnable, PullCommand() {
         description = ["Create a merge request."],
         mixinStandardHelpOptions = true)
 class PullInit: Runnable, PullCommand() {
-    @ArgGroup(exclusive = true)
+    @ArgGroup(exclusive = true, multiplicity = "1")
     private lateinit var exclusive: PullGroup
 
     @Option(names = ["--head"],
@@ -113,7 +113,9 @@ class PullInit: Runnable, PullCommand() {
     private var draft: Boolean? = null
 
     override fun run() {
-        
+        val pullRequest = this.service?.createPullRequest(this.exclusive.title, this.exclusive.issue,
+                this.head, this.base, this.body, this.canModify, this.draft)
+        displayPullRequest(pullRequest ?: return)
     }
 
     companion object {
@@ -126,13 +128,13 @@ class PullInit: Runnable, PullCommand() {
                     description = ["The title for the pull request."],
                     paramLabel = "TITLE",
                     required = true)
-            private lateinit var title: String
+            var title: String? = null
 
             @Option(names = ["-i", "--issue"],
                     description = ["The issue number to create the pull request from."],
                     paramLabel = "N",
                     required = true)
-            private var issue: Int? = null
+            var issue: Int? = null
         }
     }
 }
