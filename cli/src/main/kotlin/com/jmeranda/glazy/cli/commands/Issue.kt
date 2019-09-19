@@ -1,7 +1,10 @@
 package com.jmeranda.glazy.cli.commands
 
+import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
+import picocli.CommandLine.Spec
+import picocli.CommandLine.Model.CommandSpec
 
 import com.jmeranda.glazy.lib.objects.Issue
 import com.jmeranda.glazy.lib.service.IssueService
@@ -53,7 +56,14 @@ open class IssueCommand {
 @Command(name="issue",
         description=["Perform operations on repository issues"],
         mixinStandardHelpOptions=true)
-class IssueParent
+class IssueParent: Runnable {
+    @Spec lateinit var spec: CommandSpec
+
+    override fun run() {
+        throw CommandLine.ParameterException(this.spec.commandLine(),
+                "Missing required subcommand")
+    }
+}
 
 /**
  * List repository issues, will list issues according to the value of
