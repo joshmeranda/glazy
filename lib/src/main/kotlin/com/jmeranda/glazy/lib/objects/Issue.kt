@@ -1,5 +1,12 @@
 package com.jmeranda.glazy.lib.objects
 
+data class IssuePullRequest (
+        val url: String,
+        val html_Url: String,
+        val diffUrl: String,
+        val patchUrl: String
+)
+
 /**
  * Describes a repository issue.
  */
@@ -27,5 +34,6 @@ data class Issue (
         val closedAt: String?,
         val authorAssociation: String,
         val body: String? = null,
-        val closedBy: Owner? = null
+        val closedBy: Owner? = null,
+        val pullRequest: IssuePullRequest? = null
 )

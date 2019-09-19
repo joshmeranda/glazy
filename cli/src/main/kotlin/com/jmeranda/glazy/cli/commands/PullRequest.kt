@@ -1,5 +1,8 @@
 package com.jmeranda.glazy.cli.commands
 
+import kotlin.reflect.KProperty1
+import kotlin.reflect.full.memberProperties
+
 import picocli.CommandLine
 import picocli.CommandLine.ArgGroup
 import picocli.CommandLine.Command
@@ -13,10 +16,39 @@ import com.jmeranda.glazy.lib.objects.PullRequest
 import com.jmeranda.glazy.lib.service.CacheService
 
 /**
- * Display a [pull] to the console.
+ * Display information about the given [pullRequest],  with optional additional
+ * [fields].
  */
-fun displayPullRequest(pull: PullRequest) {
-    println("[${pull.number}] ${pull.title}")
+fun displayPullRequest(pullRequest: PullRequest, fields: List<String>?) {
+    var details = "[${pullRequest.number}] ${pullRequest.title}\n" +
+            "draft : ${pullRequest.draft}\n" +
+            "head: ${pullRequest.head}\n" +
+            "base: ${pullRequest.head}\n" +
+            "created: ${pullRequest.createdAt}"
+
+    val badFields = mutableListOf<String>()
+
+    // Concatenate additional fields to the details string.
+    for (field in fields ?: listOf()) {
+        // If property exists in class add to details, if not add to badFields.
+        try {
+            // Get repo property via input fields.
+            val property = pullRequest::class
+                    .memberProperties
+                    .first { it.name == field }
+                    as? KProperty1<PullRequest, Any>
+            // Print the field name and value to the console.
+            if (property != null) details += "\n$field: ${property.get(pullRequest)}"
+        } catch (e: Exception) {
+            badFields.add(field)
+        }
+    }
+
+    // Notify user of unrecognized fields
+    if (badFields.size > 0) details += "\n\nglazy: Could not recognize field(s) '${badFields.joinToString()}'.\n" +
+            "Please see 'https://developer.github.com/v3/repos/#list-your-repositories' for available fields"
+
+    println(details)
 }
 
 /**
@@ -64,6 +96,12 @@ class PullList: Runnable, PullCommand() {
             paramLabel="N")
     private val number: Int? = null
 
+    @Option(names = ["-f", "--fields"],
+            description = ["The fields to also show"],
+            split = ",",
+            paramLabel = "FIELD")
+    private var fields: List<String>? = null
+
     override fun run() {
         // Retrieve pull request list
         val pullList: List<PullRequest?>? = if (this.number == null) {
@@ -73,7 +111,7 @@ class PullList: Runnable, PullCommand() {
         }
 
         for (pull: PullRequest? in pullList ?: listOf()) {
-            displayPullRequest(pull ?: continue)
+            displayPullRequest(pull ?: continue, fields)
         }
     }
 }
@@ -115,7 +153,7 @@ class PullInit: Runnable, PullCommand() {
     override fun run() {
         val pullRequest = this.service?.createPullRequest(this.exclusive.title, this.exclusive.issue,
                 this.head, this.base, this.body, this.canModify, this.draft)
-        displayPullRequest(pullRequest ?: return)
+        displayPullRequest(pullRequest ?: return, listOf())
     }
 
     companion object {
@@ -139,7 +177,7 @@ class PullInit: Runnable, PullCommand() {
     }
 }
 
-@Command(name = "update",
+@Command(name = "patch",
         description = ["Send a patch to a pull request."],
         mixinStandardHelpOptions = true)
 class PullUpdate: Runnable, PullCommand() {
@@ -174,8 +212,8 @@ class PullUpdate: Runnable, PullCommand() {
     private var canModify: Boolean? = null
 
     override fun run() {
-        val pullRequest = this.service?.updatePullRequest(this.number ?: return, this.title, this.body,
+        val pullRequest = this.service?.patchPullRequest(this.number ?: return, this.title, this.body,
                 this.state, this.base, this.canModify)
-        displayPullRequest(pullRequest ?: return)
+        displayPullRequest(pullRequest ?: return, listOf())
     }
 }

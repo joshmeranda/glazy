@@ -41,7 +41,7 @@ data class PullPostRequest (
  * Request class or PUT requests to edit a pull request.
  */
 @JsonInclude(Include.NON_NULL)
-data class PullPutRequest (
+data class PullPatchRequest (
         @JsonIgnore val owner: String,
         @JsonIgnore val name: String,
         @JsonIgnore val number: Int,

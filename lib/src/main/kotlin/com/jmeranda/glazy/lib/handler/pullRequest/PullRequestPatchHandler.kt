@@ -3,12 +3,12 @@ package com.jmeranda.glazy.lib.handler.pullRequest
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.jmeranda.glazy.lib.handler.Handler
 import com.jmeranda.glazy.lib.objects.PullRequest
-import com.jmeranda.glazy.lib.request.PullPutRequest
+import com.jmeranda.glazy.lib.request.PullPatchRequest
 import khttp.patch
 import khttp.responses.Response
 
-class PullRequestPutHandler(
-        private val  request: PullPutRequest,
+class PullRequestPatchHandler(
+        private val  request: PullPatchRequest,
         val token: String?
 ): Handler<PullRequest>(token){
     override fun handleRequest(): PullRequest? {
