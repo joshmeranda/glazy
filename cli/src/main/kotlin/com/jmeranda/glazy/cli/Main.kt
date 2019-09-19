@@ -48,6 +48,7 @@ fun main(args: Array<String>) {
             // Pull Request sub-command
             .addSubcommand(CommandLine(PullParent())
                     .addSubcommand(PullList())
-                    .addSubcommand(PullInit()))
+                    .addSubcommand(PullInit())
+                    .addSubcommand(PullUpdate()))
             .execute(*args)
 }
