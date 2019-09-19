@@ -1,5 +1,6 @@
-package com.jmeranda.glazy.lib.handler
+package com.jmeranda.glazy.lib.handler.repo
 
+import com.jmeranda.glazy.lib.handler.Handler
 import khttp.post
 import khttp.responses.Response
 
@@ -34,7 +35,7 @@ class RepoTransferHandler(
         handleCode(response)
     }
     
-    override fun getRequestUrl(): String = Handler.endpoints.repositoryUrl
+    override fun getRequestUrl(): String = endpoints.repositoryUrl
             .replace("{owner}", this.request.user)
             .replace("{repo}", this.request.name)
             .plus("/transfer")

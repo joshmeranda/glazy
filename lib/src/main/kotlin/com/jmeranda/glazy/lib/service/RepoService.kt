@@ -2,7 +2,7 @@ package com.jmeranda.glazy.lib.service
 
 import com.jmeranda.glazy.lib.objects.Repo
 import com.jmeranda.glazy.lib.exception.NoSuchRepo
-import com.jmeranda.glazy.lib.handler.*
+import com.jmeranda.glazy.lib.handler.repo.*
 import com.jmeranda.glazy.lib.request.*
 
 /**

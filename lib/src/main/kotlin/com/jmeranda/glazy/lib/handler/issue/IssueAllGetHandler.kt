@@ -1,39 +1,40 @@
-package com.jmeranda.glazy.lib.handler
+package com.jmeranda.glazy.lib.handler.issue
 
 import khttp.get
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.jmeranda.glazy.lib.handler.Handler
 
 import com.jmeranda.glazy.lib.objects.Issue
-import com.jmeranda.glazy.lib.request.IssueGetRequest
+import com.jmeranda.glazy.lib.request.IssueGetAllRequest
 
 /**
- * Handle a [request] for a specific repository issue using the specified [token].
+ * Handle a [request] for all repository issues using the specified [token].
  */
-class IssueGetHandler(
-        private val request: IssueGetRequest,
+class IssueAllGetHandler(
+        private val request: IssueGetAllRequest,
         token: String?
 ): Handler<Issue>(token) {
     private val issueUrl: String = this.request.repo.issuesUrl
 
-    override fun handleRequest(): Issue? {
+    override fun handleRequest(): List<Issue>? {
         val response = get(this.getRequestUrl(), headers=this.getAuthorizationHeaders())
-        var issue: Issue? = null
+        var allIssues: List<Issue>? = null
 
-        if (! handleCode(response)) return null
+        if (!handleCode(response)) return null
 
-        // Serialize received json.
+        // Serialize the received json.
         try {
-            issue = mapper.readValue(response.text)
+            allIssues = mapper.readValue(response.text)
         } catch (e: Exception) {
             e.printStackTrace()
         }
 
-        return issue
+        return allIssues
     }
 
     override fun getRequestUrl(): String = this.issueUrl
             .replace("{owner}", this.request.repo.owner.login)
             .replace("{repo}", this.request.repo.name)
-            .replace("{/number}", "/${this.request.number.toString()}")
+            .replace("{/number}","")
 }

@@ -1,9 +1,10 @@
-package com.jmeranda.glazy.lib.handler
+package com.jmeranda.glazy.lib.handler.issue
 
 import khttp.post
 import khttp.responses.Response
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.jmeranda.glazy.lib.handler.Handler
 
 import com.jmeranda.glazy.lib.objects.Issue
 import com.jmeranda.glazy.lib.request.IssuePostRequest
@@ -31,7 +32,7 @@ class IssuePostHandler(
                 data = body,
                 headers = this.getAuthorizationHeaders())
 
-        if (! handleCode(response)) return null
+        if (!handleCode(response)) return null
 
         var issue: Issue? = null
 

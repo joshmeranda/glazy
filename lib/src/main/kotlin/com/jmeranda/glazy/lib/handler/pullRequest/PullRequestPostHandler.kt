@@ -1,6 +1,7 @@
-package com.jmeranda.glazy.lib.handler
+package com.jmeranda.glazy.lib.handler.pullRequest
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.jmeranda.glazy.lib.handler.Handler
 import khttp.post
 import khttp.responses.Response
 
@@ -31,7 +32,7 @@ class PullRequestPostHandler (
                 data  = body,
                 headers = headers)
 
-        if (! handleCode(response)) return null
+        if (!handleCode(response)) return null
 
         var pullRequest: PullRequest? = null
 
