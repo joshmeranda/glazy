@@ -60,7 +60,7 @@ class PullParent: Runnable {
         mixinStandardHelpOptions = true)
 class PullList: Runnable, PullCommand() {
     @Option(names=["-n", "--number"],
-            description=["The number of the desired issue."],
+            description=["The number of the desired pull request."],
             paramLabel="N")
     private val number: Int? = null
 
@@ -86,13 +86,13 @@ class PullInit: Runnable, PullCommand() {
     private lateinit var exclusive: PullGroup
 
     @Option(names = ["--head"],
-            description = ["The branch to merge the base into."],
+            description = ["The branch to merge."],
             paramLabel = "BRANCH",
             required = true)
     private lateinit var head: String
 
     @Option(names = ["--base"],
-            description = ["The brranch to be merged."],
+            description = ["The branch to merge the head branch into."],
             paramLabel = "BRANCH",
             required = true)
     private lateinit var base: String
@@ -120,7 +120,7 @@ class PullInit: Runnable, PullCommand() {
 
     companion object {
         /**
-         * Class to provide the ability to create a pull request form an issue,
+         * Class to provide the ability to create a pull request from an issue,
          * or use a title.
          */
         class PullGroup {
@@ -136,5 +136,46 @@ class PullInit: Runnable, PullCommand() {
                     required = true)
             var issue: Int? = null
         }
+    }
+}
+
+@Command(name = "update",
+        description = ["Send a patch to a pull request."],
+        mixinStandardHelpOptions = true)
+class PullUpdate: Runnable, PullCommand() {
+    @Option(names=["-n", "--number"],
+            description=["The number of the desired pull request."],
+            paramLabel="N",
+            required = true)
+    private var number: Int? = null
+
+    @Option(names = ["-t", "--title"],
+            description = ["The new title for the path request."],
+            paramLabel = "TITLE")
+    private var title: String? = null
+
+    @Option(names = ["-b", "--body"],
+            description = ["The new body for the pull request."],
+            paramLabel = "BODY")
+    private var body: String? = null
+
+    @Option(names = ["-s", "--state"],
+            description = ["THe new state for the pull request."],
+            paramLabel = "STATE")
+    private var state: String? = null
+
+    @Option(names = ["--base"],
+            description = ["The new branch to merge into."],
+            paramLabel = "BRANCH")
+    private var base: String? = null
+
+    @Option(names = ["-m", "--can-modify"],
+            description = ["Specify that the maintainer can modify the request."])
+    private var canModify: Boolean? = null
+
+    override fun run() {
+        val pullRequest = this.service?.updatePullRequest(this.number ?: return, this.title, this.body,
+                this.state, this.base, this.canModify)
+        displayPullRequest(pullRequest ?: return)
     }
 }

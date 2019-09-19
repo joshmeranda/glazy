@@ -4,6 +4,7 @@ import com.jmeranda.glazy.lib.objects.PullRequest
 import com.jmeranda.glazy.lib.handler.pullRequest.PullRequestAllGetHandler
 import com.jmeranda.glazy.lib.handler.pullRequest.PullRequestGetHandler
 import com.jmeranda.glazy.lib.handler.pullRequest.PullRequestPostHandler
+import com.jmeranda.glazy.lib.handler.pullRequest.PullRequestPutHandler
 import com.jmeranda.glazy.lib.request.*
 
 class PullRequestService(
@@ -41,6 +42,14 @@ class PullRequestService(
     ): PullRequest {
         val request = PullPostRequest(user, name, title, issue, head, base, body, canModify, draft)
         val handler = PullRequestPostHandler(request, this.token)
+
+        return handler.handleRequest() ?: throw Exception("An error occurred")
+    }
+
+    fun updatePullRequest(number: Int, title: String?, body: String?, state: String?,
+                          base: String?, canModify: Boolean?): PullRequest {
+        val request = PullPutRequest(this.user, this.name, number, title, body, state, base, canModify)
+        val handler = PullRequestPutHandler(request, this.token)
 
         return handler.handleRequest() ?: throw Exception("An error occurred")
     }
