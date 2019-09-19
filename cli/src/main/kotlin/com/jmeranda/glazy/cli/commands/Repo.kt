@@ -2,8 +2,11 @@ package com.jmeranda.glazy.cli.commands
 
 import com.jmeranda.glazy.cli.getRepoName
 
-import picocli.CommandLine.Option
+import picocli.CommandLine
 import picocli.CommandLine.Command
+import picocli.CommandLine.Option
+import picocli.CommandLine.Spec
+import picocli.CommandLine.Model.CommandSpec
 
 import com.jmeranda.glazy.lib.objects.Repo
 import com.jmeranda.glazy.lib.exception.NotInRepo
@@ -104,7 +107,14 @@ open class RepoCommand {
 @Command(name = "repo",
         description = ["Perform operations on a  repository."],
         mixinStandardHelpOptions = true)
-class RepoParent
+class RepoParent: Runnable {
+    @Spec lateinit var spec: CommandSpec
+
+    override fun run() {
+        throw CommandLine.ParameterException(this.spec.commandLine(),
+                "Missing required subcommand")
+    }
+}
 
 /**
  * Sub-command to show information about a repository specified via the

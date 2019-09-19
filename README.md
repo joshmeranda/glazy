@@ -14,7 +14,7 @@ Git web API wrapper written in Kotlin. Its git, but all command line for when a 
 - [ ] ~~CLI~~
 
 # Build
-Run `mvn package` and either move, copy, or link to the cloned repository into /usr/lib/ so the run script can access it.
+Run `mvn package`. Add repository location to PATH enviroment variable.
 
 # Usage
 ```
