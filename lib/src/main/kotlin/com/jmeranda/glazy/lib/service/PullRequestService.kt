@@ -1,7 +1,9 @@
 package com.jmeranda.glazy.lib.service
 
 import com.jmeranda.glazy.lib.objects.PullRequest
-import com.jmeranda.glazy.lib.handler.*
+import com.jmeranda.glazy.lib.handler.pullRequest.PullRequestAllGetHandler
+import com.jmeranda.glazy.lib.handler.pullRequest.PullRequestGetHandler
+import com.jmeranda.glazy.lib.handler.pullRequest.PullRequestPostHandler
 import com.jmeranda.glazy.lib.request.*
 
 class PullRequestService(

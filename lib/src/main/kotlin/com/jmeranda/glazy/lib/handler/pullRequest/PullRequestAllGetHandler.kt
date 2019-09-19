@@ -1,6 +1,7 @@
-package com.jmeranda.glazy.lib.handler
+package com.jmeranda.glazy.lib.handler.pullRequest
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.jmeranda.glazy.lib.handler.Handler
 
 import khttp.get
 import khttp.responses.Response
@@ -21,7 +22,7 @@ class PullRequestAllGetHandler(
         val response: Response = get(this.getRequestUrl(), headers = headers)
         var pullRequest: List<PullRequest>? = null
 
-        if ( ! handleCode(response)) return null
+        if ( !handleCode(response)) return null
 
         try {
             pullRequest = mapper.readValue(response.text)

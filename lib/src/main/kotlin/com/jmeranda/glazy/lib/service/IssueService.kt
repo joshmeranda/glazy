@@ -6,10 +6,10 @@ import com.jmeranda.glazy.lib.objects.Repo
 import com.jmeranda.glazy.lib.exception.BadRequest
 import com.jmeranda.glazy.lib.exception.NoSuchIssue
 
-import com.jmeranda.glazy.lib.handler.IssueAllGetHandler
-import com.jmeranda.glazy.lib.handler.IssueGetHandler
-import com.jmeranda.glazy.lib.handler.IssuePatchHandler
-import com.jmeranda.glazy.lib.handler.IssuePostHandler
+import com.jmeranda.glazy.lib.handler.issue.IssueAllGetHandler
+import com.jmeranda.glazy.lib.handler.issue.IssueGetHandler
+import com.jmeranda.glazy.lib.handler.issue.IssuePatchHandler
+import com.jmeranda.glazy.lib.handler.issue.IssuePostHandler
 import com.jmeranda.glazy.lib.request.IssueGetAllRequest
 import com.jmeranda.glazy.lib.request.IssueGetRequest
 import com.jmeranda.glazy.lib.request.IssuePatchRequest

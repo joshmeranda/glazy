@@ -1,6 +1,7 @@
-package com.jmeranda.glazy.lib.handler
+package com.jmeranda.glazy.lib.handler.repo
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.jmeranda.glazy.lib.handler.Handler
 
 import khttp.post
 import khttp.responses.Response
@@ -32,7 +33,7 @@ class RepoPostHandler(
                 headers = this.getAuthorizationHeaders()
         )
 
-        if (! handleCode(response)) return null
+        if (!handleCode(response)) return null
 
         var repo: Repo? = null
 

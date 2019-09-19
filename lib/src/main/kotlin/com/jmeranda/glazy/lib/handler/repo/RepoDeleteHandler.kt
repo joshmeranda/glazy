@@ -1,5 +1,6 @@
-package com.jmeranda.glazy.lib.handler
+package com.jmeranda.glazy.lib.handler.repo
 
+import com.jmeranda.glazy.lib.handler.Handler
 import khttp.delete
 import khttp.responses.Response
 
@@ -19,10 +20,10 @@ class RepoDeleteHandler(
         val response: Response = delete(this.getRequestUrl(),
                 headers = this.getAuthorizationHeaders())
 
-        if (! handleCode(response)) return
+        if (!handleCode(response)) return
     }
 
-    override fun getRequestUrl(): String = Handler.endpoints.repositoryUrl
+    override fun getRequestUrl(): String = endpoints.repositoryUrl
             .replace("{owner}", this.request.user)
             .replace("{repo}", this.request.name)
 }
