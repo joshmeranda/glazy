@@ -1,6 +1,7 @@
 package com.jmeranda.glazy.cli.commands
 
 import picocli.CommandLine
+import picocli.CommandLine.ArgGroup
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
 import picocli.CommandLine.Spec
@@ -12,15 +13,6 @@ import com.jmeranda.glazy.lib.service.RepoService
 
 import com.jmeranda.glazy.cli.getRepoName
 import com.jmeranda.glazy.lib.service.CacheService
-
-/**
- * State enum for patching issues.
- */
-enum class State(val state: String) {
-    OPEN("open"),
-    CLOSED("closed"),
-    ALL("all"),
-}
 
 /**
  * Display an [issue] to the console.
@@ -126,7 +118,7 @@ class IssueAdd: Runnable, IssueCommand() {
     @Option(names=["-a", "--assignees"],
             description=["The user logins for users to be assigned to the issue, as comma separated strings."],
             split=",",
-            paramLabel="[LOGIN...]")
+            paramLabel="LOGIN")
     private var assignees: List<String>? = null
 
     override fun run() {
@@ -147,7 +139,8 @@ class IssueAdd: Runnable, IssueCommand() {
 class IssuePatch: Runnable, IssueCommand() {
     @Option(names=["-n", "--number"],
             description=["The number of the issue to patch."],
-            paramLabel="N")
+            paramLabel="N",
+            required = true)
     private var number: Int = -1
 
     @Option(names=["-t", "--title"],
@@ -160,10 +153,8 @@ class IssuePatch: Runnable, IssueCommand() {
             paramLabel="STRING")
     private var body: String? = null
 
-    @Option(names=["-s", "--state"],
-            description=["The patched state of the issue."],
-            paramLabel="[open,closed,all]")
-    private var state: State? = null
+    @ArgGroup(exclusive = true, multiplicity = "1")
+    private lateinit var state: State
 
     @Option(names=["-m", "--milestone"],
             description=["The patched number of the milestone for the issue."],
@@ -172,19 +163,39 @@ class IssuePatch: Runnable, IssueCommand() {
 
     @Option(names=["-l", "--labels"],
             description=["The patched labels for the issue, as comma separated strings."],
-            paramLabel="[LABELS...]")
+            paramLabel="LABELS")
     private var labels: List<String>? = null
 
     @Option(names=["-a", "--assignees"],
             description=["The patched user logins for users to be assigned to the issue, as comma separated strings."],
-            paramLabel="[LOGIN...]",
+            paramLabel="LOGIN",
             split=",")
     private var assignees: List<String>? = null
 
     override fun run() {
+        val state = if (this.state.open) {
+            "open"
+        } else if (this.state.closed) {
+            "closed"
+        } else {
+            null
+        }
+
         // Patch the issue.
         val issue = this.service?.editIssue(this.number, this.title, this.body,
-                this.state.toString(), this.milestone, this.labels, this.assignees)
+                state, this.milestone, this.labels, this.assignees)
         displayIssue(issue ?: return)
+    }
+
+    companion object {
+        class State {
+            @Option(names = ["--open"],
+                    description = ["Mark the issue as open."])
+            var open: Boolean = false
+
+            @Option(names = ["--closed"],
+                    description = ["Mark the issue as closed."])
+            var closed: Boolean = false
+        }
     }
 }

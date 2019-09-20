@@ -23,6 +23,7 @@ data class IssueGetAllRequest (
 /**
  * Request class for POST requests to create an issue.
  */
+@JsonInclude(Include.NON_NULL)
 data class IssuePostRequest (
         @JsonIgnore val repo: Repo,
         val title: String,
