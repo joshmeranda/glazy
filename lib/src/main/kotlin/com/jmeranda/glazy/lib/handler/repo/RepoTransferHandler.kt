@@ -14,7 +14,7 @@ import com.jmeranda.glazy.lib.request.RepoTransferRequest
 class RepoTransferHandler(
         private val request: RepoTransferRequest,
         token: String?
-): Handler<Repo>(token) {
+): Handler(token) {
     override fun handleRequest() {
         var body: String? = null
         val headers = this.getAuthorizationHeaders()

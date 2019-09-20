@@ -15,7 +15,7 @@ import com.jmeranda.glazy.lib.handler.Handler
 /**
  * Concrete handler class to allow for testing abstract class Handler.
  */
-private class ConcreteHandler(token: String?): Handler<Int>(token) {
+private class ConcreteHandler(token: String?): Handler(token) {
     override fun handleRequest(): Any?  = null
 
     override fun getRequestUrl(): String = "TEST_DOES_NOT_NEED_URL"

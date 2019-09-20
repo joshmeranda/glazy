@@ -37,7 +37,7 @@ fun getRootEndpoints(rootUrl: String, mapper: ObjectMapper): RootEndpoints {
  * [endpoints], and all response json is serialized using [mapper].
  * Requests are authenticated using the given [token].
  */
-abstract class Handler<T>(private val token: String?) {
+abstract class Handler(private val token: String?) {
     /**
      * Return a map containing the header used to authenticate with the
      * instances token.

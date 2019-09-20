@@ -12,7 +12,7 @@ import com.jmeranda.glazy.lib.request.PullGetRequest
 class PullRequestGetHandler(
         private val request: PullGetRequest,
         token: String?
-): Handler<PullRequest>(token) {
+): Handler(token) {
     private val repositoryUrl: String = endpoints.repositoryUrl
 
     override fun handleRequest(): PullRequest? {
@@ -22,7 +22,7 @@ class PullRequestGetHandler(
         val response: Response = get(this.getRequestUrl(), headers = headers)
         var pullRequest: PullRequest? = null
 
-        if ( !handleCode(response)) return null
+        if (! handleCode(response)) return null
 
         try {
             pullRequest = mapper.readValue(response.text)

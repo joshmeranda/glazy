@@ -10,7 +10,7 @@ import khttp.responses.Response
 class PullRequestPatchHandler(
         private val  request: PullPatchRequest,
         val token: String?
-): Handler<PullRequest>(token){
+): Handler(token){
     override fun handleRequest(): PullRequest? {
         var body: String? = null
 

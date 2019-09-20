@@ -15,7 +15,7 @@ import com.jmeranda.glazy.lib.service.CacheService
 class RepoGetHandler(
         private val request: RepoGetRequest,
         token: String? = null
-): Handler<Repo>(token) {
+): Handler(token) {
     private val repositoryUrl: String = endpoints.repositoryUrl
 
     override fun handleRequest(): Repo? {
@@ -27,7 +27,7 @@ class RepoGetHandler(
             if (repo == null) {
                 val response = get(this.getRequestUrl(), headers = this.getAuthorizationHeaders())
 
-                if (!handleCode(response)) return null
+                if (! handleCode(response)) return null
 
                 // Serialize     the received json.
                 repo = mapper.readValue(response.text)

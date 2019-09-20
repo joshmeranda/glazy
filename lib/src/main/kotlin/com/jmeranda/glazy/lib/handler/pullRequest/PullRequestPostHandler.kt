@@ -12,7 +12,7 @@ import com.jmeranda.glazy.lib.request.PullPostRequest
 class PullRequestPostHandler (
         private val request: PullPostRequest,
         token: String?
-): Handler<PullRequest>(token) {
+): Handler(token) {
 
     override fun handleRequest(): PullRequest? {
         var body: String? = null
@@ -32,7 +32,7 @@ class PullRequestPostHandler (
                 data  = body,
                 headers = headers)
 
-        if (!handleCode(response)) return null
+        if (! handleCode(response)) return null
 
         var pullRequest: PullRequest? = null
 
