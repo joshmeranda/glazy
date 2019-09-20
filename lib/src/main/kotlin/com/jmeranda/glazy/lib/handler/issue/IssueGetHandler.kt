@@ -14,14 +14,14 @@ import com.jmeranda.glazy.lib.request.IssueGetRequest
 class IssueGetHandler(
         private val request: IssueGetRequest,
         token: String?
-): Handler<Issue>(token) {
+): Handler(token) {
     private val issueUrl: String = this.request.repo.issuesUrl
 
     override fun handleRequest(): Issue? {
         val response = get(this.getRequestUrl(), headers=this.getAuthorizationHeaders())
         var issue: Issue? = null
 
-        if (!handleCode(response)) return null
+        if (! handleCode(response)) return null
 
         // Serialize received json.
         try {

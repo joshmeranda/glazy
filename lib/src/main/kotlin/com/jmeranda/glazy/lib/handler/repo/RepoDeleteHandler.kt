@@ -15,12 +15,12 @@ import com.jmeranda.glazy.lib.request.RepoDeleteRequest
 class RepoDeleteHandler(
         private val request: RepoDeleteRequest,
         token: String?
-): Handler<Repo>(token) {
+): Handler(token) {
     override fun handleRequest() {
         val response: Response = delete(this.getRequestUrl(),
                 headers = this.getAuthorizationHeaders())
 
-        if (!handleCode(response)) return
+        if (! handleCode(response)) return
     }
 
     override fun getRequestUrl(): String = endpoints.repositoryUrl

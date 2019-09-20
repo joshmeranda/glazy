@@ -11,14 +11,14 @@ import com.jmeranda.glazy.lib.objects.Repo
  * Handle a request for all repositories associated with an authenticated
  * user. The [token] must be valid or an error code will be received.
  */
-class RepoAllGetHandler(token: String): Handler<List<Repo>>(token) {
+class RepoAllGetHandler(token: String): Handler(token) {
     private val repoUrl = endpoints.currentUserRepositoriesUrl
 
     override fun handleRequest(): List<Repo>? {
         val response =  get(this.getRequestUrl(), headers = this.getAuthorizationHeaders())
         var allRepos: List<Repo>? = null
 
-        if (!handleCode(response)) return null
+        if (! handleCode(response)) return null
 
         // Serialize the received json.
         try {

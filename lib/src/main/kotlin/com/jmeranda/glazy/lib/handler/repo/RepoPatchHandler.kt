@@ -15,7 +15,7 @@ import com.jmeranda.glazy.lib.request.RepoPatchRequest
 class RepoPatchHandler(
         private val request: RepoPatchRequest,
         token: String?
-): Handler<Repo>(token) {
+): Handler(token) {
     private val repositoryUrl: String = endpoints.repositoryUrl
 
     override fun handleRequest(): Repo? {
@@ -32,7 +32,7 @@ class RepoPatchHandler(
                 data = body,
                 headers = this.getAuthorizationHeaders())
 
-        if (!handleCode(response)) return null
+        if (! handleCode(response)) return null
 
         var repo: Repo? = null
 
