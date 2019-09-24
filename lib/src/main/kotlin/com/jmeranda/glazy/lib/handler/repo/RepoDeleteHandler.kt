@@ -1,5 +1,7 @@
 package com.jmeranda.glazy.lib.handler.repo
 
+import com.jmeranda.glazy.lib.handler.GlazyRepoUrl
+import com.jmeranda.glazy.lib.handler.GlazySimpleHeader
 import com.jmeranda.glazy.lib.handler.Handler
 import khttp.delete
 import khttp.responses.Response
@@ -13,17 +15,13 @@ import com.jmeranda.glazy.lib.request.RepoDeleteRequest
  * to the repository, it will not be deleted.
  */
 class RepoDeleteHandler(
-        private val request: RepoDeleteRequest,
-        token: String?
-): Handler(token) {
+        header: GlazySimpleHeader,
+        url: GlazyRepoUrl
+): Handler(header, url) {
     override fun handleRequest() {
-        val response: Response = delete(this.getRequestUrl(),
-                headers = this.getAuthorizationHeaders())
+        val response: Response = delete(this.requestUrl,
+                headers = this.getHeaders())
 
         if (! handleCode(response)) return
     }
-
-    override fun getRequestUrl(): String = endpoints.repositoryUrl
-            .replace("{owner}", this.request.user)
-            .replace("{repo}", this.request.name)
 }

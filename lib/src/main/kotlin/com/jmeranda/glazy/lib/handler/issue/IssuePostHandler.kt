@@ -4,20 +4,19 @@ import khttp.post
 import khttp.responses.Response
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.jmeranda.glazy.lib.handler.GlazySimpleIssueUrl
+import com.jmeranda.glazy.lib.handler.GlazySimpleHeader
 import com.jmeranda.glazy.lib.handler.Handler
 
 import com.jmeranda.glazy.lib.objects.Issue
-import com.jmeranda.glazy.lib.request.IssuePostRequest
 
 /**
  * Handle a [request] to create a new repository issue using the specified [token].
  */
 class IssuePostHandler(
-        private val request: IssuePostRequest,
-        token: String?
-): Handler(token) {
-    private val issueUrl: String = this.request.repo.issuesUrl
-
+        header: GlazySimpleHeader,
+        url: GlazySimpleIssueUrl
+): Handler(header, url) {
     override fun handleRequest(): Issue? {
         var body: String? = null
 
@@ -28,9 +27,9 @@ class IssuePostHandler(
             e.printStackTrace()
         }
 
-        val response: Response = post(this.getRequestUrl(),
+        val response: Response = post(this.requestUrl,
                 data = body,
-                headers = this.getAuthorizationHeaders())
+                headers = this.getHeaders())
 
         if (!handleCode(response)) return null
 
@@ -45,9 +44,4 @@ class IssuePostHandler(
 
         return issue
     }
-
-    override fun getRequestUrl(): String = this.issueUrl
-            .replace("{owner}", this.request.repo.owner.login)
-            .replace("{repo}", this.request.repo.name)
-            .replace("{/number}","")
 }

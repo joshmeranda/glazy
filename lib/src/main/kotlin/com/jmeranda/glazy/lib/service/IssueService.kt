@@ -2,10 +2,11 @@ package com.jmeranda.glazy.lib.service
 
 import com.jmeranda.glazy.lib.objects.Issue
 import com.jmeranda.glazy.lib.objects.Repo
-
 import com.jmeranda.glazy.lib.exception.BadRequest
 import com.jmeranda.glazy.lib.exception.NoSuchIssue
-
+import com.jmeranda.glazy.lib.handler.GlazyIssueUrl
+import com.jmeranda.glazy.lib.handler.GlazySimpleHeader
+import com.jmeranda.glazy.lib.handler.GlazySimpleIssueUrl
 import com.jmeranda.glazy.lib.handler.issue.IssueAllGetHandler
 import com.jmeranda.glazy.lib.handler.issue.IssueGetHandler
 import com.jmeranda.glazy.lib.handler.issue.IssuePatchHandler
@@ -27,8 +28,11 @@ class IssueService(
      * Return the repository issue associated with the value of [number].
      */
     fun getIssue(number: Int): Issue {
-        val issueRequest = IssueGetRequest(this.repo, number)
-        val issueHandler = IssueGetHandler(issueRequest, this.token)
+        val request = IssueGetRequest(this.repo.owner.login, this.repo.name, number)
+        val header = GlazySimpleHeader(this.token)
+        val url = GlazyIssueUrl(request)
+
+        val issueHandler = IssueGetHandler(header, url)
 
         return issueHandler.handleRequest() ?: throw NoSuchIssue(number)
     }
@@ -37,8 +41,11 @@ class IssueService(
      * Return a list of every issue in the current repository.
      */
     fun getAllIssues(): List<Issue> {
-        val issueAllRequest = IssueGetAllRequest(this.repo)
-        val issueAllGetHandler = IssueAllGetHandler(issueAllRequest, this.token)
+        val request = IssueGetAllRequest(this.repo.owner.login, this.repo.name)
+        val header = GlazySimpleHeader(this.token)
+        val url = GlazySimpleIssueUrl(request)
+
+        val issueAllGetHandler = IssueAllGetHandler(header, url)
 
         return issueAllGetHandler.handleRequest() ?: throw Exception()
     }
@@ -50,8 +57,11 @@ class IssueService(
     fun createIssue(title: String, body: String?, milestone: Int?,
                     labels: List<String>?, assignees: List<String>?
     ): Issue {
-        val issueRequest = IssuePostRequest(this.repo, title, body, milestone, labels, assignees)
-        val issueHandler = IssuePostHandler(issueRequest, this.token)
+        val request = IssuePostRequest(this.repo.owner.login, this.repo.name, title, body, milestone, labels, assignees)
+        val header = GlazySimpleHeader(this.token)
+        val url = GlazySimpleIssueUrl(request)
+
+        val issueHandler = IssuePostHandler(header, url)
 
         return issueHandler.handleRequest() ?: throw BadRequest("Could not create issue.")
     }
@@ -64,9 +74,11 @@ class IssueService(
     fun editIssue(number: Int, title: String?, body: String?, state: String?,
                   milestone: Int?, labels: List<String>?, assignees: List<String>?
     ): Issue {
-        val issueRequest = IssuePatchRequest(this.repo, number, title,
+        val request = IssuePatchRequest(this.repo.owner.login, this.repo.name, number, title,
                 body, state, milestone, labels, assignees)
-        val issueHandler = IssuePatchHandler(issueRequest, this.token)
+        val header = GlazySimpleHeader(this.token)
+        val url = GlazyIssueUrl(request)
+        val issueHandler = IssuePatchHandler(header, url)
 
         return issueHandler.handleRequest() ?: throw BadRequest()
     }

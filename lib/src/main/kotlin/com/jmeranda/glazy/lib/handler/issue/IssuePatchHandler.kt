@@ -4,20 +4,19 @@ import khttp.patch
 import khttp.responses.Response
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.jmeranda.glazy.lib.handler.Handler
 
+import com.jmeranda.glazy.lib.handler.GlazyIssueUrl
+import com.jmeranda.glazy.lib.handler.GlazySimpleHeader
+import com.jmeranda.glazy.lib.handler.Handler
 import com.jmeranda.glazy.lib.objects.Issue
-import com.jmeranda.glazy.lib.request.IssuePatchRequest
 
 /**
  * Handle a [request] to patch a repository issue using the specified [token].
  */
 class IssuePatchHandler(
-        private val request: IssuePatchRequest,
-        token: String?
-): Handler(token) {
-    private val issueUrl: String = this.request.repo.issuesUrl
-
+        header: GlazySimpleHeader,
+        url: GlazyIssueUrl
+): Handler(header, url) {
     override fun handleRequest(): Issue? {
         var body: String? = null
 
@@ -28,9 +27,9 @@ class IssuePatchHandler(
             e.printStackTrace()
         }
 
-        val response: Response = patch(this.getRequestUrl(),
+        val response: Response = patch(this.requestUrl,
                 data = body,
-                headers = this.getAuthorizationHeaders())
+                headers = this.getHeaders())
 
         if (!handleCode(response)) return null
 
@@ -45,9 +44,4 @@ class IssuePatchHandler(
 
         return issue
     }
-
-    override fun getRequestUrl(): String = this.issueUrl
-            .replace("{owner}", this.request.repo.owner.login)
-            .replace("{repo}", this.request.repo.name)
-            .replace("{/number}", "/${request.number}")
 }

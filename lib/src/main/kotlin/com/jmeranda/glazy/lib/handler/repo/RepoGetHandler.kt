@@ -3,6 +3,8 @@ package com.jmeranda.glazy.lib.handler.repo
 import khttp.get
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.jmeranda.glazy.lib.handler.GlazyRepoUrl
+import com.jmeranda.glazy.lib.handler.GlazySimpleHeader
 import com.jmeranda.glazy.lib.handler.Handler
 
 import com.jmeranda.glazy.lib.objects.Repo
@@ -13,19 +15,21 @@ import com.jmeranda.glazy.lib.service.CacheService
  * Handle a [request] for a repository using the specified [token].
  */
 class RepoGetHandler(
-        private val request: RepoGetRequest,
-        token: String? = null
-): Handler(token) {
-    private val repositoryUrl: String = endpoints.repositoryUrl
-
+        header: GlazySimpleHeader,
+        url: GlazyRepoUrl
+): Handler(header, url) {
     override fun handleRequest(): Repo? {
-        /* Initialize repo from cached value */
-        var repo: Repo? = CacheService.repo(request.user, request.name)
+        // Initialize repo from cached value
+        var repo: Repo? = null
+
+        if (this.request != null) {
+            repo = CacheService.repo(this.request.user, this.request.name)
+        }
 
         /* TODO Move conditional outside of try block by returning string from cache*/
         try {
             if (repo == null) {
-                val response = get(this.getRequestUrl(), headers = this.getAuthorizationHeaders())
+                val response = get(this.requestUrl, headers = this.getHeaders())
 
                 if (! handleCode(response)) return null
 
@@ -42,8 +46,4 @@ class RepoGetHandler(
 
         return repo
     }
-
-    override fun getRequestUrl(): String = this.repositoryUrl
-            .replace("{owner}", this.request.user)
-            .replace("{repo}", this.request.name)
 }
