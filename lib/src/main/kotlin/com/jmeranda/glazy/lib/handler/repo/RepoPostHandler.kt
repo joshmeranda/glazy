@@ -1,6 +1,8 @@
 package com.jmeranda.glazy.lib.handler.repo
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.jmeranda.glazy.lib.handler.GlazyCurrentUserRepoUrl
+import com.jmeranda.glazy.lib.handler.GlazySimpleHeader
 import com.jmeranda.glazy.lib.handler.Handler
 
 import khttp.post
@@ -13,11 +15,9 @@ import com.jmeranda.glazy.lib.request.RepoPostRequest
  * Handle a [request] to create a remote repository using the specified [token].
  */
 class RepoPostHandler(
-        private val request: RepoPostRequest,
-        token: String?
-): Handler(token) {
-    private val repoUrl = endpoints.currentUserRepositoriesUrl
-
+        header: GlazySimpleHeader,
+        url: GlazyCurrentUserRepoUrl
+): Handler(header, url) {
     override fun handleRequest(): Repo? {
         var body: String? = null
 
@@ -28,9 +28,9 @@ class RepoPostHandler(
             e.printStackTrace()
         }
 
-        val response: Response = post(this.getRequestUrl(),
+        val response: Response = post(this.requestUrl,
                 data = body,
-                headers = this.getAuthorizationHeaders()
+                headers = this.getHeaders()
         )
 
         if (! handleCode(response)) return null
@@ -46,10 +46,4 @@ class RepoPostHandler(
 
         return repo
     }
-
-    /**
-     * Remove trailing optional parameter specifications.
-     */
-    override fun getRequestUrl(): String = this.repoUrl
-            .replace(Regex("\\{.*}"), "")
 }

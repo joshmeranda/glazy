@@ -1,5 +1,7 @@
 package com.jmeranda.glazy.lib.handler.repo
 
+import com.jmeranda.glazy.lib.handler.GlazyRepoUrl
+import com.jmeranda.glazy.lib.handler.GlazyTransferableHeader
 import com.jmeranda.glazy.lib.handler.Handler
 import khttp.post
 import khttp.responses.Response
@@ -12,14 +14,15 @@ import com.jmeranda.glazy.lib.request.RepoTransferRequest
  * specified [token].
  */
 class RepoTransferHandler(
-        private val request: RepoTransferRequest,
-        token: String?
-): Handler(token) {
+        header: GlazyTransferableHeader,
+        url: GlazyRepoUrl
+): Handler(header, url) {
+    override val requestUrl: String = super.requestUrl
+            .plus("/transfer")
+
     override fun handleRequest() {
         var body: String? = null
-        val headers = this.getAuthorizationHeaders()
-                .toMutableMap()
-        headers["Accept"] = "application/vnd.github.nightshade-preview+json"
+        val headers = this.getHeaders()
 
         // Deserialize the request.
         try {
@@ -28,15 +31,10 @@ class RepoTransferHandler(
             e.printStackTrace()
         }
 
-        val response: Response = post(this.getRequestUrl(),
+        val response: Response = post(this.requestUrl,
                 data = body,
                 headers = headers)
 
         handleCode(response)
     }
-    
-    override fun getRequestUrl(): String = endpoints.repositoryUrl
-            .replace("{owner}", this.request.user)
-            .replace("{repo}", this.request.name)
-            .plus("/transfer")
 }

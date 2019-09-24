@@ -9,18 +9,21 @@ import kotlin.test.assertNull
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonInclude.Include
+import com.jmeranda.glazy.lib.handler.GlazyRepoUrl
+import com.jmeranda.glazy.lib.handler.GlazySimpleHeader
 
 import com.jmeranda.glazy.lib.handler.Handler
 
 /**
  * Concrete handler class to allow for testing abstract class Handler.
  */
-private class ConcreteHandler(token: String?): Handler(token) {
-    override fun handleRequest(): Any?  = null
+private class ConcreteHandler(
+        header: GlazySimpleHeader,
+        url: GlazyRepoUrl
+): Handler(header, url) {
+    override val requestUrl: String = "TEST_DOES_NOT_NEED_URL"
 
-    override fun getRequestUrl(): String = "TEST_DOES_NOT_NEED_URL"
-
-    fun getHeaders() = this.getAuthorizationHeaders()
+    override fun handleRequest(): Any? = null
 }
 
 /**

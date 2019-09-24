@@ -246,7 +246,7 @@ class RepoInit: Runnable, RepoCommand() {
         }
 
         // Create the remote repository.
-        this.service.createRepo(this.name ?: return, this.description,
+        this.service.createRepo( this.user ?: return, this.name ?: return, this.description,
                 this.homepage, this.private, this.hasIssues,
                 this.hasProject, this.hasWiki, this.isTemplate,
                 this.teamId, this.autoInit, this.gitignoreTemplate,

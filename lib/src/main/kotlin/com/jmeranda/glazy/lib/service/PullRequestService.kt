@@ -1,5 +1,8 @@
 package com.jmeranda.glazy.lib.service
 
+import com.jmeranda.glazy.lib.handler.GlazyDraftableHeader
+import com.jmeranda.glazy.lib.handler.GlazyPullUrl
+import com.jmeranda.glazy.lib.handler.GlazySimplePullUrl
 import com.jmeranda.glazy.lib.objects.PullRequest
 import com.jmeranda.glazy.lib.handler.pullRequest.PullRequestAllGetHandler
 import com.jmeranda.glazy.lib.handler.pullRequest.PullRequestGetHandler
@@ -17,7 +20,10 @@ class PullRequestService(
      */
     fun getAllPullRequests(): List<PullRequest> {
         val request = PullGetAllRequest(this.user, this.name)
-        val handler = PullRequestAllGetHandler(request, this.token)
+        val header = GlazyDraftableHeader(this.token)
+        val url = GlazySimplePullUrl(request)
+
+        val handler = PullRequestAllGetHandler(header, url)
 
         return handler.handleRequest() ?: throw Exception("Could not authenticate using specified token")
     }
@@ -27,7 +33,10 @@ class PullRequestService(
      */
     fun getPullRequest(number: Int): PullRequest {
         val request = PullGetRequest(this.user, this.name, number)
-        val handler = PullRequestGetHandler(request, this.token)
+        val header = GlazyDraftableHeader(this.token)
+        val url = GlazyPullUrl(request)
+
+        val handler = PullRequestGetHandler(header, url)
 
         return handler.handleRequest() ?: throw Exception("Could not authenticate using specified token")
     }
@@ -41,15 +50,21 @@ class PullRequestService(
                           draft: Boolean?
     ): PullRequest {
         val request = PullPostRequest(user, name, title, issue, head, base, body, canModify, draft)
-        val handler = PullRequestPostHandler(request, this.token)
+        val header = GlazyDraftableHeader(this.token)
+        val url = GlazySimplePullUrl(request)
+        val handler = PullRequestPostHandler(header, url)
 
         return handler.handleRequest() ?: throw Exception("An error occurred")
     }
 
     fun patchPullRequest(number: Int, title: String?, body: String?, state: String?,
-                          base: String?, canModify: Boolean?): PullRequest {
+                          base: String?, canModify: Boolean?
+    ): PullRequest {
         val request = PullPatchRequest(this.user, this.name, number, title, body, state, base, canModify)
-        val handler = PullRequestPatchHandler(request, this.token)
+        val header = GlazyDraftableHeader(this.token)
+        val url = GlazyPullUrl(request)
+
+        val handler = PullRequestPatchHandler(header, url)
 
         return handler.handleRequest() ?: throw Exception("An error occurred")
     }

@@ -3,21 +3,25 @@ package com.jmeranda.glazy.lib.request
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonInclude.Include
+import com.fasterxml.jackson.annotation.JsonProperty
+
+import com.jmeranda.glazy.lib.handler.Request
 
 /**
  * Request class for GET requests.
  */
 data class RepoGetRequest(
-        val user: String,
-        val name: String
-)
+        override val user: String,
+        override val name: String
+) : Request
 
 /**
  * Request class for POST create requests.
  */
 @JsonInclude(Include.NON_NULL)
 data class RepoPostRequest(
-        val name: String,
+        override val user: String,
+        override val name: String,
         val description: String? = null,
         val homepage: String? = null,
         val private: Boolean? = null,
@@ -32,27 +36,27 @@ data class RepoPostRequest(
         val allowSquashMerge: Boolean? = null,
         val allowMergeCommit: Boolean? = null,
         val allowRebaseMerge: Boolean? = null
-)
+) : Request
 
 /**
  * Request class for POST transfer requests.
  */
 @JsonInclude(Include.NON_NULL)
 data class RepoTransferRequest(
-        @JsonIgnore val user: String,
-        @JsonIgnore val name: String,
+        @JsonIgnore override val user: String,
+        @JsonIgnore override val name: String,
         val newOwner: String,
         val teamIds: List<Int>? = null
-)
+) : Request
 
 /**
  * Request class for PATCH requests.
  */
 @JsonInclude(Include.NON_NULL)
 data class RepoPatchRequest(
-        @JsonIgnore val owner: String,
-        @JsonIgnore val currentName: String,
-        val name: String? = null,
+        @JsonIgnore override val user: String,
+        @JsonIgnore override val name: String,
+        @JsonProperty("name") val newName: String? = null,
         val description: String? = null,
         val homepage: String? = null,
         val private: Boolean? = null,
@@ -65,12 +69,12 @@ data class RepoPatchRequest(
         val allowMergeCommit: Boolean? = null,
         val allowRebaseMerge: Boolean? = null,
         val archived: Boolean? = null
-)
+) : Request
 
 /**
  * Request class for DELETE requests
  */
 data class RepoDeleteRequest(
-        val user: String,
-        val name: String
-)
+        override val user: String,
+        override val name: String
+) : Request

@@ -14,7 +14,7 @@ import com.jmeranda.glazy.lib.service.CacheService
 import khttp.responses.Response
 
 /**
- * Return a RootEndpoints instance serialed using [mapper].
+ * Return a RootEndpoints instance serialized using [mapper].
  */
 fun getRootEndpoints(rootUrl: String, mapper: ObjectMapper): RootEndpoints {
     val rootEndpoints: RootEndpoints
@@ -31,34 +31,12 @@ fun getRootEndpoints(rootUrl: String, mapper: ObjectMapper): RootEndpoints {
     return rootEndpoints
 }
 
-/**
- * Abstract class for all handler classes used to parse a request object
- * and send queries to an api. The initial endpoint urls are stored in
- * [endpoints], and all response json is serialized using [mapper].
- * Requests are authenticated using the given [token].
- */
-abstract class Handler(private val token: String?) {
-    /**
-     * Return a map containing the header used to authenticate with the
-     * instances token.
-     */
-    protected fun getAuthorizationHeaders(): Map<String, String> {
-        return if (this.token == null) {
-            emptyMap()
-        } else {
-            mapOf("Authorization" to "token ${this.token}")
-        }
-    }
+abstract class Handler(
+        protected val header: GlazyHeader,
+        protected val url: GlazyUrl
+) : GlazyHeader by header, GlazyUrl by url {
 
-    /**
-     * Return the requested date received from the api.
-     */
     abstract fun handleRequest(): Any?
-
-    /**
-     * Return the endpoint url for the request.
-     */
-    abstract fun getRequestUrl(): String
 
     companion object {
         val mapper: ObjectMapper = jacksonObjectMapper()

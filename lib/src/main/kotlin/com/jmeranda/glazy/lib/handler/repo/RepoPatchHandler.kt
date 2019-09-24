@@ -4,6 +4,8 @@ import khttp.patch
 import khttp.responses.Response
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.jmeranda.glazy.lib.handler.GlazyRepoUrl
+import com.jmeranda.glazy.lib.handler.GlazySimpleHeader
 import com.jmeranda.glazy.lib.handler.Handler
 import com.jmeranda.glazy.lib.objects.Repo
 
@@ -13,11 +15,9 @@ import com.jmeranda.glazy.lib.request.RepoPatchRequest
  * Handle a [request] to edit a remote repository using the specified [token].
  */
 class RepoPatchHandler(
-        private val request: RepoPatchRequest,
-        token: String?
-): Handler(token) {
-    private val repositoryUrl: String = endpoints.repositoryUrl
-
+        header: GlazySimpleHeader,
+        url: GlazyRepoUrl
+): Handler(header, url) {
     override fun handleRequest(): Repo? {
         var body: String? = null
 
@@ -28,9 +28,9 @@ class RepoPatchHandler(
             e.printStackTrace()
         }
 
-        val response: Response = patch(this.getRequestUrl(),
+        val response: Response = patch(this.requestUrl,
                 data = body,
-                headers = this.getAuthorizationHeaders())
+                headers = this.getHeaders())
 
         if (! handleCode(response)) return null
 
@@ -45,8 +45,4 @@ class RepoPatchHandler(
 
         return repo
     }
-
-    override fun getRequestUrl(): String = this.repositoryUrl
-            .replace("{owner}", this.request.owner)
-            .replace("{repo}", this.request.currentName)
 }

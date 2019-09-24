@@ -1,6 +1,8 @@
 package com.jmeranda.glazy.lib.handler.pullRequest
 
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.jmeranda.glazy.lib.handler.GlazyDraftableHeader
+import com.jmeranda.glazy.lib.handler.GlazyPullUrl
 import com.jmeranda.glazy.lib.handler.Handler
 import com.jmeranda.glazy.lib.objects.PullRequest
 import com.jmeranda.glazy.lib.request.PullPatchRequest
@@ -8,9 +10,9 @@ import khttp.patch
 import khttp.responses.Response
 
 class PullRequestPatchHandler(
-        private val  request: PullPatchRequest,
-        val token: String?
-): Handler(token){
+        header: GlazyDraftableHeader,
+        url: GlazyPullUrl
+): Handler(header, url) {
     override fun handleRequest(): PullRequest? {
         var body: String? = null
 
@@ -22,10 +24,8 @@ class PullRequestPatchHandler(
         }
 
         // Prepare and send post request to api
-        val headers = this.getAuthorizationHeaders()
-                .toMutableMap()
-        headers["Accept"] = "application/vnd.github.shadow-cat-preview+json"
-        val response: Response = patch(this.getRequestUrl(),
+        val headers = this.getHeaders()
+        val response: Response = patch(this.requestUrl,
                 data  = body,
                 headers = headers)
 
@@ -42,9 +42,4 @@ class PullRequestPatchHandler(
 
         return pullRequest
     }
-
-    override fun getRequestUrl(): String = endpoints.repositoryUrl
-            .replace("{owner}", this.request.owner)
-            .replace("{repo}", this.request.name)
-            .plus("/pulls/${request.number}")
 }
