@@ -53,7 +53,7 @@ class RepoService(private var token: String?){
                 teamId, autoInit, gitignoreTemplate, licenseTemplate,
                 allowSquashMerge, allowMergeCommit, allowRebaseMerge)
         val header = GlazySimpleHeader(this.token)
-        val url = GlazyCurrentUserRepoUrl()
+        val url = GlazyCurrentUserRepoUrl(request)
 
         val repoHandler = RepoPostHandler(header, url)
 

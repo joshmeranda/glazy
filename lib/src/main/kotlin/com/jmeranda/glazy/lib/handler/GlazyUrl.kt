@@ -34,8 +34,7 @@ class GlazyRepoUrl(override val request: Request) : GlazyUrl {
             .replace("{repo}", this.request.name)
 }
 
-class GlazyCurrentUserRepoUrl : GlazyUrl {
-    override val request: Request? = null
+class GlazyCurrentUserRepoUrl(override val request: Request? = null) : GlazyUrl {
     override val requestUrl: String = Handler.endpoints.currentUserRepositoriesUrl
             .replace(Regex("\\{.*}"), "")
 }

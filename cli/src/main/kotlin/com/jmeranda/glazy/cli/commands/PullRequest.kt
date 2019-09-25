@@ -22,8 +22,8 @@ import com.jmeranda.glazy.lib.service.CacheService
 fun displayPullRequest(pullRequest: PullRequest, fields: List<String>?) {
     var details = "[${pullRequest.number}] ${pullRequest.title}\n" +
             "draft : ${pullRequest.draft}\n" +
-            "head: ${pullRequest.head}\n" +
-            "base: ${pullRequest.head}\n" +
+            "head: ${pullRequest.head.label}\n" +
+            "base: ${pullRequest.base.label}\n" +
             "created: ${pullRequest.createdAt}"
 
     val badFields = mutableListOf<String>()
