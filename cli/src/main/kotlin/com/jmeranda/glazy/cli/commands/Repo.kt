@@ -55,25 +55,37 @@ fun displayRepo(repo: Repo, fields: List<String>?) {
  * it may be null) treat [token] as a lateinit. Due to this please ensure
  * that setToken and setService are called before either property is used.
  */
-open class RepoCommand {
+abstract class RepoCommand {
+    abstract var user: String?
+    abstract var name: String?
+    protected open var token: String? = null
+    protected lateinit var service: RepoService
+
+    /**
+     * Set the value of the private token.
+     */
+    protected fun getCachedToken() {
+        this.token = CacheService.token(this.user ?: return)
+    }
+
+    /**
+     * Set the value of the private service.
+     */
+    protected abstract fun startService()
+}
+
+sealed class OptionalRepoCommand : RepoCommand() {
     @Option(names = ["-u", "--user"],
             description = ["The user login for the desired repository."],
             paramLabel = "LOGIN")
-    open var user: String? = null
+    override var user: String? = null
 
     @Option(names = ["-n", "--name"],
             description = ["The name of the desired repository"],
             paramLabel = "NAME")
-    open var name: String? = null
+    override var name: String? = null
 
-    private var token: String? = null
-    protected lateinit var service: RepoService
-
-    /**
-     * Use the values parsed from the current or parent repository
-     * directory, if either is null.
-     */
-    fun useDefaultRepoInfo() {
+    override fun startService() {
         val (user, name) = getRepoName()
 
         this.user = user
@@ -82,21 +94,28 @@ open class RepoCommand {
         /* If not in a repository directory or sub-directory */
         if (this.user == null && this.name == null) { throw NotInRepo() }
 
-        this.setToken()
-        this.setService()
+        this.getCachedToken()
+        this.service = RepoService(this.token)
     }
+}
 
-    /**
-     * Set the value of the private token.
-     */
-    protected fun setToken() {
-        this.token = CacheService.token(this.user ?: return)
-    }
+sealed class RequiredRepoCommand : RepoCommand() {
+    @Option(names = ["-u", "--user"],
+            description = ["The user login for the desired repository."],
+            paramLabel = "LOGIN",
+            required = true)
+    override var user: String? = String()
 
-    /**
-     * Set the value of the private service.
-     */
-    protected fun setService() {
+    @Option(names = ["-n", "--name"],
+            description = ["The name of the desired repository"],
+            paramLabel = "NAME",
+            required = true)
+   override var name: String? = String()
+
+    override var token: String? = null
+
+    override fun startService() {
+        this.getCachedToken()
         this.service = RepoService(this.token)
     }
 }
@@ -107,7 +126,7 @@ open class RepoCommand {
 @Command(name = "repo",
         description = ["Perform operations on a  repository."],
         mixinStandardHelpOptions = true)
-class RepoParent: Runnable {
+class RepoParent : Runnable, OptionalRepoCommand() {
     @Spec lateinit var spec: CommandSpec
 
     override fun run() {
@@ -123,7 +142,7 @@ class RepoParent: Runnable {
 @Command(name = "show",
         description = ["Show details about a repository"],
         mixinStandardHelpOptions = true)
-open class RepoShow: Runnable, RepoCommand() {
+open class RepoShow : Runnable, OptionalRepoCommand() {
     @Option(names = ["-f", "--fields"],
             description = ["The fields to also show"],
             split = ",",
@@ -131,11 +150,11 @@ open class RepoShow: Runnable, RepoCommand() {
     private var fields: List<String>? = null
 
     override fun run() {
-        this.setToken()
-        this.setService()
+        this.getCachedToken()
+        this.startService()
 
         if (this.user == null || this.name == null) {
-            this.useDefaultRepoInfo()
+            this.startService()
         }
 
         // Retrieve and display a Repo instance.
@@ -155,11 +174,11 @@ class RepoList: RepoShow() {
             return
         }
 
-        this.setToken()
-        this.setService()
+        this.getCachedToken()
+        this.startService()
 
         if (this.user == null) {
-            this.useDefaultRepoInfo()
+            this.startService()
         }
 
         val repoList = this.service.getAllRepos()
@@ -176,7 +195,7 @@ class RepoList: RepoShow() {
 @Command(name = "init",
         description = ["Create a new remote repository"],
         mixinStandardHelpOptions = true)
-class RepoInit: Runnable, RepoCommand() {
+class RepoInit: Runnable, RequiredRepoCommand() {
     @Option(names = ["-d", "--description"],
             description = ["THe description for the new repository"],
             paramLabel = "DESCRIPTION")
@@ -238,11 +257,14 @@ class RepoInit: Runnable, RepoCommand() {
             description = ["Allow rebase merging pull requests."])
     var allowRebaseMerge: Boolean = true
 
+    // Necessary to allow for treatingin name as required.
+    @Spec lateinit var spec: CommandSpec
+
     override fun run() {
-        this.setToken()
-        this.setService()
+        this.getCachedToken()
+        this.startService()
         if (this.user == null || this.name == null) {
-            this.useDefaultRepoInfo()
+            this.startService()
         }
 
         // Create the remote repository.
@@ -261,7 +283,7 @@ class RepoInit: Runnable, RepoCommand() {
 @Command(name = "patch",
         description = ["Edit an existing repository"],
         mixinStandardHelpOptions = true)
-class RepoPatch: Runnable, RepoCommand() {
+class RepoPatch: Runnable, OptionalRepoCommand() {
     @Option(names = ["--new-name"],
             description = ["The new name for the repository."],
             paramLabel = "NAME")
@@ -322,10 +344,10 @@ class RepoPatch: Runnable, RepoCommand() {
     var archived: Boolean? = null
 
     override fun run() {
-        this.setToken()
-        this.setService()
+        this.getCachedToken()
+        this.startService()
         if (this.user == null || this.name == null) {
-            this.useDefaultRepoInfo()
+            this.startService()
         }
 
         // Patch the remote repository.
@@ -359,12 +381,12 @@ class RepoPatch: Runnable, RepoCommand() {
 @Command(name = "delete",
         description = ["Delete a remote repository, user must have admin privileges."],
         mixinStandardHelpOptions = true)
-class RepoDelete: Runnable, RepoCommand() {
+class RepoDelete: Runnable, OptionalRepoCommand() {
     override fun run() {
-        this.setToken()
-        this.setService()
+        this.getCachedToken()
+        this.startService()
         if (this.user == null || this.name == null) {
-            this.useDefaultRepoInfo()
+            this.startService()
         }
 
         // Delete the remote repository.
@@ -380,7 +402,7 @@ class RepoDelete: Runnable, RepoCommand() {
 @Command(name = "transfer",
         description = ["Transfer a repository to another user."],
         mixinStandardHelpOptions = true)
-class RepoTransfer: Runnable, RepoCommand() {
+class RepoTransfer: Runnable, OptionalRepoCommand() {
     @Option(names = ["-o", "--new-owner"],
             description = ["The login of the new owner."],
             paramLabel = "LOGIN",
@@ -394,8 +416,8 @@ class RepoTransfer: Runnable, RepoCommand() {
     var teamIds: List<Int>? = null
 
     override fun run() {
-        this.setToken()
-        this.setService()
+        this.getCachedToken()
+        this.startService()
 
         // Transfer the remote repository.
         this.service.transferRepo(this.user ?: return,this.name ?: return,
