@@ -35,9 +35,7 @@ open class IssueCommand {
         if (user != null) token = CacheService.token(user)
 
         if (name != null && user != null) {
-            this.service = IssueService(
-                    RepoService(this.token).getRepo(user, name),
-                    token)
+            this.service = IssueService(user, name, token)
         }
     }
 }

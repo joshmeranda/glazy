@@ -21,14 +21,15 @@ import com.jmeranda.glazy.lib.request.IssuePostRequest
  * [token] for authentication.
  */
 class IssueService(
-        private val repo: Repo,
+        private val user: String,
+        private val name: String,
         private val token: String?
 ) {
     /**
      * Return the repository issue associated with the value of [number].
      */
     fun getIssue(number: Int): Issue {
-        val request = IssueGetRequest(this.repo.owner.login, this.repo.name, number)
+        val request = IssueGetRequest(this.user, this.name, number)
         val header = GlazySimpleHeader(this.token)
         val url = GlazyIssueUrl(request)
 
@@ -41,7 +42,7 @@ class IssueService(
      * Return a list of every issue in the current repository.
      */
     fun getAllIssues(): List<Issue> {
-        val request = IssueGetAllRequest(this.repo.owner.login, this.repo.name)
+        val request = IssueGetAllRequest(this.user, this.name)
         val header = GlazySimpleHeader(this.token)
         val url = GlazySimpleIssueUrl(request)
 
@@ -57,7 +58,7 @@ class IssueService(
     fun createIssue(title: String, body: String?, milestone: Int?,
                     labels: List<String>?, assignees: List<String>?
     ): Issue {
-        val request = IssuePostRequest(this.repo.owner.login, this.repo.name, title, body, milestone, labels, assignees)
+        val request = IssuePostRequest(this.user, this.name, title, body, milestone, labels, assignees)
         val header = GlazySimpleHeader(this.token)
         val url = GlazySimpleIssueUrl(request)
 
@@ -74,7 +75,7 @@ class IssueService(
     fun editIssue(number: Int, title: String?, body: String?, state: String?,
                   milestone: Int?, labels: List<String>?, assignees: List<String>?
     ): Issue {
-        val request = IssuePatchRequest(this.repo.owner.login, this.repo.name, number, title,
+        val request = IssuePatchRequest(this.user, this.name, number, title,
                 body, state, milestone, labels, assignees)
         val header = GlazySimpleHeader(this.token)
         val url = GlazyIssueUrl(request)
