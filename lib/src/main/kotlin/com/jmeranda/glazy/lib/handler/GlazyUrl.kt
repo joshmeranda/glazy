@@ -1,6 +1,7 @@
 package com.jmeranda.glazy.lib.handler
 
 import com.jmeranda.glazy.lib.request.IssueRequest
+import com.jmeranda.glazy.lib.request.LabelGetRequest
 import com.jmeranda.glazy.lib.request.PullRequest
 
 interface GlazyUrl {
@@ -13,6 +14,7 @@ interface Request {
     val name: String
 }
 
+// TODO use repo issues url
 class GlazySimpleIssueUrl(override val request: Request) : GlazyUrl {
     override val requestUrl = Handler.endpoints.repositoryUrl
             .replace("{owner}", this.request.user)
@@ -52,4 +54,20 @@ class GlazyPullUrl(override val request: PullRequest) : GlazyUrl {
             .replace("{owner}", this.request.user)
             .replace("{repo}", this.request.name)
             .plus("/pulls/${request.number}")
+}
+
+// TODO user repo labels url
+class GlazySimpleLabelUrl(override val request: Request) : GlazyUrl {
+    override val requestUrl = Handler.endpoints.repositoryUrl
+            .replace("{owner}", this.request.user)
+            .replace("{repo}", this.request.name)
+            .plus("/labels")
+}
+
+// TODO user repo labels url
+class GlazyLabelUrl(override val request: LabelGetRequest) : GlazyUrl {
+    override val requestUrl = Handler.endpoints.repositoryUrl
+            .replace("{owner}", this.request.user)
+            .replace("{repo}", this.request.name)
+            .plus("/labels/${request.label}")
 }

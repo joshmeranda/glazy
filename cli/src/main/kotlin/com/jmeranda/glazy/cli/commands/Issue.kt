@@ -108,7 +108,7 @@ class IssueAdd: Runnable, IssueCommand() {
     private var milestone: Int? = null
 
     @Option(names=["-l", "--labels"],
-            description=["The labels for the new issue, as comma separated strings."],
+            description=["The labels for the new issue as comma separated strings."],
             split=",",
             paramLabel="LABEL")
     private var labels: List<String>? = null
@@ -151,8 +151,8 @@ class IssuePatch: Runnable, IssueCommand() {
             paramLabel="STRING")
     private var body: String? = null
 
-    @ArgGroup(exclusive = true, multiplicity = "1")
-    private lateinit var state: State
+    @ArgGroup(exclusive = true, multiplicity = "0..1")
+    private var state: State? = null
 
     @Option(names=["-m", "--milestone"],
             description=["The patched number of the milestone for the issue."],
@@ -160,7 +160,7 @@ class IssuePatch: Runnable, IssueCommand() {
     private var milestone: Int? = null
 
     @Option(names=["-l", "--labels"],
-            description=["The patched labels for the issue, as comma separated strings."],
+            description=["The patched labels for the issue as comma separated strings."],
             paramLabel="LABELS")
     private var labels: List<String>? = null
 
@@ -171,12 +171,11 @@ class IssuePatch: Runnable, IssueCommand() {
     private var assignees: List<String>? = null
 
     override fun run() {
-        val state = if (this.state.open) {
-            "open"
-        } else if (this.state.closed) {
-            "closed"
-        } else {
-            null
+        val state = when {
+            this.state == null -> null
+            this.state?.open ?: false -> "open"
+            this.state?.closed ?: false -> "closed"
+            else -> null
         }
 
         // Patch the issue.

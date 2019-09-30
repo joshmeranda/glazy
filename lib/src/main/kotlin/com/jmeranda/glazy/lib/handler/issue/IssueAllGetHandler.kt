@@ -1,7 +1,6 @@
 package com.jmeranda.glazy.lib.handler.issue
 
 import khttp.get
-
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.jmeranda.glazy.lib.handler.*
 import com.jmeranda.glazy.lib.objects.Issue
@@ -14,14 +13,14 @@ class IssueAllGetHandler(
         url: GlazySimpleIssueUrl
 ): Handler(header, url) {
     override fun handleRequest(): List<Issue>? {
-        val response = get(this.requestUrl, headers=this.getHeaders())
+        val response = get(this.requestUrl, headers = this.getHeaders())
         var allIssues: List<Issue>? = null
 
-        if (! Handler.handleCode(response)) return null
+        if (! handleCode(response)) return null
 
         // Serialize the received json.
         try {
-            allIssues = Handler.mapper.readValue(response.text)
+            allIssues = mapper.readValue(response.text)
         } catch (e: Exception) {
             e.printStackTrace()
         }

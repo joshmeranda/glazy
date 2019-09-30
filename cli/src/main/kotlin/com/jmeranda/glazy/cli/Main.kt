@@ -25,7 +25,8 @@ class Glazy: Runnable {
 fun main(args: Array<String>) {
     CommandLine(Glazy())
             // Issue sub-command
-            .addSubcommand(CommandLine(IssueParent())
+            .addSubcommand(CommandLine(
+                    IssueParent())
                     .addSubcommand(IssueList())
                     .addSubcommand(IssueAdd())
                     .addSubcommand(IssuePatch()))
@@ -50,5 +51,7 @@ fun main(args: Array<String>) {
                     .addSubcommand(PullList())
                     .addSubcommand(PullInit())
                     .addSubcommand(PullUpdate()))
+            .addSubcommand(CommandLine(LabelParent())
+                    .addSubcommand(LabelList()))
             .execute(*args)
 }
