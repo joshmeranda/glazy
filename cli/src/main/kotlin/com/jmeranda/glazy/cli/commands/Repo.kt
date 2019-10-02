@@ -268,12 +268,24 @@ class RepoInit: Runnable, RequiredRepoCommand() {
         }
 
         // Create the remote repository.
-        this.service.createRepo( this.user ?: return, this.name ?: return, this.description,
-                this.homepage, this.private, this.hasIssues,
-                this.hasProject, this.hasWiki, this.isTemplate,
-                this.teamId, this.autoInit, this.gitignoreTemplate,
-                this.licenseTemplate, this.allowSquashMerge,
-                this.allowMergeCommit, this.allowRebaseMerge)
+        this.service.createRepo(
+                this.user ?: return,
+                this.name ?: return,
+                this.description,
+                this.homepage,
+                this.private,
+                this.hasIssues,
+                this.hasProject,
+                this.hasWiki,
+                this.isTemplate,
+                this.teamId,
+                this.autoInit,
+                this.gitignoreTemplate,
+                this.licenseTemplate,
+                this.allowSquashMerge,
+                this.allowMergeCommit,
+                this.allowRebaseMerge
+        )
     }
 }
 

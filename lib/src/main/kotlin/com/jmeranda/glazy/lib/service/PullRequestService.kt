@@ -45,9 +45,14 @@ class PullRequestService(
      * Create a pull request with the specified [title] or [issue], [head],
      * [base], [body], [canModify], and [draft].
      */
-    fun createPullRequest(title:String?, issue: Int?, head: String,
-                          base: String, body: String?, canModify: Boolean?,
-                          draft: Boolean?
+    fun createPullRequest(
+            title: String? = null,
+            head: String,
+            base: String,
+            issue: Int? = null,
+            body: String? = null,
+            canModify: Boolean? = null,
+            draft: Boolean? = null
     ): PullRequest {
         val request = PullPostRequest(user, name, title, issue, head, base, body, canModify, draft)
         val header = GlazyDraftableHeader(this.token)
@@ -57,8 +62,13 @@ class PullRequestService(
         return handler.handleRequest() ?: throw Exception("An error occurred")
     }
 
-    fun patchPullRequest(number: Int, title: String?, body: String?, state: String?,
-                          base: String?, canModify: Boolean?
+    fun patchPullRequest(
+            number: Int,
+            title: String? = null,
+            body: String? = null,
+            state: String? = null,
+            base: String? = null,
+            canModify: Boolean? = null
     ): PullRequest {
         val request = PullPatchRequest(this.user, this.name, number, title, body, state, base, canModify)
         val header = GlazyDraftableHeader(this.token)

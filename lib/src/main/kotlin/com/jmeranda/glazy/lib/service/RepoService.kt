@@ -41,12 +41,23 @@ class RepoService(private var token: String?){
     /**
      * Create a remote repository.
      */
-    fun createRepo(user: String, name: String, description: String?, homepage: String?,
-                   private: Boolean, hasIssues: Boolean, hasProject: Boolean,
-                   hasWiki: Boolean, isTemplate: Boolean, teamId: Int?,
-                   autoInit: Boolean, gitignoreTemplate: String?,
-                   licenseTemplate: String?, allowSquashMerge: Boolean,
-                   allowMergeCommit: Boolean, allowRebaseMerge: Boolean
+    fun createRepo(
+            user: String,
+            name: String,
+            description: String? = null,
+            homepage: String? = null,
+            private: Boolean? = null,
+            hasIssues: Boolean? = null,
+            hasProject: Boolean? = null,
+            hasWiki: Boolean? = null,
+            isTemplate: Boolean? = null,
+            teamId: Int? = null,
+            autoInit: Boolean? = null,
+            gitignoreTemplate: String? = null,
+            licenseTemplate: String? = null,
+            allowSquashMerge: Boolean? = null,
+            allowMergeCommit: Boolean? = null,
+            allowRebaseMerge: Boolean? = null
     ): Repo {
         val request = RepoPostRequest(user, name, description, homepage,
                 private, hasIssues, hasProject, hasWiki, isTemplate,
@@ -63,12 +74,22 @@ class RepoService(private var token: String?){
     /**
      * Edit a remote repository.
      */
-    fun editRepo(user: String, currentName: String, name: String?,
-                 description: String?, homepage: String?, private: Boolean?,
-                 hasIssues: Boolean?, hasProjects: Boolean?, hasWiki: Boolean?,
-                 isTemplate: Boolean?, defaultBranch: String?, allowSquashMerge: Boolean?,
-                 allowMergeCommit: Boolean?, allowRebaseMerge: Boolean?,
-                 archived: Boolean?
+    fun editRepo(
+            user: String,
+            currentName: String,
+            name: String? = null,
+            description: String? = null,
+            homepage: String? = null,
+            private: Boolean? = null,
+            hasIssues: Boolean? = null,
+            hasProjects: Boolean? = null,
+            hasWiki: Boolean? = null,
+            isTemplate: Boolean? = null,
+            defaultBranch: String? = null,
+            allowSquashMerge: Boolean? = null,
+            allowMergeCommit: Boolean? = null,
+            allowRebaseMerge: Boolean? = null,
+            archived: Boolean? = null
     ): Repo {
         val request = RepoPatchRequest(user, currentName, name, description,
                 homepage, private, hasIssues, hasProjects, hasWiki,
@@ -99,7 +120,7 @@ class RepoService(private var token: String?){
      * Transfer the ownership of the repository called [name] from
      * [user] fo [newOwner] with optional [teamIds].
      */
-    fun transferRepo(user: String, name: String, newOwner: String, teamIds: List<Int>?) {
+    fun transferRepo(user: String, name: String, newOwner: String, teamIds: List<Int>? = null) {
         val request = RepoTransferRequest(user, name, newOwner, teamIds)
         val header = GlazyTransferableHeader(this.token)
         val url = GlazyRepoUrl(request)

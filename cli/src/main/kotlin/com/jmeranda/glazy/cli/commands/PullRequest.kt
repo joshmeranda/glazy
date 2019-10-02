@@ -151,8 +151,15 @@ class PullInit: Runnable, PullCommand() {
     private var draft: Boolean? = null
 
     override fun run() {
-        val pullRequest = this.service?.createPullRequest(this.exclusive.title, this.exclusive.issue,
-                this.head, this.base, this.body, this.canModify, this.draft)
+        val pullRequest = this.service?.createPullRequest(
+                this.exclusive.title,
+                this.head,
+                this.base,
+                this.exclusive.issue,
+                this.body,
+                this.canModify,
+                this.draft
+        )
         displayPullRequest(pullRequest ?: return, listOf())
     }
 

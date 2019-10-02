@@ -55,8 +55,12 @@ class IssueService(
      * Create and return a new issue in the repository given the issue's
      * [title], [body], [milestone], [labels], and [assignees].
      */
-    fun createIssue(title: String, body: String?, milestone: Int?,
-                    labels: List<String>?, assignees: List<String>?
+    fun createIssue(
+            title: String,
+            body: String? = null,
+            milestone: Int? = null,
+            labels: List<String>? = null,
+            assignees: List<String>? = null
     ): Issue {
         val request = IssuePostRequest(this.user, this.name, title, body, milestone, labels, assignees)
         val header = GlazySimpleHeader(this.token)
@@ -72,8 +76,14 @@ class IssueService(
      * or [assignees] given the issue's [number] and return the edited
      * issue.
      */
-    fun editIssue(number: Int, title: String?, body: String?, state: String?,
-                  milestone: Int?, labels: List<String>?, assignees: List<String>?
+    fun editIssue(
+            number: Int,
+            title: String? = null,
+            body: String? = null,
+            state: String? = null,
+            milestone: Int? = null,
+            labels: List<String>? = null,
+            assignees: List<String>? = null
     ): Issue {
         val request = IssuePatchRequest(this.user, this.name, number, title,
                 body, state, milestone, labels, assignees)

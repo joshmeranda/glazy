@@ -29,7 +29,11 @@ class LabelService(
         return handler.handleRequest() ?: throw Exception()
     }
 
-    fun createLabel(label: String, color: String, description: String?): Label? {
+    fun createLabel(
+            label: String,
+            color: String,
+            description: String? = null
+    ): Label? {
         val request = LabelPostRequest(this.user, this.name, label, color, description)
         val header = GlazySimpleHeader(this.token)
         val url = GlazySimpleLabelUrl(request)
@@ -47,7 +51,12 @@ class LabelService(
         LabelDeleteHandler(header, url).handleRequest()
     }
 
-    fun patchLabel(label: String, newLabel: String?, color: String?, description: String?): Label? {
+    fun patchLabel(
+            label: String,
+            newLabel: String? = null,
+            color: String? = null,
+            description: String? = null
+    ): Label? {
         val request = LabelPatchRequest(this.user, this.name, label, newLabel, color, description)
         val header = GlazySimpleHeader(this.token)
         val url = GlazyLabelUrl(request)
