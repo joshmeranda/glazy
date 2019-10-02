@@ -6,10 +6,12 @@ import com.jmeranda.glazy.lib.handler.GlazySimpleHeader
 import com.jmeranda.glazy.lib.handler.GlazySimpleLabelUrl
 import com.jmeranda.glazy.lib.handler.label.LabelAllGetHandler
 import com.jmeranda.glazy.lib.handler.label.LabelDeleteHandler
+import com.jmeranda.glazy.lib.handler.label.LabelPatchHandler
 import com.jmeranda.glazy.lib.handler.label.LabelPostHandler
 import com.jmeranda.glazy.lib.objects.Label
 import com.jmeranda.glazy.lib.request.LabelAllGetRequest
 import com.jmeranda.glazy.lib.request.LabelDeleteRequest
+import com.jmeranda.glazy.lib.request.LabelPatchRequest
 import com.jmeranda.glazy.lib.request.LabelPostRequest
 
 class LabelService(
@@ -43,5 +45,15 @@ class LabelService(
         val url = GlazyLabelUrl(request)
 
         LabelDeleteHandler(header, url).handleRequest()
+    }
+
+    fun patchLabel(label: String, newLabel: String?, color: String?, description: String?): Label? {
+        val request = LabelPatchRequest(this.user, this.name, label, newLabel, color, description)
+        val header = GlazySimpleHeader(this.token)
+        val url = GlazyLabelUrl(request)
+
+        val handler = LabelPatchHandler(header, url)
+
+        return handler.handleRequest()
     }
 }

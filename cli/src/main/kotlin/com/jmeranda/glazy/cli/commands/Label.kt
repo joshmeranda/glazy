@@ -12,13 +12,13 @@ import com.jmeranda.glazy.lib.service.LabelService
 import picocli.CommandLine
 
 class Color {
-    @Option(names = ["-r", "--random"],
-            description = ["Generate a random value for the color"])
-    var randomColor: Boolean = false
-
     @Option(names = ["-c", "--color"],
             description = ["The color to use for the label."])
-    lateinit var color: String
+    var color: String? = null
+
+    @Option(names = ["-r", "--random-color"],
+            description = ["Use a randomly generated hex value for the color."])
+    var randomColor = false
 }
 
 open class LabelCommand {
@@ -45,7 +45,7 @@ open class LabelCommand {
 @Command(name = "label",
         description = ["Perform operations on repository labels"],
         mixinStandardHelpOptions = true)
-class LabelParent: Runnable {
+class LabelParent : Runnable {
     @Spec lateinit var spec: CommandSpec
 
     override fun run() {
@@ -57,7 +57,7 @@ class LabelParent: Runnable {
 @Command(name = "list",
         description = ["List all available repository labels."],
         mixinStandardHelpOptions = true)
-class LabelList: Runnable, LabelCommand() {
+class LabelList : Runnable, LabelCommand() {
     override fun run() {
         // Retrieve repository labels.
         val labelList: List<Label>? = this.service?.getAllLabels()
@@ -72,22 +72,23 @@ class LabelList: Runnable, LabelCommand() {
 @Command(name = "add",
         description = ["Create a new label for the repository."],
         mixinStandardHelpOptions = true)
-class LabelAdd: Runnable, LabelCommand() {
+class LabelAdd : Runnable, LabelCommand() {
     @Option(names = ["-l", "--label"],
             description = ["The name of the new label."],
             required = true)
     private lateinit var label: String
 
-    @ArgGroup(exclusive = true, multiplicity = "1")
-    private lateinit var color: Color
+    @ArgGroup(exclusive = true, multiplicity = "0..1")
+    private val color: Color? = null
 
     @Option(names = ["-d", "--description"],
-            description = ["An optional description of the labael."])
+            description = ["An optional description of the label."])
     private var description: String? = null
 
     override fun run() {
         val realColor: String = when {
-            this.color.randomColor -> (0x0..0xFFFFFF).random().toString(16)
+            // If no color or randoms specified, generate random hex code.
+            this.color == null  || this.color.randomColor -> (0x0..0xFFFFFF).random().toString(16)
             else -> this.color.color ?: String()
         }
 
@@ -99,7 +100,7 @@ class LabelAdd: Runnable, LabelCommand() {
 @Command(name = "delete",
         description = ["Delete aa repository lbael."],
         mixinStandardHelpOptions = true)
-class LabelDelete: Runnable, LabelCommand() {
+class LabelDelete : Runnable, LabelCommand() {
     @Option(names = ["-l", "--labels"],
             description = ["The name of the label to remove."],
             required = true)
@@ -107,5 +108,37 @@ class LabelDelete: Runnable, LabelCommand() {
 
     override fun run() {
         this.service?.deleteLabel(this.label)
+    }
+}
+
+@Command(name = "patch",
+        description = ["Patch a repository label."],
+        mixinStandardHelpOptions = true)
+class LabelPatch : Runnable, LabelCommand() {
+    @Option(names = ["-l", "--label"],
+            description = ["The name of the label to edit."],
+            required = true)
+    private lateinit var label: String
+
+    @Option(names = ["-n", "--new-label"],
+            description = ["The new name for the label."])
+    private var newLabel: String? = null
+
+    @ArgGroup(exclusive = true, multiplicity = "0..1")
+    private val color: Color? = null
+
+    @Option(names = ["-d", "--description"],
+            description = ["An optional description of the labael."])
+    private var description: String? = null
+
+    override fun run() {
+        val realColor: String = when {
+            // If no color or randoms specified, generate random hex code.
+            this.color == null  || this.color.randomColor -> (0x0..0xFFFFFF).random().toString(16)
+            else -> this.color.color ?: String()
+        }
+
+        val label = this.service?.patchLabel(this.label, this.newLabel, realColor, this.description)
+        displayLabel(label ?: return)
     }
 }

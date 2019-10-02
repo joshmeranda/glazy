@@ -3,6 +3,7 @@ package com.jmeranda.glazy.lib.request
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonInclude.Include
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.jmeranda.glazy.lib.handler.Request
 
 interface LabelRequest : Request {
@@ -20,7 +21,7 @@ data class LabelAllGetRequest (
 data class LabelPostRequest (
         @JsonIgnore override val user: String,
         @JsonIgnore override val name: String,
-        override val label: String,
+        @JsonProperty("name") override val label: String,
         val color: String,
         val description: String? = null
 ) : LabelRequest
@@ -29,4 +30,14 @@ data class LabelDeleteRequest (
         override val user: String,
         override val name: String,
         override val label: String
+) : LabelRequest
+
+@JsonInclude(Include.NON_NULL)
+data class LabelPatchRequest (
+        @JsonIgnore override val user: String,
+        @JsonIgnore override val name: String,
+        @JsonIgnore override val label: String,
+        val newName: String?,
+        val color: String?,
+        val description: String?
 ) : LabelRequest

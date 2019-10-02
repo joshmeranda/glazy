@@ -56,6 +56,7 @@ fun main(args: Array<String>) {
                     .addSubcommand(LabelList())
                     .addSubcommand(LabelAdd())
                     .addSubcommand(LabelDelete())
+                    .addSubcommand(LabelPatch())
                     .setToggleBooleanFlags(true))
             .execute(*args)
 }
