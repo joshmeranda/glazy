@@ -56,8 +56,8 @@ fun displayRepo(repo: Repo, fields: List<String>?) {
  * that setToken and setService are called before either property is used.
  */
 abstract class RepoCommand {
-    abstract var user: String?
-    abstract var name: String?
+    abstract val user: String?
+    abstract val name: String?
     protected open var token: String? = null
     protected lateinit var service: RepoService
 
@@ -104,13 +104,13 @@ sealed class RequiredRepoCommand : RepoCommand() {
             description = ["The user login for the desired repository."],
             paramLabel = "LOGIN",
             required = true)
-    override var user: String? = String()
+    override lateinit var user: String
 
     @Option(names = ["-n", "--name"],
             description = ["The name of the desired repository"],
             paramLabel = "NAME",
             required = true)
-   override var name: String? = String()
+   override lateinit var name: String
 
     override var token: String? = null
 
@@ -150,7 +150,6 @@ open class RepoShow : Runnable, OptionalRepoCommand() {
     private var fields: List<String>? = null
 
     override fun run() {
-        this.getCachedToken()
         this.startService()
 
         if (this.user == null || this.name == null) {
@@ -257,15 +256,9 @@ class RepoInit: Runnable, RequiredRepoCommand() {
             description = ["Allow rebase merging pull requests."])
     var allowRebaseMerge: Boolean = true
 
-    // Necessary to allow for treatingin name as required.
-    @Spec lateinit var spec: CommandSpec
-
     override fun run() {
         this.getCachedToken()
         this.startService()
-        if (this.user == null || this.name == null) {
-            this.startService()
-        }
 
         // Create the remote repository.
         this.service.createRepo(
@@ -419,13 +412,13 @@ class RepoTransfer: Runnable, OptionalRepoCommand() {
             description = ["The login of the new owner."],
             paramLabel = "LOGIN",
             required = true)
-    var newOwner: String? = null
+    lateinit var newOwner: String
 
     @Option(names = ["-t", "--team-ids"],
             description = ["Team id(s) to add to the repository."],
             split = ",",
             paramLabel = "IDS")
-    var teamIds: List<Int>? = null
+    lateinit var teamIds: List<Int>
 
     override fun run() {
         this.getCachedToken()
@@ -433,6 +426,6 @@ class RepoTransfer: Runnable, OptionalRepoCommand() {
 
         // Transfer the remote repository.
         this.service.transferRepo(this.user ?: return,this.name ?: return,
-                this.newOwner!!, this.teamIds)
+                this.newOwner, this.teamIds)
     }
 }

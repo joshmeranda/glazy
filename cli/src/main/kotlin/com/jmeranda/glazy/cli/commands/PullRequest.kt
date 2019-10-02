@@ -56,10 +56,10 @@ fun displayPullRequest(pullRequest: PullRequest, fields: List<String>?) {
  * authentication. All pull su-commands must inherit from this class.
  */
 open class PullCommand {
-    var service: PullRequestService? = null
+    protected lateinit var service: PullRequestService
     private var token: String? = null
 
-    init {
+    protected fun startService() {
         val (user, name) = getRepoName()
         if (user != null) token = CacheService.token(user)
 
@@ -103,11 +103,12 @@ class PullList: Runnable, PullCommand() {
     private var fields: List<String>? = null
 
     override fun run() {
+        this.startService()
         // Retrieve pull request list
         val pullList: List<PullRequest?>? = if (this.number == null) {
-            this.service?.getAllPullRequests()
+            this.service.getAllPullRequests()
         } else {
-            listOf(this.service?.getPullRequest(this.number))
+            listOf(this.service.getPullRequest(this.number))
         }
 
         for (pull: PullRequest? in pullList ?: listOf()) {
@@ -151,7 +152,8 @@ class PullInit: Runnable, PullCommand() {
     private var draft: Boolean? = null
 
     override fun run() {
-        val pullRequest = this.service?.createPullRequest(
+        this.startService()
+        val pullRequest = this.service.createPullRequest(
                 this.exclusive.title,
                 this.head,
                 this.base,
@@ -173,13 +175,13 @@ class PullInit: Runnable, PullCommand() {
                     description = ["The title for the pull request."],
                     paramLabel = "TITLE",
                     required = true)
-            var title: String? = null
+            lateinit var title: String
 
             @Option(names = ["-i", "--issue"],
                     description = ["The issue number to create the pull request from."],
                     paramLabel = "N",
                     required = true)
-            var issue: Int? = null
+            var issue: Int = -1 // Will be overridden but cannot be lateinit
         }
     }
 }
@@ -192,7 +194,7 @@ class PullUpdate: Runnable, PullCommand() {
             description=["The number of the desired pull request."],
             paramLabel="N",
             required = true)
-    private var number: Int? = null
+    private var number: Int = -1 // Will be overridden but cannot be lateinit
 
     @Option(names = ["-t", "--title"],
             description = ["The new title for the path request."],
@@ -219,8 +221,9 @@ class PullUpdate: Runnable, PullCommand() {
     private var canModify: Boolean? = null
 
     override fun run() {
-        val pullRequest = this.service?.patchPullRequest(this.number ?: return, this.title, this.body,
+        this.startService()
+        val pullRequest = this.service.patchPullRequest(this.number ?: return, this.title, this.body,
                 this.state, this.base, this.canModify)
-        displayPullRequest(pullRequest ?: return, listOf())
+        displayPullRequest(pullRequest, listOf())
     }
 }

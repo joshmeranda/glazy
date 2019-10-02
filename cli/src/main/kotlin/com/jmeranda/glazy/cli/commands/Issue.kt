@@ -26,17 +26,15 @@ fun displayIssue(issue: Issue) {
  * authentication. All issue sub-commands must inherit from this class.
  */
 open class IssueCommand {
-    var service: IssueService? = null
+    protected lateinit var service: IssueService
     private var token: String? = null
 
-    init {
+    protected fun startService() {
         val (user, name) = getRepoName()
 
         if (user != null) token = CacheService.token(user)
 
-        if (name != null && user != null) {
-            this.service = IssueService(user, name, token)
-        }
+        if (name != null && user != null) this.service = IssueService(user, name, token)
     }
 }
 
@@ -69,11 +67,12 @@ class IssueList: Runnable, IssueCommand() {
     private val number: Int? = null
 
     override fun run() {
+        this.startService()
         // Retrieve repository issues.
         val issueList: List<Issue?>? = if (this.number == null) {
-            this.service?.getAllIssues()
+            this.service.getAllIssues()
         } else  {
-            listOf(this.service?.getIssue(this.number))
+            listOf(this.service.getIssue(this.number))
         }
 
         // Display all retrieved issues.
@@ -95,7 +94,7 @@ class IssueAdd: Runnable, IssueCommand() {
             description=["The title of the new issue."],
             paramLabel="STRING",
             required=true)
-    private var title: String = ""
+    private lateinit var title: String
 
     @Option(names=["-b", "--body"],
             description=["The body of the new issue."],
@@ -120,8 +119,9 @@ class IssueAdd: Runnable, IssueCommand() {
     private var assignees: List<String>? = null
 
     override fun run() {
+        this.startService()
         // Create the issue.
-        val issue = this.service?.createIssue(title, body, milestone, labels, assignees)
+        val issue = this.service.createIssue(title, body, milestone, labels, assignees)
         displayIssue(issue ?: return)
     }
 }
@@ -171,6 +171,7 @@ class IssuePatch: Runnable, IssueCommand() {
     private var assignees: List<String>? = null
 
     override fun run() {
+        this.startService()
         val state = when {
             this.state == null -> null
             this.state?.open ?: false -> "open"
@@ -179,7 +180,7 @@ class IssuePatch: Runnable, IssueCommand() {
         }
 
         // Patch the issue.
-        val issue = this.service?.editIssue(this.number, this.title, this.body,
+        val issue = this.service.editIssue(this.number, this.title, this.body,
                 state, this.milestone, this.labels, this.assignees)
         displayIssue(issue ?: return)
     }

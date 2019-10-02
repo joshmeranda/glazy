@@ -22,10 +22,10 @@ class Color {
 }
 
 open class LabelCommand {
-    var service: LabelService? = null
+    protected lateinit var service: LabelService
     private var token: String? = null
 
-    init {
+    protected fun startService() {
         val (user, name) = getRepoName()
 
         if (user != null) token = CacheService.token(user)
@@ -59,8 +59,10 @@ class LabelParent : Runnable {
         mixinStandardHelpOptions = true)
 class LabelList : Runnable, LabelCommand() {
     override fun run() {
+        this.startService()
+
         // Retrieve repository labels.
-        val labelList: List<Label>? = this.service?.getAllLabels()
+        val labelList: List<Label>? = this.service.getAllLabels()
 
         // Display all retrieved labels.
         for (label: Label? in labelList ?: listOf()) {
@@ -86,13 +88,15 @@ class LabelAdd : Runnable, LabelCommand() {
     private var description: String? = null
 
     override fun run() {
+        this.startService()
+
         val realColor: String = when {
             // If no color or randoms specified, generate random hex code.
             this.color == null  || this.color.randomColor -> (0x0..0xFFFFFF).random().toString(16)
             else -> this.color.color ?: String()
         }
 
-        val label = this.service?.createLabel(this.label, realColor, this.description)
+        val label = this.service.createLabel(this.label, realColor, this.description)
         displayLabel(label ?: return)
     }
 }
@@ -107,7 +111,8 @@ class LabelDelete : Runnable, LabelCommand() {
     private lateinit var label: String
 
     override fun run() {
-        this.service?.deleteLabel(this.label)
+        this.startService()
+        this.service.deleteLabel(this.label)
     }
 }
 
@@ -132,13 +137,15 @@ class LabelPatch : Runnable, LabelCommand() {
     private var description: String? = null
 
     override fun run() {
+        this.startService()
+
         val realColor: String = when {
             // If no color or randoms specified, generate random hex code.
             this.color == null  || this.color.randomColor -> (0x0..0xFFFFFF).random().toString(16)
             else -> this.color.color ?: String()
         }
 
-        val label = this.service?.patchLabel(this.label, this.newLabel, realColor, this.description)
+        val label = this.service.patchLabel(this.label, this.newLabel, realColor, this.description)
         displayLabel(label ?: return)
     }
 }

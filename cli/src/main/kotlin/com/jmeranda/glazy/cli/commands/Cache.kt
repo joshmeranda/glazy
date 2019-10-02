@@ -54,7 +54,7 @@ class RefreshCache: Runnable {
             description = ["THe user whose repositories to refresh."],
             required = true,
             paramLabel = "LOGIN")
-    private var user: String = String()
+    private lateinit var user: String
 
     @Option(names = ["-n", "--name"],
             description = ["The name of the repository to refresh"],
@@ -86,13 +86,13 @@ class TokenCache: Runnable {
             description = ["The token to be cached."],
             required = true,
             paramLabel = "TOKEN")
-    private var token = String()
+    private lateinit var token: String
 
     @Option(names = ["-u", "--user"],
             description = ["The users login to associate with the token"],
             required = true,
             paramLabel = "LOGIN")
-    private var user = String()
+    private lateinit var user: String
 
     override fun run() {
         // Write the token to the cache.
