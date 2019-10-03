@@ -7,9 +7,9 @@ import picocli.CommandLine
 import picocli.CommandLine.ArgGroup
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
+import picocli.CommandLine.Parameters
 import picocli.CommandLine.Spec
 import picocli.CommandLine.Model.CommandSpec
-
 import com.jmeranda.glazy.lib.service.PullRequestService
 import com.jmeranda.glazy.cli.getRepoName
 import com.jmeranda.glazy.lib.objects.PullRequest
@@ -92,14 +92,12 @@ class PullParent: Runnable {
         mixinStandardHelpOptions = true)
 class PullList: Runnable, PullCommand() {
     @Option(names=["-n", "--number"],
-            description=["The number of the desired pull request."],
-            paramLabel="N")
+            description=["The number of the desired pull request."])
     private val number: Int? = null
 
     @Option(names = ["-f", "--fields"],
             description = ["The fields to also show"],
-            split = ",",
-            paramLabel = "FIELD")
+            split = ",")
     private var fields: List<String>? = null
 
     override fun run() {
@@ -124,31 +122,22 @@ class PullInit: Runnable, PullCommand() {
     @ArgGroup(exclusive = true, multiplicity = "1")
     private lateinit var exclusive: PullGroup
 
-    @Option(names = ["--head"],
-            description = ["The branch to merge."],
-            paramLabel = "BRANCH",
-            required = true)
+    @Parameters(index = "1", description = ["The branch to merge."])
     private lateinit var head: String
 
-    @Option(names = ["--base"],
-            description = ["The branch to merge the head branch into."],
-            paramLabel = "BRANCH",
-            required = true)
+    @Parameters(index = "1", description = ["The branch to merge the head branch into."])
     private lateinit var base: String
 
     @Option(names = ["-b", "--body"],
-            description = ["The contents of the pull request."],
-            paramLabel = "BODY")
+            description = ["The contents of the pull request."])
     private var body: String? = null
 
     @Option(names = ["-m", "--can-modify"],
-            description = ["Specifies that the repository maintainers can modify the pull request."],
-            paramLabel = "BOOL")
+            description = ["Specifies that the repository maintainers can modify the pull request."])
     private var canModify: Boolean? = null
 
     @Option(names = ["-d", "--draft"],
-            description = ["Specifies whether the pull request is a draft or not."],
-            paramLabel = "BOOL")
+            description = ["Specifies whether the pull request is a draft or not."])
     private var draft: Boolean? = null
 
     override fun run() {
@@ -162,7 +151,7 @@ class PullInit: Runnable, PullCommand() {
                 this.canModify,
                 this.draft
         )
-        displayPullRequest(pullRequest ?: return, listOf())
+        displayPullRequest(pullRequest, listOf())
     }
 
     companion object {
@@ -172,14 +161,11 @@ class PullInit: Runnable, PullCommand() {
          */
         class PullGroup {
             @Option(names = ["-t", "--title"],
-                    description = ["The title for the pull request."],
-                    paramLabel = "TITLE",
-                    required = true)
+                    description = ["The title for the pull request."],required = true)
             lateinit var title: String
 
             @Option(names = ["-i", "--issue"],
                     description = ["The issue number to create the pull request from."],
-                    paramLabel = "N",
                     required = true)
             var issue: Int = -1 // Will be overridden but cannot be lateinit
         }
@@ -190,30 +176,23 @@ class PullInit: Runnable, PullCommand() {
         description = ["Send a patch to a pull request."],
         mixinStandardHelpOptions = true)
 class PullUpdate: Runnable, PullCommand() {
-    @Option(names=["-n", "--number"],
-            description=["The number of the desired pull request."],
-            paramLabel="N",
-            required = true)
+    @Parameters(index = "0", description=["The number of the desired pull request."])
     private var number: Int = -1 // Will be overridden but cannot be lateinit
 
     @Option(names = ["-t", "--title"],
-            description = ["The new title for the path request."],
-            paramLabel = "TITLE")
+            description = ["The new title for the path request."])
     private var title: String? = null
 
     @Option(names = ["-b", "--body"],
-            description = ["The new body for the pull request."],
-            paramLabel = "BODY")
+            description = ["The new body for the pull request."])
     private var body: String? = null
 
     @Option(names = ["-s", "--state"],
-            description = ["THe new state for the pull request."],
-            paramLabel = "STATE")
+            description = ["THe new state for the pull request."])
     private var state: String? = null
 
     @Option(names = ["--base"],
-            description = ["The new branch to merge into."],
-            paramLabel = "BRANCH")
+            description = ["The new branch to merge into."])
     private var base: String? = null
 
     @Option(names = ["-m", "--can-modify"],
@@ -222,7 +201,7 @@ class PullUpdate: Runnable, PullCommand() {
 
     override fun run() {
         this.startService()
-        val pullRequest = this.service.patchPullRequest(this.number ?: return, this.title, this.body,
+        val pullRequest = this.service.patchPullRequest(this.number, this.title, this.body,
                 this.state, this.base, this.canModify)
         displayPullRequest(pullRequest, listOf())
     }

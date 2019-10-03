@@ -4,13 +4,11 @@ import picocli.CommandLine
 import picocli.CommandLine.ArgGroup
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
+import picocli.CommandLine.Parameters
 import picocli.CommandLine.Spec
 import picocli.CommandLine.Model.CommandSpec
-
 import com.jmeranda.glazy.lib.objects.Issue
 import com.jmeranda.glazy.lib.service.IssueService
-import com.jmeranda.glazy.lib.service.RepoService
-
 import com.jmeranda.glazy.cli.getRepoName
 import com.jmeranda.glazy.lib.service.CacheService
 
@@ -62,8 +60,7 @@ class IssueParent: Runnable {
         mixinStandardHelpOptions=true)
 class IssueList: Runnable, IssueCommand() {
     @Option(names=["-n", "--number"],
-            description=["The number of the desired issue."],
-            paramLabel="N")
+            description=["The number of the desired issue."])
     private val number: Int? = null
 
     override fun run() {
@@ -90,39 +87,32 @@ class IssueList: Runnable, IssueCommand() {
         description=["Create a new issue in the repository."],
         mixinStandardHelpOptions = true)
 class IssueAdd: Runnable, IssueCommand() {
-    @Option(names=["-t", "--title"],
-            description=["The title of the new issue."],
-            paramLabel="STRING",
-            required=true)
+    @Parameters(index = "0", description=["The title of the new issue."])
     private lateinit var title: String
 
     @Option(names=["-b", "--body"],
-            description=["The body of the new issue."],
-            paramLabel="STRING")
+            description=["The body of the new issue."])
     private var body: String? = null
 
     @Option(names=["-m", "--milestone"],
-            description=["The number of the milestone for the new issue."],
-            paramLabel="N")
+            description=["The number of the milestone for the new issue."])
     private var milestone: Int? = null
 
     @Option(names=["-l", "--labels"],
             description=["The labels for the new issue as comma separated strings."],
-            split=",",
-            paramLabel="LABEL")
+            split=",")
     private var labels: List<String>? = null
 
     @Option(names=["-a", "--assignees"],
             description=["The user logins for users to be assigned to the issue, as comma separated strings."],
-            split=",",
-            paramLabel="LOGIN")
+            split=",")
     private var assignees: List<String>? = null
 
     override fun run() {
         this.startService()
         // Create the issue.
         val issue = this.service.createIssue(title, body, milestone, labels, assignees)
-        displayIssue(issue ?: return)
+        displayIssue(issue)
     }
 }
 
@@ -135,38 +125,30 @@ class IssueAdd: Runnable, IssueCommand() {
         description=["Send a patch to an issue."],
         mixinStandardHelpOptions=true)
 class IssuePatch: Runnable, IssueCommand() {
-    @Option(names=["-n", "--number"],
-            description=["The number of the issue to patch."],
-            paramLabel="N",
-            required = true)
+    @Parameters(index = "0", description=["The number of the issue to patch."])
     private var number: Int = -1
 
     @Option(names=["-t", "--title"],
-            description=["The patched issue of the issue."],
-            paramLabel="STRING")
+            description=["The patched issue of the issue."])
     private var title: String? = null
 
     @Option(names=["-b", "--body"],
-            description=["The patched body of the issue."],
-            paramLabel="STRING")
+            description=["The patched body of the issue."])
     private var body: String? = null
 
     @ArgGroup(exclusive = true, multiplicity = "0..1")
     private var state: State? = null
 
     @Option(names=["-m", "--milestone"],
-            description=["The patched number of the milestone for the issue."],
-            paramLabel="N")
+            description=["The patched number of the milestone for the issue."])
     private var milestone: Int? = null
 
     @Option(names=["-l", "--labels"],
-            description=["The patched labels for the issue as comma separated strings."],
-            paramLabel="LABELS")
+            description=["The patched labels for the issue as comma separated strings."])
     private var labels: List<String>? = null
 
     @Option(names=["-a", "--assignees"],
             description=["The patched user logins for users to be assigned to the issue, as comma separated strings."],
-            paramLabel="LOGIN",
             split=",")
     private var assignees: List<String>? = null
 
@@ -182,7 +164,7 @@ class IssuePatch: Runnable, IssueCommand() {
         // Patch the issue.
         val issue = this.service.editIssue(this.number, this.title, this.body,
                 state, this.milestone, this.labels, this.assignees)
-        displayIssue(issue ?: return)
+        displayIssue(issue)
     }
 
     companion object {

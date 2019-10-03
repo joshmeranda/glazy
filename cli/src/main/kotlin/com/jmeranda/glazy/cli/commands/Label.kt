@@ -1,15 +1,16 @@
 package com.jmeranda.glazy.cli.commands
 
+import picocli.CommandLine
+import picocli.CommandLine.ArgGroup
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
+import picocli.CommandLine.Parameters
 import picocli.CommandLine.Spec
-import picocli.CommandLine.ArgGroup
 import picocli.CommandLine.Model.CommandSpec
 import com.jmeranda.glazy.cli.getRepoName
 import com.jmeranda.glazy.lib.objects.Label
 import com.jmeranda.glazy.lib.service.CacheService
 import com.jmeranda.glazy.lib.service.LabelService
-import picocli.CommandLine
 
 class Color {
     @Option(names = ["-c", "--color"],
@@ -40,6 +41,11 @@ open class LabelCommand {
             println(label.name)
         }
     }
+}
+
+open class LabelParameterCommand : LabelCommand() {
+    @Parameters(index = "0", description = ["The number of the target label."])
+    protected lateinit var label: String
 }
 
 @Command(name = "label",
@@ -74,12 +80,7 @@ class LabelList : Runnable, LabelCommand() {
 @Command(name = "add",
         description = ["Create a new label for the repository."],
         mixinStandardHelpOptions = true)
-class LabelAdd : Runnable, LabelCommand() {
-    @Option(names = ["-l", "--label"],
-            description = ["The name of the new label."],
-            required = true)
-    private lateinit var label: String
-
+class LabelAdd : Runnable, LabelParameterCommand() {
     @ArgGroup(exclusive = true, multiplicity = "0..1")
     private val color: Color? = null
 
@@ -104,12 +105,7 @@ class LabelAdd : Runnable, LabelCommand() {
 @Command(name = "delete",
         description = ["Delete aa repository lbael."],
         mixinStandardHelpOptions = true)
-class LabelDelete : Runnable, LabelCommand() {
-    @Option(names = ["-l", "--labels"],
-            description = ["The name of the label to remove."],
-            required = true)
-    private lateinit var label: String
-
+class LabelDelete : Runnable, LabelParameterCommand() {
     override fun run() {
         this.startService()
         this.service.deleteLabel(this.label)
@@ -119,12 +115,7 @@ class LabelDelete : Runnable, LabelCommand() {
 @Command(name = "patch",
         description = ["Patch a repository label."],
         mixinStandardHelpOptions = true)
-class LabelPatch : Runnable, LabelCommand() {
-    @Option(names = ["-l", "--label"],
-            description = ["The name of the label to edit."],
-            required = true)
-    private lateinit var label: String
-
+class LabelPatch : Runnable, LabelParameterCommand() {
     @Option(names = ["-n", "--new-label"],
             description = ["The new name for the label."])
     private var newLabel: String? = null
@@ -138,7 +129,6 @@ class LabelPatch : Runnable, LabelCommand() {
 
     override fun run() {
         this.startService()
-
         val realColor: String = when {
             // If no color or randoms specified, generate random hex code.
             this.color == null  || this.color.randomColor -> (0x0..0xFFFFFF).random().toString(16)

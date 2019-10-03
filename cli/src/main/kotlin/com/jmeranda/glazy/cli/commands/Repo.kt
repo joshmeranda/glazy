@@ -6,8 +6,8 @@ import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
 import picocli.CommandLine.Spec
+import picocli.CommandLine.Parameters
 import picocli.CommandLine.Model.CommandSpec
-
 import com.jmeranda.glazy.lib.objects.Repo
 import com.jmeranda.glazy.lib.exception.NotInRepo
 import com.jmeranda.glazy.lib.service.CacheService
@@ -76,13 +76,11 @@ abstract class RepoCommand {
 
 sealed class OptionalRepoCommand : RepoCommand() {
     @Option(names = ["-u", "--user"],
-            description = ["The user login for the desired repository."],
-            paramLabel = "LOGIN")
+            description = ["The user login for the desired repository."])
     override var user: String? = null
 
     @Option(names = ["-n", "--name"],
-            description = ["The name of the desired repository"],
-            paramLabel = "NAME")
+            description = ["The name of the desired repository"])
     override var name: String? = null
 
     override fun startService() {
@@ -100,17 +98,11 @@ sealed class OptionalRepoCommand : RepoCommand() {
 }
 
 sealed class RequiredRepoCommand : RepoCommand() {
-    @Option(names = ["-u", "--user"],
-            description = ["The user login for the desired repository."],
-            paramLabel = "LOGIN",
-            required = true)
+    @Parameters(index = "0", description = ["The user login for the desired repository."])
     override lateinit var user: String
 
-    @Option(names = ["-n", "--name"],
-            description = ["The name of the desired repository"],
-            paramLabel = "NAME",
-            required = true)
-   override lateinit var name: String
+    @Parameters(index = "1", description = ["The name of the desired repository"])
+    override lateinit var name: String
 
     override var token: String? = null
 
@@ -145,8 +137,7 @@ class RepoParent : Runnable, OptionalRepoCommand() {
 open class RepoShow : Runnable, OptionalRepoCommand() {
     @Option(names = ["-f", "--fields"],
             description = ["The fields to also show"],
-            split = ",",
-            paramLabel = "FIELD")
+            split = ",")
     private var fields: List<String>? = null
 
     override fun run() {
@@ -196,13 +187,11 @@ class RepoList: RepoShow() {
         mixinStandardHelpOptions = true)
 class RepoInit: Runnable, RequiredRepoCommand() {
     @Option(names = ["-d", "--description"],
-            description = ["THe description for the new repository"],
-            paramLabel = "DESCRIPTION")
+            description = ["THe description for the new repository"])
     var description: String? = null
 
     @Option(names = ["--homepage"],
-            description = ["The url to the repositories homepage"],
-            paramLabel = "URL")
+            description = ["The url to the repositories homepage"])
     var homepage: String? = null
 
     @Option(names = ["-p", "--private"],
@@ -226,8 +215,7 @@ class RepoInit: Runnable, RequiredRepoCommand() {
     var isTemplate: Boolean = false
 
     @Option(names = ["--team-id"],
-            description = ["The id of the team to have access to the repository"],
-            paramLabel = "ID")
+            description = ["The id of the team to have access to the repository"])
     var teamId: Int? = null
 
     @Option(names = ["-a", "--auto-init"],
@@ -235,13 +223,11 @@ class RepoInit: Runnable, RequiredRepoCommand() {
     var autoInit: Boolean = false
 
     @Option(names = ["--gitignore-template"],
-            description = ["The language gitignore template to use."],
-            paramLabel = "LANG")
+            description = ["The language gitignore template to use."])
     var gitignoreTemplate: String? = null
 
     @Option(names = ["--license-template"],
-            description = ["The license to use for the repository (MIT, GPL, etc.)."],
-            paramLabel = "LICENSE")
+            description = ["The license to use for the repository (MIT, GPL, etc.)."])
     var licenseTemplate: String? = null
 
     @Option(names = ["--allow-squash"],
@@ -262,8 +248,8 @@ class RepoInit: Runnable, RequiredRepoCommand() {
 
         // Create the remote repository.
         this.service.createRepo(
-                this.user ?: return,
-                this.name ?: return,
+                this.user,
+                this.name,
                 this.description,
                 this.homepage,
                 this.private,
@@ -290,18 +276,15 @@ class RepoInit: Runnable, RequiredRepoCommand() {
         mixinStandardHelpOptions = true)
 class RepoPatch: Runnable, OptionalRepoCommand() {
     @Option(names = ["--new-name"],
-            description = ["The new name for the repository."],
-            paramLabel = "NAME")
+            description = ["The new name for the repository."])
     var newName: String? = null
 
     @Option(names = ["-d", "--description"],
-            description = ["THe new description for the repo."],
-            paramLabel = "DESCRIPTION")
+            description = ["THe new description for the repo."])
     var description: String? = null
 
     @Option(names = ["--homepage"],
-            description = ["The new homepage url for the repo."],
-            paramLabel = "URL")
+            description = ["The new homepage url for the repo."])
     var homepage: String? = null
 
     @Option(names = ["--private"],
@@ -356,7 +339,7 @@ class RepoPatch: Runnable, OptionalRepoCommand() {
         }
 
         // Patch the remote repository.
-        val repo = this.service.editRepo(this.user ?: return , this.name ?: return,
+        val repo = this.service.editRepo(this.user ?: return, this.name ?: return,
                 this.newName, this.description, this.homepage, this.private ?: this.public?.not(),
                 this.hasIssues, this.hasProjects, this.hasWiki, this.isTemplate,
                 this.defaultBranch, this.allowSquashMerge, this.allowMergeCommit,
@@ -408,16 +391,12 @@ class RepoDelete: Runnable, OptionalRepoCommand() {
         description = ["Transfer a repository to another user."],
         mixinStandardHelpOptions = true)
 class RepoTransfer: Runnable, OptionalRepoCommand() {
-    @Option(names = ["-o", "--new-owner"],
-            description = ["The login of the new owner."],
-            paramLabel = "LOGIN",
-            required = true)
+    @Parameters(index = "0", description = ["The login of the new owner."])
     lateinit var newOwner: String
 
     @Option(names = ["-t", "--team-ids"],
             description = ["Team id(s) to add to the repository."],
-            split = ",",
-            paramLabel = "IDS")
+            split = ",")
     lateinit var teamIds: List<Int>
 
     override fun run() {

@@ -3,6 +3,7 @@ package com.jmeranda.glazy.cli.commands
 import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
+import picocli.CommandLine.Parameters
 import picocli.CommandLine.Spec
 import picocli.CommandLine.Model.CommandSpec
 
@@ -13,7 +14,7 @@ import com.jmeranda.glazy.lib.service.RepoService
  * Parent for all cache sub-commands.
  */
 @Command(name = "cache",
-        description  = ["Perform operations on the glazy cache."],
+        description = ["Perform operations on the glazy cache."],
         mixinStandardHelpOptions = true)
 class CacheParent: Runnable {
     @Spec lateinit var spec: CommandSpec
@@ -52,13 +53,11 @@ class ClearCache: Runnable {
 class RefreshCache: Runnable {
     @Option(names = ["-u", "--user"],
             description = ["THe user whose repositories to refresh."],
-            required = true,
-            paramLabel = "LOGIN")
+            required = true)
     private lateinit var user: String
 
     @Option(names = ["-n", "--name"],
-            description = ["The name of the repository to refresh"],
-            paramLabel = "NAME")
+            description = ["The name of the repository to refresh"])
     private var name: String? = null
 
     override fun run() {
@@ -82,17 +81,11 @@ class RefreshCache: Runnable {
         description = ["Add token to the cache."],
         mixinStandardHelpOptions = true)
 class TokenCache: Runnable {
-    @Option(names = ["-t", "--token"],
-            description = ["The token to be cached."],
-            required = true,
-            paramLabel = "TOKEN")
-    private lateinit var token: String
-
-    @Option(names = ["-u", "--user"],
-            description = ["The users login to associate with the token"],
-            required = true,
-            paramLabel = "LOGIN")
+    @Parameters(index = "0", description = ["The users login to associate with the token"])
     private lateinit var user: String
+
+    @Parameters(index = "1", description = ["The token to be cached."])
+    private lateinit var token: String
 
     override fun run() {
         // Write the token to the cache.
