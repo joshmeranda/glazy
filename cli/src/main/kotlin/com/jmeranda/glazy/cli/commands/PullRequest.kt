@@ -122,7 +122,7 @@ class PullInit: Runnable, PullCommand() {
     @ArgGroup(exclusive = true, multiplicity = "1")
     private lateinit var exclusive: PullGroup
 
-    @Parameters(index = "1", description = ["The branch to merge."])
+    @Parameters(index = "0", description = ["The branch to merge."])
     private lateinit var head: String
 
     @Parameters(index = "1", description = ["The branch to merge the head branch into."])
