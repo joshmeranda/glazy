@@ -42,7 +42,7 @@ open class IssueCommand {
 @Command(name="issue",
         description=["Perform operations on repository issues"],
         mixinStandardHelpOptions=true)
-class IssueParent: Runnable {
+class IssueParent : Runnable {
     @Spec lateinit var spec: CommandSpec
 
     override fun run() {
@@ -58,7 +58,7 @@ class IssueParent: Runnable {
 @Command(name="list",
         description=["List repository issues."],
         mixinStandardHelpOptions=true)
-class IssueList: Runnable, IssueCommand() {
+class IssueList : Runnable, IssueCommand() {
     @Option(names=["-n", "--number"],
             description=["The number of the desired issue."])
     private val number: Int? = null
@@ -111,7 +111,7 @@ class IssueAdd: Runnable, IssueCommand() {
     override fun run() {
         this.startService()
         // Create the issue.
-        val issue = this.service.createIssue(title, body, milestone, labels, assignees)
+        val issue = this.service.createIssue(title, body, milestone, labels, assignees) ?: return
         displayIssue(issue)
     }
 }
@@ -162,8 +162,15 @@ class IssuePatch: Runnable, IssueCommand() {
         }
 
         // Patch the issue.
-        val issue = this.service.editIssue(this.number, this.title, this.body,
-                state, this.milestone, this.labels, this.assignees)
+        val issue = this.service.editIssue(this.number,
+                this.title,
+                this.body,
+                state,
+                this.milestone,
+                this.labels,
+                this.assignees
+        ) ?: return
+
         displayIssue(issue)
     }
 

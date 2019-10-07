@@ -150,7 +150,7 @@ class PullInit: Runnable, PullCommand() {
                 this.body,
                 this.canModify,
                 this.draft
-        )
+        ) ?: return
         displayPullRequest(pullRequest, listOf())
     }
 
@@ -201,8 +201,13 @@ class PullUpdate: Runnable, PullCommand() {
 
     override fun run() {
         this.startService()
-        val pullRequest = this.service.patchPullRequest(this.number, this.title, this.body,
-                this.state, this.base, this.canModify)
+        val pullRequest = this.service.patchPullRequest(this.number,
+                this.title,
+                this.body,
+                this.state,
+                this.base,
+                this.canModify
+        ) ?: return
         displayPullRequest(pullRequest, listOf())
     }
 }

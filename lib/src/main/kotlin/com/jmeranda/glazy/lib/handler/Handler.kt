@@ -23,7 +23,7 @@ fun getRootEndpoints(rootUrl: String, mapper: ObjectMapper): RootEndpoints {
         val endpointsAsJson: String = get(rootUrl).text
         rootEndpoints = mapper.readValue(endpointsAsJson)
     } catch (e: Exception) {
-        throw BadEndpoint()
+        throw BadEndpoint(rootUrl)
     }
 
     CacheService.write(rootEndpoints)

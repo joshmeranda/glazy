@@ -12,8 +12,7 @@ import com.jmeranda.glazy.lib.service.RepoService
 class RepoServiceTest {
     private val service = RepoService(CacheService.token("foo"))
 
-    @Test
-    fun testGetRepoBad() {
+    @Test fun testGetRepoBad() {
         var repo: Repo? = null
         try {
             repo = this.service.getRepo("foo", "I_DO_NOT_EXIST")

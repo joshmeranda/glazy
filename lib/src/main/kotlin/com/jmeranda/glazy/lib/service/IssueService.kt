@@ -28,27 +28,27 @@ class IssueService(
     /**
      * Return the repository issue associated with the value of [number].
      */
-    fun getIssue(number: Int): Issue {
+    fun getIssue(number: Int): Issue? {
         val request = IssueGetRequest(this.user, this.name, number)
         val header = GlazySimpleHeader(this.token)
         val url = GlazyIssueUrl(request)
 
         val issueHandler = IssueGetHandler(header, url)
 
-        return issueHandler.handleRequest() ?: throw NoSuchIssue(number)
+        return issueHandler.handleRequest()
     }
 
     /**
      * Return a list of every issue in the current repository.
      */
-    fun getAllIssues(): List<Issue> {
+    fun getAllIssues(): List<Issue>? {
         val request = IssueGetAllRequest(this.user, this.name)
         val header = GlazySimpleHeader(this.token)
         val url = GlazySimpleIssueUrl(request)
 
         val issueAllGetHandler = IssueAllGetHandler(header, url)
 
-        return issueAllGetHandler.handleRequest() ?: throw Exception()
+        return issueAllGetHandler.handleRequest()
     }
 
     /**
@@ -61,14 +61,14 @@ class IssueService(
             milestone: Int? = null,
             labels: List<String>? = null,
             assignees: List<String>? = null
-    ): Issue {
+    ): Issue? {
         val request = IssuePostRequest(this.user, this.name, title, body, milestone, labels, assignees)
         val header = GlazySimpleHeader(this.token)
         val url = GlazySimpleIssueUrl(request)
 
         val issueHandler = IssuePostHandler(header, url)
 
-        return issueHandler.handleRequest() ?: throw BadRequest("Could not create issue.")
+        return issueHandler.handleRequest()
     }
 
     /**
@@ -84,13 +84,13 @@ class IssueService(
             milestone: Int? = null,
             labels: List<String>? = null,
             assignees: List<String>? = null
-    ): Issue {
+    ): Issue? {
         val request = IssuePatchRequest(this.user, this.name, number, title,
                 body, state, milestone, labels, assignees)
         val header = GlazySimpleHeader(this.token)
         val url = GlazyIssueUrl(request)
         val issueHandler = IssuePatchHandler(header, url)
 
-        return issueHandler.handleRequest() ?: throw BadRequest()
+        return issueHandler.handleRequest()
     }
 }

@@ -1,5 +1,6 @@
 package com.jmeranda.glazy.cli
 
+import com.jmeranda.glazy.lib.exception.NotInRepo
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -9,12 +10,12 @@ import java.nio.file.Paths
  * Return the name of the topmost git repository directory, given the
  * starting [dir].
  */
-fun getRepoDir(dir: String = "."): String? {
+fun getRepoDir(dir: String = "."): String {
     var cwd: Path = Paths.get(dir).toAbsolutePath().normalize()
 
     /* Walk up the tree to find a directory containing the '.git' dir. */
     while (! Files.exists(cwd.resolve(".git"))) {
-        if (cwd == cwd.root) { return null }
+        if (cwd == cwd.root) throw NotInRepo(cwd.toAbsolutePath().toString())
 
         cwd = cwd.parent
     }
@@ -44,7 +45,7 @@ fun getRepoName(dir: String = "."): Pair<String?, String?> {
         if (repoResult != null) { break }
     }
 
-    if (repoResult == null) { return Pair(null, null) }
+    if (repoResult == null) return Pair(null, null)
 
     val resultData: List<String> = repoResult.value.split("/")
 

@@ -180,12 +180,14 @@ class CacheService {
          * [name], using the provided [service].
          */
         fun refresh(user: String, name: String, service: RepoService) {
-            if (! Files.exists(Paths.get("$CACHE_PATH/user/name")))  return
-
-            /* Replace cached repo data */
             val path = "$CACHE_PATH/$user/$name"
+
+            // If no such cached repository, do nothing
+            if (! Files.exists(Paths.get(path))) return
+
+            // Replace cached repo data.
             File(path).delete()
-            write(service.getRepo(user, name))
+            write(service.getRepo(user, name) ?: return)
         }
 
         /**

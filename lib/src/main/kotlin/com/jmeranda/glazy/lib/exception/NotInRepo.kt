@@ -1,3 +1,5 @@
 package com.jmeranda.glazy.lib.exception
 
-class NotInRepo(): Exception("Current working directory is not a git repository.")
+class NotInRepo(
+        private var dir: String
+) : Exception("Current working directory '$dir' is not a git repository.")

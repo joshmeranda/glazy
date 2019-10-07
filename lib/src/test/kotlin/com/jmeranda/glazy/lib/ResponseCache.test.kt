@@ -13,13 +13,11 @@ class ResponseCacheTest {
         CacheService.setCacheLocation(File("src/test/resource").canonicalPath)
     }
 
-    @Test
-    fun testGetCachedAccessToken() {
+    @Test fun testGetCachedAccessToken() {
         assertEquals("bar", CacheService.token("foo"))
     }
 
-    @Test
-    fun testGetCachedAccessTokenBAD() {
+    @Test fun testGetCachedAccessTokenBAD() {
         assertNull(CacheService.token("I_DO_NOT_EXIST"))
     }
 }

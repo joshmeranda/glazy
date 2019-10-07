@@ -16,26 +16,25 @@ class RepoService(private var token: String?){
     /**
      * Get a repo with the specified [name], and [user].
      */
-    fun getRepo(user: String, name: String): Repo {
+    fun getRepo(user: String, name: String): Repo? {
         val request = RepoGetRequest(user, name)
         val header = GlazySimpleHeader(this.token)
         val url = GlazyRepoUrl(request)
         val repoHandler = RepoGetHandler(header, url)
 
-        return repoHandler.handleRequest() ?: throw NoSuchRepo(name)
+        return repoHandler.handleRequest()
     }
-
 
     /**
      * Get all repos owned by a user.
      */
-    fun getAllRepos(): List<Repo> {
+    fun getAllRepos(): List<Repo>? {
         val header = GlazySimpleHeader(this.token)
         val url = GlazyCurrentUserRepoUrl()
 
         val handler = RepoAllGetHandler(header, url)
 
-        return handler.handleRequest() ?: throw Exception("Could not authenticate using specified token")
+        return handler.handleRequest()
     }
 
     /**
@@ -58,7 +57,7 @@ class RepoService(private var token: String?){
             allowSquashMerge: Boolean? = null,
             allowMergeCommit: Boolean? = null,
             allowRebaseMerge: Boolean? = null
-    ): Repo {
+    ): Repo? {
         val request = RepoPostRequest(user, name, description, homepage,
                 private, hasIssues, hasProject, hasWiki, isTemplate,
                 teamId, autoInit, gitignoreTemplate, licenseTemplate,
@@ -68,7 +67,7 @@ class RepoService(private var token: String?){
 
         val repoHandler = RepoPostHandler(header, url)
 
-        return repoHandler.handleRequest() ?: throw Exception("Could not create repository")
+        return repoHandler.handleRequest()
     }
 
     /**
@@ -90,7 +89,7 @@ class RepoService(private var token: String?){
             allowMergeCommit: Boolean? = null,
             allowRebaseMerge: Boolean? = null,
             archived: Boolean? = null
-    ): Repo {
+    ): Repo? {
         val request = RepoPatchRequest(user, currentName, name, description,
                 homepage, private, hasIssues, hasProjects, hasWiki,
                 isTemplate, defaultBranch, allowSquashMerge, allowMergeCommit,
@@ -100,7 +99,7 @@ class RepoService(private var token: String?){
 
         val handler = RepoPatchHandler(header, url)
 
-        return handler.handleRequest() ?: throw NoSuchRepo(currentName)
+        return handler.handleRequest()
     }
 
     /**
@@ -113,7 +112,7 @@ class RepoService(private var token: String?){
 
         val handler = RepoDeleteHandler(header, url)
 
-        return handler.handleRequest()
+        handler.handleRequest()
     }
 
     /**
@@ -127,6 +126,6 @@ class RepoService(private var token: String?){
 
         val handler = RepoTransferHandler(header, url)
 
-        return handler.handleRequest()
+        handler.handleRequest()
     }
 }

@@ -19,14 +19,14 @@ class LabelService(
         private val name: String,
         private val token: String?
 ) {
-    fun getAllLabels(): List<Label> {
+    fun getAllLabels(): List<Label>? {
         val request = LabelAllGetRequest(this.user, this.name)
         val header = GlazySimpleHeader(this.token)
         val url = GlazySimpleLabelUrl(request)
 
         val handler = LabelAllGetHandler(header, url)
 
-        return handler.handleRequest() ?: throw Exception()
+        return handler.handleRequest()
     }
 
     fun createLabel(
@@ -40,7 +40,7 @@ class LabelService(
 
         val handler = LabelPostHandler(header, url)
 
-        return handler.handleRequest() ?: throw Exception()
+        return handler.handleRequest()
     }
 
     fun deleteLabel(label: String) {

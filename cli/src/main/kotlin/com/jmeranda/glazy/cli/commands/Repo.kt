@@ -84,13 +84,12 @@ sealed class OptionalRepoCommand : RepoCommand() {
     override var name: String? = null
 
     override fun startService() {
-        val (user, name) = getRepoName()
+        if (this.user == null && this.name == null) {
+            val (user, name) = getRepoName()
 
-        this.user = user
-        this.name = name
-
-        /* If not in a repository directory or sub-directory */
-        if (this.user == null && this.name == null) { throw NotInRepo() }
+            this.user = user
+            this.name = name
+        }
 
         this.getCachedToken()
         this.service = RepoService(this.token)
@@ -149,7 +148,7 @@ open class RepoShow : Runnable, OptionalRepoCommand() {
 
         // Retrieve and display a Repo instance.
         val repo = this.service.getRepo(this.user ?: return,
-                this.name?: return)
+                this.name?: return) ?: return
         displayRepo(repo, fields)
     }
 }
@@ -171,7 +170,7 @@ class RepoList: RepoShow() {
             this.startService()
         }
 
-        val repoList = this.service.getAllRepos()
+        val repoList = this.service.getAllRepos() ?: return
 
         for (repo: Repo? in repoList) {
             println(repo?.fullName)
@@ -343,8 +342,7 @@ class RepoPatch: Runnable, OptionalRepoCommand() {
                 this.newName, this.description, this.homepage, this.private ?: this.public?.not(),
                 this.hasIssues, this.hasProjects, this.hasWiki, this.isTemplate,
                 this.defaultBranch, this.allowSquashMerge, this.allowMergeCommit,
-                this.allowRebaseMerge, this.archived)
-
+                this.allowRebaseMerge, this.archived) ?: return
 
         val patchedFields = mutableListOf<String>()
         val ignoreProps = arrayOf("service", "user", "name")
