@@ -10,6 +10,7 @@ import picocli.CommandLine.Model.CommandSpec
 import com.jmeranda.glazy.lib.objects.Issue
 import com.jmeranda.glazy.lib.service.IssueService
 import com.jmeranda.glazy.cli.getRepoName
+import com.jmeranda.glazy.lib.exception.NotInRepo
 import com.jmeranda.glazy.lib.service.CacheService
 
 /**
@@ -24,15 +25,21 @@ fun displayIssue(issue: Issue) {
  * authentication. All issue sub-commands must inherit from this class.
  */
 open class IssueCommand {
-    protected lateinit var service: IssueService
+    protected var service: IssueService? = null
     private var token: String? = null
 
-    protected fun startService() {
-        val (user, name) = getRepoName()
+    protected fun startService(): IssueService? {
+        try {
+            val (user, name) = getRepoName()
 
-        if (user != null) token = CacheService.token(user)
+            if (user != null) token = CacheService.token(user)
 
-        if (name != null && user != null) this.service = IssueService(user, name, token)
+            if (user != null && name != null) this.service = IssueService(user, name, token)
+        } catch (e: NotInRepo) {
+            this.service = null
+        }
+
+        return this.service
     }
 }
 
@@ -64,12 +71,13 @@ class IssueList : Runnable, IssueCommand() {
     private val number: Int? = null
 
     override fun run() {
-        this.startService()
+        this.startService() ?: return
+
         // Retrieve repository issues.
         val issueList: List<Issue?>? = if (this.number == null) {
-            this.service.getAllIssues()
+            this.service?.getAllIssues()
         } else  {
-            listOf(this.service.getIssue(this.number))
+            listOf(this.service?.getIssue(this.number))
         }
 
         // Display all retrieved issues.
@@ -109,9 +117,9 @@ class IssueAdd: Runnable, IssueCommand() {
     private var assignees: List<String>? = null
 
     override fun run() {
-        this.startService()
+        this.startService() ?: return
         // Create the issue.
-        val issue = this.service.createIssue(title, body, milestone, labels, assignees) ?: return
+        val issue = this.service?.createIssue(title, body, milestone, labels, assignees) ?: return
         displayIssue(issue)
     }
 }
@@ -153,7 +161,7 @@ class IssuePatch: Runnable, IssueCommand() {
     private var assignees: List<String>? = null
 
     override fun run() {
-        this.startService()
+        this.startService() ?: return
         val state = when {
             this.state == null -> null
             this.state?.open ?: false -> "open"
@@ -162,7 +170,7 @@ class IssuePatch: Runnable, IssueCommand() {
         }
 
         // Patch the issue.
-        val issue = this.service.editIssue(this.number,
+        val issue = this.service?.editIssue(this.number,
                 this.title,
                 this.body,
                 state,

@@ -345,14 +345,18 @@ class RepoPatch: Runnable, OptionalRepoCommand() {
                 this.allowRebaseMerge, this.archived) ?: return
 
         val patchedFields = mutableListOf<String>()
-        val ignoreProps = arrayOf("service", "user", "name")
+        val ignoreProps = arrayOf("token", "service", "user", "name")
 
         // Determine which fields have been patched.
         for (prop in RepoPatch::class.memberProperties) {
             if (prop.name in ignoreProps) continue
 
             if ((prop as KProperty1<RepoPatch, Any>).get(this) != null) {
-                patchedFields.add(prop.name)
+                if (prop.name == "public"){
+                    patchedFields.add("private")
+                } else {
+                    patchedFields.add(prop.name)
+                }
             }
         }
 

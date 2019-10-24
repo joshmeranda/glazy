@@ -15,7 +15,7 @@ private val resourceDir: String = "${Paths.get(".").toRealPath()}/src/test/resou
 /**
  * Unit tests for for the getRepoDir top level function.
  */
-class GetRepoDirTest() {
+class GetRepoDirTest {
     @Test fun testNoGit() {
         assertFailsWith<NotInRepo> { getRepoDir("/home/") }
     }
@@ -48,14 +48,10 @@ class GetRepoNameTest {
     }
 
     @Test fun testNoRepo() {
-        val (user: String?, name: String?) = getRepoName("/home/")
-        assertNull(user)
-        assertNull(name)
+        assertFailsWith<NotInRepo> { getRepoName("/home/") }
     }
 
     @Test fun testFromRoot() {
-        val(user: String?, name: String?) = getRepoName("/")
-        assertNull(user)
-        assertNull(name)
+        assertFailsWith<NotInRepo> { getRepoDir("/") }
     }
 }

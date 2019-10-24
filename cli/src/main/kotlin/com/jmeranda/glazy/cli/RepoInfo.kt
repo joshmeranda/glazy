@@ -15,7 +15,7 @@ fun getRepoDir(dir: String = "."): String {
 
     /* Walk up the tree to find a directory containing the '.git' dir. */
     while (! Files.exists(cwd.resolve(".git"))) {
-        if (cwd == cwd.root) throw NotInRepo(cwd.toAbsolutePath().toString())
+        if (cwd == cwd.root) throw NotInRepo(dir)
 
         cwd = cwd.parent
     }
@@ -31,11 +31,8 @@ fun getRepoName(dir: String = "."): Pair<String?, String?> {
     val repoRegex = Regex( "[a-zA-Z0-9]+/[a-zA-Z0-9\\-_]+\\.git$", RegexOption.UNIX_LINES)
     val contents: List<String>
 
-    try {
-        contents = File("${getRepoDir(dir)}/.git/config").readLines()
-    } catch(e: Exception) {
-        return Pair(null, null)
-    }
+    contents = File("${getRepoDir(dir)}/.git/config").readLines()
+
     var repoResult: MatchResult? = null
 
     /* Search for git repo name */
