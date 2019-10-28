@@ -39,6 +39,7 @@ fun main(args: Array<String>) {
                     .addSubcommand(RepoPatch())
                     .addSubcommand(RepoDelete())
                     .addSubcommand(RepoTransfer())
+                    .addSubcommand(RepoFork())
                     .setToggleBooleanFlags(true))
             // Cache sub-command
             .addSubcommand(CommandLine(CacheParent())

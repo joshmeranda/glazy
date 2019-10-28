@@ -71,3 +71,9 @@ class GlazyLabelUrl(override val request: LabelRequest) : GlazyUrl {
             .replace("{repo}", this.request.name)
             .plus("/labels/${request.label}")
 }
+class GlazyForkUrl(override val request: Request) : GlazyUrl {
+    override val requestUrl = Handler.endpoints.repositoryUrl
+            .replace("{owner}", this.request.user)
+            .replace("{repo}", this.request.name)
+            .plus("/forks")
+}

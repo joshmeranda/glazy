@@ -2,10 +2,8 @@ package com.jmeranda.glazy.lib.service
 
 import com.jmeranda.glazy.lib.objects.Repo
 import com.jmeranda.glazy.lib.exception.NoSuchRepo
-import com.jmeranda.glazy.lib.handler.GlazyCurrentUserRepoUrl
-import com.jmeranda.glazy.lib.handler.GlazyRepoUrl
-import com.jmeranda.glazy.lib.handler.GlazySimpleHeader
-import com.jmeranda.glazy.lib.handler.GlazyTransferableHeader
+import com.jmeranda.glazy.lib.handler.*
+import com.jmeranda.glazy.lib.handler.fork.ForkPostHandler
 import com.jmeranda.glazy.lib.handler.repo.*
 import com.jmeranda.glazy.lib.request.*
 
@@ -127,5 +125,18 @@ class RepoService(private var token: String?){
         val handler = RepoTransferHandler(header, url)
 
         handler.handleRequest()
+    }
+
+    /**
+     * Create a fork of  repository called [name] and owned by [user].
+     */
+    fun createFork(user: String, name: String, organization: String?): Repo? {
+        val request = RepoForkRequest(user, name, organization)
+        val header = GlazySimpleHeader(this.token)
+        val url = GlazyForkUrl(request)
+
+        val handler = ForkPostHandler(header, url)
+
+        return handler.handleRequest()
     }
 }

@@ -1,29 +1,24 @@
-package com.jmeranda.glazy.lib.handler.issue
-
-import khttp.post
-import khttp.responses.Response
+package com.jmeranda.glazy.lib.handler.fork
 
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.jmeranda.glazy.lib.handler.GlazySimpleIssueUrl
+import khttp.post
+import com.jmeranda.glazy.lib.handler.GlazyForkUrl
 import com.jmeranda.glazy.lib.handler.GlazySimpleHeader
 import com.jmeranda.glazy.lib.handler.Handler
+import com.jmeranda.glazy.lib.objects.Repo
+import java.lang.Exception
 
-import com.jmeranda.glazy.lib.objects.Issue
-
-/**
- * Handle a [request] to create a new repository issue using the specified [token].
- */
-class IssuePostHandler(
+class ForkPostHandler(
         header: GlazySimpleHeader,
-        url: GlazySimpleIssueUrl
+        url: GlazyForkUrl
 ) : Handler(header, url) {
-    override fun handleRequest(): Issue? {
+    override fun handleRequest(): Repo? {
         var body: String? = null
 
         // Deserialize the request instance.
         try {
             body = mapper.writeValueAsString(this.request)
-        } catch(e: Exception) {
+        } catch (e: Exception) {
             e.printStackTrace()
         }
 
@@ -31,17 +26,17 @@ class IssuePostHandler(
                 data = body,
                 headers = this.getHeaders())
 
-        if (!handleCode(response)) return null
+        if (! handleCode(response)) return null
 
-        var issue: Issue? = null
+        var repo: Repo? = null
 
         // Serialize the received json.
         try {
-            issue = mapper.readValue(response.text)
+            repo = mapper.readValue(response.text)
         } catch (e: Exception) {
             e.printStackTrace()
         }
 
-        return issue
+        return repo
     }
 }

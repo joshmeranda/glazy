@@ -78,3 +78,12 @@ data class RepoDeleteRequest(
         override val user: String,
         override val name: String
 ) : Request
+
+/**
+ * Request class for forking a repository.
+ */
+data class RepoForkRequest (
+        @JsonIgnore override val user: String,
+        @JsonIgnore override val name: String,
+        val organization: String? = null
+) : Request

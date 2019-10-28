@@ -71,7 +71,10 @@ abstract class RepoCommand {
     /**
      * Set the value of the private service.
      */
-    protected abstract fun startService()
+    protected open fun startService() {
+        this.getCachedToken()
+        this.service = RepoService(this.token)
+    }
 }
 
 sealed class OptionalRepoCommand : RepoCommand() {
@@ -91,8 +94,7 @@ sealed class OptionalRepoCommand : RepoCommand() {
             this.name = name
         }
 
-        this.getCachedToken()
-        this.service = RepoService(this.token)
+        super.startService()
     }
 }
 
@@ -104,11 +106,6 @@ sealed class RequiredRepoCommand : RepoCommand() {
     override lateinit var name: String
 
     override var token: String? = null
-
-    override fun startService() {
-        this.getCachedToken()
-        this.service = RepoService(this.token)
-    }
 }
 
 /**
@@ -408,5 +405,36 @@ class RepoTransfer: Runnable, OptionalRepoCommand() {
         // Transfer the remote repository.
         this.service.transferRepo(this.user ?: return,this.name ?: return,
                 this.newOwner, this.teamIds)
+    }
+}
+
+@Command(name = "fork",
+        description = ["Create a fork of a repository."],
+        mixinStandardHelpOptions = true)
+class RepoFork: Runnable, RepoCommand() {
+    @Parameters(index = "0", description = ["The new owner for the repository."])
+    override lateinit var user: String
+
+    @Option(names = ["-n", "--name"],
+            description = ["The name of the desired repository"],
+            required = true)
+    override lateinit var name: String
+
+    @Option(names = ["-u", "--user"],
+            description = ["The owner of the original repository."],
+            required = true)
+    lateinit var current: String
+
+    @Option(names = ["-o", "--organization"],
+            description = ["The name of the organization to log into."])
+    var organization: String? = null
+
+    override fun run() {
+        this.getCachedToken()
+        this.startService()
+
+        val repo = this.service.createFork(this.current, this.name, organization)
+
+        displayRepo(repo ?: return, null)
     }
 }
