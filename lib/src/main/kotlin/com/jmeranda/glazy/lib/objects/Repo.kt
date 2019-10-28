@@ -82,5 +82,8 @@ data class Repo(
         val subscribersCount: Int,
         val allowSquashMerge: Boolean,
         val allowMergeCommit: Boolean,
-        val allowRebaseMerge: Boolean
+        val allowRebaseMerge: Boolean,
+        val organization: Organization? = null,
+        val parent: Repo? = null,
+        val source: Repo? = null
 )
