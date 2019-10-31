@@ -31,8 +31,8 @@ data class LinkRelations (
 @JsonInclude(Include.NON_NULL)
 data class PullRequest (
         val url: String,
-        val id: Int,
-        val nodeId: String,
+        override val id: Int,
+        override val nodeId: String,
         val htmlUrl: String,
         val diffUrl: String,
         val patchUrl: String,
@@ -78,4 +78,4 @@ data class PullRequest (
         val additions: Int,
         val deletions: Int,
         val changedFiles: Int
-)
+) : GitObject(id, nodeId)

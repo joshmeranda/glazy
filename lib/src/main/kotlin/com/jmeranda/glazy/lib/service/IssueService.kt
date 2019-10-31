@@ -1,12 +1,15 @@
 package com.jmeranda.glazy.lib.service
 
+import com.fasterxml.jackson.databind.JsonMappingException
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.jmeranda.glazy.lib.objects.Issue
 import com.jmeranda.glazy.lib.objects.Repo
 import com.jmeranda.glazy.lib.exception.BadRequest
 import com.jmeranda.glazy.lib.exception.NoSuchIssue
-import com.jmeranda.glazy.lib.handler.GlazyIssueUrl
-import com.jmeranda.glazy.lib.handler.GlazySimpleHeader
-import com.jmeranda.glazy.lib.handler.GlazySimpleIssueUrl
+import com.jmeranda.glazy.lib.handler.*
 import com.jmeranda.glazy.lib.handler.issue.IssueAllGetHandler
 import com.jmeranda.glazy.lib.handler.issue.IssueGetHandler
 import com.jmeranda.glazy.lib.handler.issue.IssuePatchHandler
@@ -32,10 +35,9 @@ class IssueService(
         val request = IssueGetRequest(this.user, this.name, number)
         val header = GlazySimpleHeader(this.token)
         val url = GlazyIssueUrl(request)
+        val handler = GetHandler(header, url, Issue::class)
 
-        val issueHandler = IssueGetHandler(header, url)
-
-        return issueHandler.handleRequest()
+        return handler.handleRequest() as Issue?
     }
 
     /**
@@ -45,10 +47,19 @@ class IssueService(
         val request = IssueGetAllRequest(this.user, this.name)
         val header = GlazySimpleHeader(this.token)
         val url = GlazySimpleIssueUrl(request)
+        val handler = GetHandler(header, url, Issue::class)
+        val mapper: ObjectMapper = jacksonObjectMapper()
+                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
 
-        val issueAllGetHandler = IssueAllGetHandler(header, url)
+        var data: List<Issue>? = null
 
-        return issueAllGetHandler.handleRequest()
+        try {
+            data = mapper.readValue(handler.handleListRequest())
+        } catch (e: JsonMappingException) {
+            println("Error mapping api response.")
+        }
+
+        return data
     }
 
     /**
@@ -65,10 +76,9 @@ class IssueService(
         val request = IssuePostRequest(this.user, this.name, title, body, milestone, labels, assignees)
         val header = GlazySimpleHeader(this.token)
         val url = GlazySimpleIssueUrl(request)
+        val issueHandler = PostPatchHandler(header, url, Issue::class)
 
-        val issueHandler = IssuePostHandler(header, url)
-
-        return issueHandler.handleRequest()
+        return issueHandler.handleRequest() as Issue?
     }
 
     /**
@@ -89,8 +99,8 @@ class IssueService(
                 body, state, milestone, labels, assignees)
         val header = GlazySimpleHeader(this.token)
         val url = GlazyIssueUrl(request)
-        val issueHandler = IssuePatchHandler(header, url)
+        val issueHandler = PostPatchHandler(header, url, Issue::class)
 
-        return issueHandler.handleRequest()
+        return issueHandler.handleRequest() as Issue?
     }
 }

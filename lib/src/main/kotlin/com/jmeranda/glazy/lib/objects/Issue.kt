@@ -17,8 +17,8 @@ data class Issue (
         val commentsUrl: String,
         val eventsUrl: String,
         val htmlUrl: String,
-        val id: Int,
-        val nodeId: String,
+        override val id: Int,
+        override val nodeId: String,
         val number: Int,
         val title: String,
         val user: Owner,
@@ -36,4 +36,4 @@ data class Issue (
         val body: String? = null,
         val closedBy: Owner? = null,
         val pullRequest: IssuePullRequest? = null
-)
+) : GitObject(id, nodeId)

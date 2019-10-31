@@ -1,8 +1,11 @@
 package com.jmeranda.glazy.lib.service
 
-import com.jmeranda.glazy.lib.handler.GlazyDraftableHeader
-import com.jmeranda.glazy.lib.handler.GlazyPullUrl
-import com.jmeranda.glazy.lib.handler.GlazySimplePullUrl
+import com.fasterxml.jackson.databind.JsonMappingException
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import com.jmeranda.glazy.lib.handler.*
 import com.jmeranda.glazy.lib.objects.PullRequest
 import com.jmeranda.glazy.lib.handler.pullRequest.PullRequestAllGetHandler
 import com.jmeranda.glazy.lib.handler.pullRequest.PullRequestGetHandler
@@ -22,10 +25,18 @@ class PullRequestService(
         val request = PullGetAllRequest(this.user, this.name)
         val header = GlazyDraftableHeader(this.token)
         val url = GlazySimplePullUrl(request)
+        val handler = GetHandler(header, url, PullRequest::class)
+        val mapper: ObjectMapper = jacksonObjectMapper()
+                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+        var data: List<PullRequest>? = null
 
-        val handler = PullRequestAllGetHandler(header, url)
+        try {
+            data = mapper.readValue(handler.handleListRequest())
+        } catch (e: JsonMappingException) {
+            println("Error mapping api response.")
+        }
 
-        return handler.handleRequest()
+        return data
     }
 
     /**
@@ -35,10 +46,9 @@ class PullRequestService(
         val request = PullGetRequest(this.user, this.name, number)
         val header = GlazyDraftableHeader(this.token)
         val url = GlazyPullUrl(request)
+        val handler = GetHandler(header, url, PullRequest::class)
 
-        val handler = PullRequestGetHandler(header, url)
-
-        return handler.handleRequest()
+        return handler.handleRequest() as PullRequest?
     }
 
     /**
@@ -57,9 +67,9 @@ class PullRequestService(
         val request = PullPostRequest(user, name, title, issue, head, base, body, canModify, draft)
         val header = GlazyDraftableHeader(this.token)
         val url = GlazySimplePullUrl(request)
-        val handler = PullRequestPostHandler(header, url)
+        val handler = PostPatchHandler(header, url, PullRequest::class)
 
-        return handler.handleRequest()
+        return handler.handleRequest() as PullRequest?
     }
 
     fun patchPullRequest(
@@ -73,9 +83,8 @@ class PullRequestService(
         val request = PullPatchRequest(this.user, this.name, number, title, body, state, base, canModify)
         val header = GlazyDraftableHeader(this.token)
         val url = GlazyPullUrl(request)
+        val handler = PostPatchHandler(header, url, PullRequest::class)
 
-        val handler = PullRequestPatchHandler(header, url)
-
-        return handler.handleRequest()
+        return handler.handleRequest() as PullRequest?
     }
 }

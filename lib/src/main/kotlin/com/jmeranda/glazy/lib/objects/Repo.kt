@@ -4,8 +4,8 @@ package com.jmeranda.glazy.lib.objects
  * Describes a github repository.
  */
 data class Repo(
-        val id: Int,
-        val nodeId: String,
+        override val id: Int,
+        override val nodeId: String,
         val name: String,
         val fullName: String,
         val private: Boolean,
@@ -86,4 +86,4 @@ data class Repo(
         val organization: Organization? = null,
         val parent: Repo? = null,
         val source: Repo? = null
-)
+) : GitObject(id, nodeId)

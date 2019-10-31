@@ -1,5 +1,10 @@
 package com.jmeranda.glazy.lib.service
 
+import com.fasterxml.jackson.databind.JsonMappingException
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.jmeranda.glazy.lib.objects.Repo
 import com.jmeranda.glazy.lib.handler.*
 import com.jmeranda.glazy.lib.handler.fork.ForkPostHandler
@@ -14,12 +19,18 @@ class RepoService(private var token: String?){
      * Get a repo with the specified [name], and [user].
      */
     fun getRepo(user: String, name: String): Repo? {
-        val request = RepoGetRequest(user, name)
-        val header = GlazySimpleHeader(this.token)
-        val url = GlazyRepoUrl(request)
-        val repoHandler = RepoGetHandler(header, url)
+        var repo = CacheService.repo(user, name)
 
-        return repoHandler.handleRequest()
+        if (repo == null) {
+            val request = RepoGetRequest(user, name)
+            val header = GlazySimpleHeader(this.token)
+            val url = GlazyRepoUrl(request)
+            val repoHandler = GetHandler(header, url, Repo::class)
+
+            repo = repoHandler.handleRequest() as Repo
+        }
+
+        return repo
     }
 
     /**
@@ -28,10 +39,17 @@ class RepoService(private var token: String?){
     fun getAllRepos(): List<Repo>? {
         val header = GlazySimpleHeader(this.token)
         val url = GlazyCurrentUserRepoUrl()
+        val handler = GetHandler(header, url, Repo::class)
+        val mapper: ObjectMapper = jacksonObjectMapper()
+                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
+        var data: List<Repo>? = null
+        try {
+            data = mapper.readValue(handler.handleListRequest())
+        } catch (e: JsonMappingException) {
+            println("Error mapping api response.")
+        }
 
-        val handler = RepoAllGetHandler(header, url)
-
-        return handler.handleRequest()
+        return data
     }
 
     /**
@@ -61,10 +79,9 @@ class RepoService(private var token: String?){
                 allowSquashMerge, allowMergeCommit, allowRebaseMerge)
         val header = GlazySimpleHeader(this.token)
         val url = GlazyCurrentUserRepoUrl(request)
+        val repoHandler = PostPatchHandler(header, url, Repo::class)
 
-        val repoHandler = RepoPostHandler(header, url)
-
-        return repoHandler.handleRequest()
+        return repoHandler.handleRequest() as Repo?
     }
 
     /**
@@ -93,10 +110,9 @@ class RepoService(private var token: String?){
                 allowRebaseMerge, archived)
         val header = GlazySimpleHeader(this.token)
         val url = GlazyRepoUrl(request)
+        val handler = PostPatchHandler(header, url, Repo::class)
 
-        val handler = RepoPatchHandler(header, url)
-
-        return handler.handleRequest()
+        return handler.handleRequest() as Repo?
     }
 
     /**
@@ -106,10 +122,9 @@ class RepoService(private var token: String?){
         val request = RepoDeleteRequest(user, name)
         val header = GlazySimpleHeader(this.token)
         val url = GlazyRepoUrl(request)
+        val handler = DeleteHandler(header, url, Repo::class)
 
-        val handler = RepoDeleteHandler(header, url)
-
-        handler.handleRequest()
+        handler.handleRequest() as Repo?
     }
 
     /**
@@ -120,10 +135,9 @@ class RepoService(private var token: String?){
         val request = RepoTransferRequest(user, name, newOwner, teamIds)
         val header = GlazyTransferableHeader(this.token)
         val url = GlazyRepoUrl(request)
+        val handler = TransferHandler(header, url, Repo::class)
 
-        val handler = RepoTransferHandler(header, url)
-
-        handler.handleRequest()
+        handler.handleRequest() as Repo?
     }
 
     /**
@@ -133,9 +147,8 @@ class RepoService(private var token: String?){
         val request = RepoForkRequest(user, name, organization)
         val header = GlazySimpleHeader(this.token)
         val url = GlazyForkUrl(request)
+        val handler = PostPatchHandler(header, url, Repo::class)
 
-        val handler = ForkPostHandler(header, url)
-
-        return handler.handleRequest()
+        return handler.handleRequest() as Repo?
     }
 }

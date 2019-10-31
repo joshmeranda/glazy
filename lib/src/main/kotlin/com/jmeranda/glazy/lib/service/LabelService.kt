@@ -1,9 +1,11 @@
 package com.jmeranda.glazy.lib.service
 
-import com.jmeranda.glazy.lib.handler.GlazyIssueUrl
-import com.jmeranda.glazy.lib.handler.GlazyLabelUrl
-import com.jmeranda.glazy.lib.handler.GlazySimpleHeader
-import com.jmeranda.glazy.lib.handler.GlazySimpleLabelUrl
+import com.fasterxml.jackson.databind.JsonMappingException
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import com.jmeranda.glazy.lib.handler.*
 import com.jmeranda.glazy.lib.handler.label.LabelAllGetHandler
 import com.jmeranda.glazy.lib.handler.label.LabelDeleteHandler
 import com.jmeranda.glazy.lib.handler.label.LabelPatchHandler
@@ -23,10 +25,18 @@ class LabelService(
         val request = LabelAllGetRequest(this.user, this.name)
         val header = GlazySimpleHeader(this.token)
         val url = GlazySimpleLabelUrl(request)
+        val handler = GetHandler(header, url, Label::class)
+        var data: List<Label>? = null
+        val mapper: ObjectMapper = jacksonObjectMapper()
+                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
 
-        val handler = LabelAllGetHandler(header, url)
+        try {
+            data = mapper.readValue(handler.handleListRequest())
+        } catch (e: JsonMappingException) {
+            println("Error mapping api")
+        }
 
-        return handler.handleRequest()
+        return data
     }
 
     fun createLabel(
@@ -37,18 +47,16 @@ class LabelService(
         val request = LabelPostRequest(this.user, this.name, label, color, description)
         val header = GlazySimpleHeader(this.token)
         val url = GlazySimpleLabelUrl(request)
+        val handler = PostPatchHandler(header, url, Label::class)
 
-        val handler = LabelPostHandler(header, url)
-
-        return handler.handleRequest()
+        return handler.handleRequest() as Label?
     }
 
     fun deleteLabel(label: String) {
         val request = LabelDeleteRequest(this.user, this.name, label)
         val header = GlazySimpleHeader(this.token)
         val url = GlazyLabelUrl(request)
-
-        LabelDeleteHandler(header, url).handleRequest()
+        DeleteHandler(header, url, Label::class).handleRequest() as Label?
     }
 
     fun patchLabel(
@@ -60,9 +68,8 @@ class LabelService(
         val request = LabelPatchRequest(this.user, this.name, label, newLabel, color, description)
         val header = GlazySimpleHeader(this.token)
         val url = GlazyLabelUrl(request)
+        val handler = PostPatchHandler(header, url, Label::class)
 
-        val handler = LabelPatchHandler(header, url)
-
-        return handler.handleRequest()
+        return handler.handleRequest() as Label?
     }
 }
