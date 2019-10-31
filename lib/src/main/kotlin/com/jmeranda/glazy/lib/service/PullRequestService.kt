@@ -1,17 +1,11 @@
 package com.jmeranda.glazy.lib.service
 
-import com.fasterxml.jackson.databind.JsonMappingException
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.PropertyNamingStrategy
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.jmeranda.glazy.lib.handler.*
 import com.jmeranda.glazy.lib.objects.PullRequest
-import com.jmeranda.glazy.lib.handler.pullRequest.PullRequestAllGetHandler
-import com.jmeranda.glazy.lib.handler.pullRequest.PullRequestGetHandler
-import com.jmeranda.glazy.lib.handler.pullRequest.PullRequestPostHandler
-import com.jmeranda.glazy.lib.handler.pullRequest.PullRequestPatchHandler
-import com.jmeranda.glazy.lib.request.*
+import com.jmeranda.glazy.lib.request.PullGetAllRequest
+import com.jmeranda.glazy.lib.request.PullGetRequest
+import com.jmeranda.glazy.lib.request.PullPatchRequest
+import com.jmeranda.glazy.lib.request.PullPostRequest
 
 class PullRequestService(
         private val user: String,
@@ -26,17 +20,8 @@ class PullRequestService(
         val header = GlazyDraftableHeader(this.token)
         val url = GlazySimplePullUrl(request)
         val handler = GetHandler(header, url, PullRequest::class)
-        val mapper: ObjectMapper = jacksonObjectMapper()
-                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-        var data: List<PullRequest>? = null
 
-        try {
-            data = mapper.readValue(handler.handleListRequest())
-        } catch (e: JsonMappingException) {
-            println("Error mapping api response.")
-        }
-
-        return data
+        return handler.handleListRequest() as List<PullRequest>?
     }
 
     /**

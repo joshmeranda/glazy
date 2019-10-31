@@ -1,19 +1,7 @@
 package com.jmeranda.glazy.lib.service
 
-import com.fasterxml.jackson.databind.JsonMappingException
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.PropertyNamingStrategy
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
-import com.jmeranda.glazy.lib.objects.Issue
-import com.jmeranda.glazy.lib.objects.Repo
-import com.jmeranda.glazy.lib.exception.BadRequest
-import com.jmeranda.glazy.lib.exception.NoSuchIssue
 import com.jmeranda.glazy.lib.handler.*
-import com.jmeranda.glazy.lib.handler.issue.IssueAllGetHandler
-import com.jmeranda.glazy.lib.handler.issue.IssueGetHandler
-import com.jmeranda.glazy.lib.handler.issue.IssuePatchHandler
-import com.jmeranda.glazy.lib.handler.issue.IssuePostHandler
+import com.jmeranda.glazy.lib.objects.Issue
 import com.jmeranda.glazy.lib.request.IssueGetAllRequest
 import com.jmeranda.glazy.lib.request.IssueGetRequest
 import com.jmeranda.glazy.lib.request.IssuePatchRequest
@@ -48,18 +36,8 @@ class IssueService(
         val header = GlazySimpleHeader(this.token)
         val url = GlazySimpleIssueUrl(request)
         val handler = GetHandler(header, url, Issue::class)
-        val mapper: ObjectMapper = jacksonObjectMapper()
-                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
 
-        var data: List<Issue>? = null
-
-        try {
-            data = mapper.readValue(handler.handleListRequest())
-        } catch (e: JsonMappingException) {
-            println("Error mapping api response.")
-        }
-
-        return data
+        return handler.handleListRequest() as List<Issue>?
     }
 
     /**

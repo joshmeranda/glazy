@@ -1,15 +1,6 @@
 package com.jmeranda.glazy.lib.service
 
-import com.fasterxml.jackson.databind.JsonMappingException
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.PropertyNamingStrategy
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.jmeranda.glazy.lib.handler.*
-import com.jmeranda.glazy.lib.handler.label.LabelAllGetHandler
-import com.jmeranda.glazy.lib.handler.label.LabelDeleteHandler
-import com.jmeranda.glazy.lib.handler.label.LabelPatchHandler
-import com.jmeranda.glazy.lib.handler.label.LabelPostHandler
 import com.jmeranda.glazy.lib.objects.Label
 import com.jmeranda.glazy.lib.request.LabelAllGetRequest
 import com.jmeranda.glazy.lib.request.LabelDeleteRequest
@@ -26,17 +17,8 @@ class LabelService(
         val header = GlazySimpleHeader(this.token)
         val url = GlazySimpleLabelUrl(request)
         val handler = GetHandler(header, url, Label::class)
-        var data: List<Label>? = null
-        val mapper: ObjectMapper = jacksonObjectMapper()
-                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
 
-        try {
-            data = mapper.readValue(handler.handleListRequest())
-        } catch (e: JsonMappingException) {
-            println("Error mapping api")
-        }
-
-        return data
+        return handler.handleListRequest() as List<Label>?
     }
 
     fun createLabel(
@@ -56,7 +38,7 @@ class LabelService(
         val request = LabelDeleteRequest(this.user, this.name, label)
         val header = GlazySimpleHeader(this.token)
         val url = GlazyLabelUrl(request)
-        DeleteHandler(header, url, Label::class).handleRequest() as Label?
+        DeleteHandler(header, url, Label::class).handleNoRequest()
     }
 
     fun patchLabel(

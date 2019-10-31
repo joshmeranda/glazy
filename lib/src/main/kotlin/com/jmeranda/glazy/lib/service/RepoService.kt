@@ -1,14 +1,7 @@
 package com.jmeranda.glazy.lib.service
 
-import com.fasterxml.jackson.databind.JsonMappingException
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.PropertyNamingStrategy
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import com.jmeranda.glazy.lib.objects.Repo
 import com.jmeranda.glazy.lib.handler.*
-import com.jmeranda.glazy.lib.handler.fork.ForkPostHandler
-import com.jmeranda.glazy.lib.handler.repo.*
 import com.jmeranda.glazy.lib.request.*
 
 /**
@@ -40,16 +33,8 @@ class RepoService(private var token: String?){
         val header = GlazySimpleHeader(this.token)
         val url = GlazyCurrentUserRepoUrl()
         val handler = GetHandler(header, url, Repo::class)
-        val mapper: ObjectMapper = jacksonObjectMapper()
-                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
-        var data: List<Repo>? = null
-        try {
-            data = mapper.readValue(handler.handleListRequest())
-        } catch (e: JsonMappingException) {
-            println("Error mapping api response.")
-        }
 
-        return data
+        return handler.handleListRequest() as List<Repo>?
     }
 
     /**
@@ -124,7 +109,7 @@ class RepoService(private var token: String?){
         val url = GlazyRepoUrl(request)
         val handler = DeleteHandler(header, url, Repo::class)
 
-        handler.handleRequest() as Repo?
+        handler.handleNoRequest()
     }
 
     /**
@@ -137,7 +122,7 @@ class RepoService(private var token: String?){
         val url = GlazyRepoUrl(request)
         val handler = TransferHandler(header, url, Repo::class)
 
-        handler.handleRequest() as Repo?
+        handler.handleNoRequest()
     }
 
     /**
