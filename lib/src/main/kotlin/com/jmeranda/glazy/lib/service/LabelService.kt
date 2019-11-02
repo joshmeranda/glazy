@@ -29,7 +29,7 @@ class LabelService(
         val request = LabelPostRequest(this.user, this.name, label, color, description)
         val header = GlazySimpleHeader(this.token)
         val url = GlazySimpleLabelUrl(request)
-        val handler = PostPatchHandler(header, url, Label::class)
+        val handler = PostHandler(header, url, Label::class)
 
         return handler.handleRequest() as Label?
     }
@@ -50,7 +50,7 @@ class LabelService(
         val request = LabelPatchRequest(this.user, this.name, label, newLabel, color, description)
         val header = GlazySimpleHeader(this.token)
         val url = GlazyLabelUrl(request)
-        val handler = PostPatchHandler(header, url, Label::class)
+        val handler = PatchHandler(header, url, Label::class)
 
         return handler.handleRequest() as Label?
     }

@@ -20,7 +20,7 @@ class RepoService(private var token: String?){
             val url = GlazyRepoUrl(request)
             val repoHandler = GetHandler(header, url, Repo::class)
 
-            repo = repoHandler.handleRequest() as Repo
+            repo = repoHandler.handleRequest() as Repo?
         }
 
         return repo
@@ -64,7 +64,7 @@ class RepoService(private var token: String?){
                 allowSquashMerge, allowMergeCommit, allowRebaseMerge)
         val header = GlazySimpleHeader(this.token)
         val url = GlazyCurrentUserRepoUrl(request)
-        val repoHandler = PostPatchHandler(header, url, Repo::class)
+        val repoHandler = PostHandler(header, url, Repo::class)
 
         return repoHandler.handleRequest() as Repo?
     }
@@ -95,7 +95,7 @@ class RepoService(private var token: String?){
                 allowRebaseMerge, archived)
         val header = GlazySimpleHeader(this.token)
         val url = GlazyRepoUrl(request)
-        val handler = PostPatchHandler(header, url, Repo::class)
+        val handler = PatchHandler(header, url, Repo::class)
 
         return handler.handleRequest() as Repo?
     }
@@ -132,7 +132,7 @@ class RepoService(private var token: String?){
         val request = RepoForkRequest(user, name, organization)
         val header = GlazySimpleHeader(this.token)
         val url = GlazyForkUrl(request)
-        val handler = PostPatchHandler(header, url, Repo::class)
+        val handler = PostHandler(header, url, Repo::class)
 
         return handler.handleRequest() as Repo?
     }

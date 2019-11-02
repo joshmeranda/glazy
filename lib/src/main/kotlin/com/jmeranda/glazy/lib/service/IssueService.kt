@@ -54,7 +54,7 @@ class IssueService(
         val request = IssuePostRequest(this.user, this.name, title, body, milestone, labels, assignees)
         val header = GlazySimpleHeader(this.token)
         val url = GlazySimpleIssueUrl(request)
-        val issueHandler = PostPatchHandler(header, url, Issue::class)
+        val issueHandler = PostHandler(header, url, Issue::class)
 
         return issueHandler.handleRequest() as Issue?
     }
@@ -77,7 +77,7 @@ class IssueService(
                 body, state, milestone, labels, assignees)
         val header = GlazySimpleHeader(this.token)
         val url = GlazyIssueUrl(request)
-        val issueHandler = PostPatchHandler(header, url, Issue::class)
+        val issueHandler = PatchHandler(header, url, Issue::class)
 
         return issueHandler.handleRequest() as Issue?
     }

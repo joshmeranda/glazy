@@ -52,7 +52,7 @@ class PullRequestService(
         val request = PullPostRequest(user, name, title, issue, head, base, body, canModify, draft)
         val header = GlazyDraftableHeader(this.token)
         val url = GlazySimplePullUrl(request)
-        val handler = PostPatchHandler(header, url, PullRequest::class)
+        val handler = PostHandler(header, url, PullRequest::class)
 
         return handler.handleRequest() as PullRequest?
     }
@@ -68,7 +68,7 @@ class PullRequestService(
         val request = PullPatchRequest(this.user, this.name, number, title, body, state, base, canModify)
         val header = GlazyDraftableHeader(this.token)
         val url = GlazyPullUrl(request)
-        val handler = PostPatchHandler(header, url, PullRequest::class)
+        val handler = PatchHandler(header, url, PullRequest::class)
 
         return handler.handleRequest() as PullRequest?
     }

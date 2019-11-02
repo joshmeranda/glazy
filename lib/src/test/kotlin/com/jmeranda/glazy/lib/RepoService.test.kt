@@ -8,6 +8,7 @@ import kotlin.test.assertNull
 import com.jmeranda.glazy.lib.exception.NoSuchRepo
 import com.jmeranda.glazy.lib.service.CacheService
 import com.jmeranda.glazy.lib.service.RepoService
+import kotlin.test.fail
 
 class RepoServiceTest {
     private val service = RepoService(CacheService.token("foo"))
@@ -18,6 +19,14 @@ class RepoServiceTest {
             repo = this.service.getRepo("foo", "I_DO_NOT_EXIST")
         } catch (e: NoSuchRepo) {
             assertNull(repo)
+        }
+    }
+
+    @Test fun testGetRepo() {
+        var repo = try {
+            this.service.getRepo("joshmeranda", "glazy")
+        } catch (e: NoSuchRepo) {
+            fail("Could not find existing repository 'joshmeranda/glazy'.")
         }
     }
 }

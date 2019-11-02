@@ -125,7 +125,22 @@ class GetHandler(
     }
 }
 
-class PostPatchHandler(
+class PostHandler(
+        header: GlazyHeader,
+        url: GlazyUrl,
+        clazz: KClass<out GitObject>
+) : Handler(header, url, clazz), SingleResponse {
+    override fun handleRequest(): GitObject? {
+        val response: Response = post(this.requestUrl,
+                data = serializeRequest(),
+                headers = this.getHeaders())
+        if (! handleCode(response)) return null
+
+        return deserialize(response.text)
+    }
+}
+
+class PatchHandler(
         header: GlazyHeader,
         url: GlazyUrl,
         clazz: KClass<out GitObject>
