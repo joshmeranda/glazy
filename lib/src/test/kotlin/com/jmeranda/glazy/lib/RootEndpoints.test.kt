@@ -2,7 +2,6 @@ package com.jmeranda.glazy.lib
 
 import org.junit.Test
 
-import kotlin.test.assertNull
 import kotlin.test.assertNotNull
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper

@@ -3,11 +3,12 @@ package com.jmeranda.glazy.lib.objects
 /**
  * Describes a label to an issue.
  */
-data class Label (
+data class Label(
         override val id: Int,
         override val nodeId: String,
-        val url: String,
-        val name: String,
         val color: String,
-        val default: Boolean
+        val default: Boolean,
+        val description: String,
+        val name: String,
+        val url: String
 ) : GitObject(id, nodeId)

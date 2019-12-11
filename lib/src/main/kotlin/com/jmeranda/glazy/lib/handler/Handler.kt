@@ -112,7 +112,12 @@ class GetHandler(
 ) : Handler(header, url, clazz), SingleResponse, ListResponse {
     override fun handleListRequest(): List<GitObject>? {
         val response = get(this.requestUrl, headers = this.getHeaders())
-        if (! handleCode(response)) return null
+//        if (! handleCode(response)) return null
+
+        if (! handleCode(response)) {
+            println(this.token)
+            return null
+        }
 
         return deserializeList(response.text)
     }
