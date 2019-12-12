@@ -33,7 +33,7 @@ class CacheService {
 
         private var ENDPOINT_CACHE_PATH = "$CACHE_PATH/root_endpoints.json"
 
-        val mapper: ObjectMapper = jacksonObjectMapper()
+        private val mapper: ObjectMapper = jacksonObjectMapper()
                 .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
 
         /**

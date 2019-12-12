@@ -21,9 +21,8 @@ class GetRepoDirTest {
     }
 
     @Test fun testGit() {
-        val gitDirPath = getRepoDir("$resourceDir/ssh/.git")
-        assertNotNull(gitDirPath)
-        assertEquals("$resourceDir/ssh", gitDirPath)
+        val gitDirPath = getRepoDir()
+        assertEquals("${Paths.get("..").toAbsolutePath().normalize()}", gitDirPath)
     }
 
     @Test fun testFromRoot() {
@@ -36,15 +35,21 @@ class GetRepoDirTest {
  */
 class GetRepoNameTest {
     @Test fun testSSH() {
-        val (user: String?, name: String?) = getRepoName()
+        val (user: String?, name: String?) = getRepoName(targetPath = "$resourceDir/ssh")
         assertEquals("joshmeranda", user)
         assertEquals("glazy", name)
     }
 
     @Test fun testHTTPS() {
-        val (user: String?, name: String?) = getRepoName("$resourceDir/https/.git")
+        val (user: String?, name: String?) = getRepoName(targetPath = "$resourceDir/https")
         assertEquals("joshmeranda", user)
         assertEquals("glazy", name)
+    }
+
+    @Test fun testInRepo() {
+        val (user: String?, name: String?) = getRepoName()
+        assertNotNull(user)
+        assertNotNull(name)
     }
 
     @Test fun testNoRepo() {

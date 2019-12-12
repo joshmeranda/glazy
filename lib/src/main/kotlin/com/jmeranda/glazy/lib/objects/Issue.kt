@@ -1,8 +1,11 @@
 package com.jmeranda.glazy.lib.objects
 
+/**
+ * Describes a pull request associated with an Issue.
+ */
 data class IssuePullRequest (
         val url: String,
-        val html_Url: String,
+        val htmlUrl: String,
         val diffUrl: String,
         val patchUrl: String
 )
@@ -29,7 +32,7 @@ data class Issue(
         val locked: Boolean,
         val milestone: Milestone? = null,
         val number: Int,
-        val pullRequest: PullRequest? = null,
+        val pullRequest: IssuePullRequest? = null,
         val repositoryUrl: String,
         val state: String,
         val title: String,

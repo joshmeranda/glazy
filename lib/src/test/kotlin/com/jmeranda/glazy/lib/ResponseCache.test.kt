@@ -20,4 +20,8 @@ class ResponseCacheTest {
     @Test fun testGetCachedAccessTokenBAD() {
         assertNull(CacheService.token("I_DO_NOT_EXIST"))
     }
+
+    @Test fun testGetCachedRepo() {
+        assertNull(CacheService.repo("foo", "bar"))
+    }
 }

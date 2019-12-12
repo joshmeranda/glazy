@@ -25,13 +25,18 @@ fun getRepoDir(dir: String = "."): String {
 
 /**
  * Determine the user login and name of the current repository, given
- * the starting [dir].
+ * the starting [dir]. If targetPath is specified, the dir argument if
+ * supplied is ignored.
  */
-fun getRepoName(dir: String = "."): Pair<String?, String?> {
+fun getRepoName(dir: String = ".", targetPath: String? = null): Pair<String?, String?> {
     val repoRegex = Regex( "[a-zA-Z0-9]+/[a-zA-Z0-9\\-_]+\\.git$", RegexOption.UNIX_LINES)
-    val contents: List<String>
 
-    contents = File("${getRepoDir(dir)}/.git/config").readLines()
+    /* Get the contents of the git config file or the target file */
+    val contents: List<String> = if (targetPath  == null) {
+        File("${getRepoDir(dir)}/.git/config").readLines()
+    } else {
+        File(targetPath).readLines()
+    }
 
     var repoResult: MatchResult? = null
 

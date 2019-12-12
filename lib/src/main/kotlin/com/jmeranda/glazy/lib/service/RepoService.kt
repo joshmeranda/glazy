@@ -12,7 +12,7 @@ class RepoService(private var token: String?){
      * Get a repo with the specified [name], and [user].
      */
     fun getRepo(user: String, name: String): Repo? {
-        var repo = CacheService.repo(user, name)
+        var repo: Repo? = CacheService.repo(user, name)
 
         if (repo == null) {
             val request = RepoGetRequest(user, name)
