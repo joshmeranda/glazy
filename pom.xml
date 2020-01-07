@@ -8,7 +8,7 @@
 
     <modules>
         <module>lib</module>
-        <module>cli</module>
+        <module>entry</module>
     </modules>
 
     <properties>

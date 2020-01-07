@@ -1,13 +1,22 @@
 #!/bin/env bash
+# provide variable for running nd installing glazy
 
-jar_file="/usr/lib/glazy/cli/target/cli-0.0-jar-with-dependencies.jar"
+# resolve real directory for launch script (following symlinks)
+SOURCE="$0"
+while [ -h "$SOURCE" ]; do
+    SOURCE="$(readlink $SOURCE)"
+done
 
-if [ ! -f "$jar_file" ]; then
+# get JAR variables
+source "$(dirname $SOURCE)/.config"
+
+# test for JAR
+if [ ! -f "$JAR" ]; then
     echo "$(basename "$0"): No jar file found"
     echo "Please package the project with 'mvn package'"
     exit 1
 fi
 
-java -jar "$jar_file" "$@"
+java -jar "$JAR" "$@"
 
-exit "$?"
+exit $?
