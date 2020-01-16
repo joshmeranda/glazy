@@ -37,7 +37,7 @@ data class RootEndpoints(
     val repositoryUrl: String,
     val starredGistsUrl: String,
     val starredUrl: String,
-    val teamUrl: String,
+    val organizationTeamsUrl: String,
     val userOrganizationsUrl: String,
     val userRepositoriesUrl: String,
     val userSearchUrl: String,
