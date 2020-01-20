@@ -1,4 +1,4 @@
-package com.jmeranda.glazy.cli
+package com.jmeranda.glazy.entry
 
 import com.jmeranda.glazy.lib.exception.NotInRepo
 import org.junit.Test

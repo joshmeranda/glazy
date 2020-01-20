@@ -1,4 +1,4 @@
-package com.jmeranda.glazy.cli.commands
+package com.jmeranda.glazy.entry.commands
 
 import picocli.CommandLine
 import picocli.CommandLine.Command

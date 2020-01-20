@@ -1,4 +1,4 @@
-package com.jmeranda.glazy.cli.commands
+package com.jmeranda.glazy.entry.commands
 
 import picocli.CommandLine
 import picocli.CommandLine.ArgGroup
@@ -7,7 +7,7 @@ import picocli.CommandLine.Option
 import picocli.CommandLine.Parameters
 import picocli.CommandLine.Spec
 import picocli.CommandLine.Model.CommandSpec
-import com.jmeranda.glazy.cli.getRepoName
+import com.jmeranda.glazy.entry.getRepoName
 import com.jmeranda.glazy.lib.objects.Label
 import com.jmeranda.glazy.lib.service.CacheService
 import com.jmeranda.glazy.lib.service.LabelService

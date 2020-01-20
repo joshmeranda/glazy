@@ -1,11 +1,11 @@
-package com.jmeranda.glazy.cli
+package com.jmeranda.glazy.entry
 
 import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.Spec
 import picocli.CommandLine.Model.CommandSpec
 
-import com.jmeranda.glazy.cli.commands.*
+import com.jmeranda.glazy.entry.commands.*
 
 /**
  * Parent for all sub-commands.

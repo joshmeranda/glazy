@@ -1,4 +1,4 @@
-package com.jmeranda.glazy.cli.commands
+package com.jmeranda.glazy.entry.commands
 
 import picocli.CommandLine
 import picocli.CommandLine.ArgGroup
@@ -9,7 +9,7 @@ import picocli.CommandLine.Spec
 import picocli.CommandLine.Model.CommandSpec
 import com.jmeranda.glazy.lib.objects.Issue
 import com.jmeranda.glazy.lib.service.IssueService
-import com.jmeranda.glazy.cli.getRepoName
+import com.jmeranda.glazy.entry.getRepoName
 import com.jmeranda.glazy.lib.exception.NotInRepo
 import com.jmeranda.glazy.lib.service.CacheService
 

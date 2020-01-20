@@ -1,7 +1,6 @@
-package com.jmeranda.glazy.cli.commands
+package com.jmeranda.glazy.entry.commands
 
-import com.jmeranda.glazy.cli.getRepoName
-
+import com.jmeranda.glazy.entry.getRepoName
 import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
@@ -9,7 +8,6 @@ import picocli.CommandLine.Spec
 import picocli.CommandLine.Parameters
 import picocli.CommandLine.Model.CommandSpec
 import com.jmeranda.glazy.lib.objects.Repo
-import com.jmeranda.glazy.lib.exception.NotInRepo
 import com.jmeranda.glazy.lib.service.CacheService
 import com.jmeranda.glazy.lib.service.RepoService
 import kotlin.reflect.KProperty1
@@ -114,7 +112,7 @@ sealed class RequiredRepoCommand : RepoCommand() {
 @Command(name = "repo",
         description = ["Perform operations on a  repository."],
         mixinStandardHelpOptions = true)
-class RepoParent : Runnable, OptionalRepoCommand() {
+class RepoParent: Runnable, OptionalRepoCommand() {
     @Spec lateinit var spec: CommandSpec
 
     override fun run() {
@@ -130,7 +128,7 @@ class RepoParent : Runnable, OptionalRepoCommand() {
 @Command(name = "show",
         description = ["Show details about a repository"],
         mixinStandardHelpOptions = true)
-open class RepoShow : Runnable, OptionalRepoCommand() {
+open class RepoShow : Runnable, RequiredRepoCommand() {
     @Option(names = ["-f", "--fields"],
             description = ["The fields to also show"],
             split = ",")
@@ -153,19 +151,15 @@ open class RepoShow : Runnable, OptionalRepoCommand() {
 @Command(name = "list",
         description = ["List names of user repositories."],
         mixinStandardHelpOptions = true)
-class RepoList: RepoShow() {
-    override fun run() {
-        if (this.name != null) {
-            super.run()
-            return
-        }
+class RepoList: Runnable, RepoCommand() {
+    @Parameters(index = "0", description = ["The user login for the desired repository."])
+    override lateinit var user: String
 
+    override val name: String?  = null
+
+    override fun run() {
         this.getCachedToken()
         this.startService()
-
-        if (this.user == null) {
-            this.startService()
-        }
 
         val repoList = this.service.getAllRepos() ?: return
 

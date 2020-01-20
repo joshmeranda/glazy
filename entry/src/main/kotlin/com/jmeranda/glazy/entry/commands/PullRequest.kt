@@ -1,4 +1,4 @@
-package com.jmeranda.glazy.cli.commands
+package com.jmeranda.glazy.entry.commands
 
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
@@ -11,7 +11,7 @@ import picocli.CommandLine.Parameters
 import picocli.CommandLine.Spec
 import picocli.CommandLine.Model.CommandSpec
 import com.jmeranda.glazy.lib.service.PullRequestService
-import com.jmeranda.glazy.cli.getRepoName
+import com.jmeranda.glazy.entry.getRepoName
 import com.jmeranda.glazy.lib.objects.PullRequest
 import com.jmeranda.glazy.lib.service.CacheService
 
