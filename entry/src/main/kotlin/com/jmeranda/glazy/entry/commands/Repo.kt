@@ -10,48 +10,23 @@ import picocli.CommandLine.Model.CommandSpec
 import com.jmeranda.glazy.lib.objects.Repo
 import com.jmeranda.glazy.lib.service.CacheService
 import com.jmeranda.glazy.lib.service.RepoService
+import displayRepo
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
-
-/**
- * Display information about the given [repo], with optional additional [fields].
- */
-fun displayRepo(repo: Repo, fields: List<String>?) {
-    var details = "full name: ${repo.fullName}\n" +
-            "private: ${repo.private}\n" +
-            "created: ${repo.createdAt}\n" +
-            "clone url: ${repo.cloneUrl}"
-
-    val badFields = mutableListOf<String>()
-
-    // Concatenate additional fields to the details string.
-    for (field in fields ?: listOf()) {
-        // If property exists in class add to details, if not add to badFields.
-        try {
-            // Get repo property via input fields.
-            val property = repo::class
-                    .memberProperties
-                    .first { it.name == field }
-                    as? KProperty1<Repo, Any>
-            // Print the field name and value to the console.
-            if (property != null) details += "\n$field: ${property.get(repo)}"
-        } catch (e: Exception) {
-            badFields.add(field)
-        }
-    }
-
-    // Notify user of unrecognized fields
-    if (badFields.size > 0) details += "\n\nglazy: Could not recognize field(s) '${badFields.joinToString()}'.\n" +
-            "Please see 'https://developer.github.com/v3/repos/#list-your-repositories' for available fields"
-
-    println(details)
-}
 
 /**
  * Class to provide the [token] and [service] issue commands, as well
  * as [user] and [name] options. Despite not being a 'lateinit' (since
  * it may be null) treat [token] as a lateinit. Due to this please ensure
  * that setToken and setService are called before either property is used.
+ */
+/**
+ * Parent class for all repo commands.
+ *
+ * @property user The username of the repository owner.
+ * @property name The name of the repository.
+ * @property token The personal access token
+ * @property service The [com.jmeranda.glazy.lib.service.RepoService] to by repo commands.
  */
 abstract class RepoCommand {
     abstract val user: String?
@@ -60,21 +35,20 @@ abstract class RepoCommand {
     protected lateinit var service: RepoService
 
     /**
-     * Set the value of the private token.
+     * Initialize service to be utilized by repository commands.
      */
-    protected fun getCachedToken() {
+    protected open fun initService() {
         this.token = CacheService.token(this.user ?: return)
-    }
-
-    /**
-     * Set the value of the private service.
-     */
-    protected open fun startService() {
-        this.getCachedToken()
         this.service = RepoService(this.token)
     }
 }
 
+/**
+ * Parent class for repo commands taking optional specification of repository owner and name.
+ *
+ * @property user The owner of the repository.
+ * @property name The name of the repository.
+ */
 sealed class OptionalRepoCommand : RepoCommand() {
     @Option(names = ["-u", "--user"],
             description = ["The user login for the desired repository."])
@@ -84,7 +58,7 @@ sealed class OptionalRepoCommand : RepoCommand() {
             description = ["The name of the desired repository"])
     override var name: String? = null
 
-    override fun startService() {
+    override fun initService() {
         if (this.user == null && this.name == null) {
             val (user, name) = getRepoName()
 
@@ -92,18 +66,22 @@ sealed class OptionalRepoCommand : RepoCommand() {
             this.name = name
         }
 
-        super.startService()
+        super.initService()
     }
 }
 
+/**
+ * Parent class for repo commands taking positional parameters to specify target repository.
+ *
+ * @property user The owner of the repository.
+ * @property name The name of the repository.
+ */
 sealed class RequiredRepoCommand : RepoCommand() {
     @Parameters(index = "0", description = ["The user login for the desired repository."])
     override lateinit var user: String
 
     @Parameters(index = "1", description = ["The name of the desired repository"])
     override lateinit var name: String
-
-    override var token: String? = null
 }
 
 /**
@@ -115,6 +93,11 @@ sealed class RequiredRepoCommand : RepoCommand() {
 class RepoParent: Runnable, OptionalRepoCommand() {
     @Spec lateinit var spec: CommandSpec
 
+    /**
+     * When run before all child classes, with end program if no sub-command is passed as an argument.
+     *
+     * @throws CommandLine.ParameterException When no sub-command is entered by terminal.
+     */
     override fun run() {
         throw CommandLine.ParameterException(this.spec.commandLine(),
                 "Missing required subcommand")
@@ -122,8 +105,9 @@ class RepoParent: Runnable, OptionalRepoCommand() {
 }
 
 /**
- * Sub-command to show information about a repository specified via the
- * [user] and [name] options.
+ * Display details of a repository to the console.
+ *
+ * @property fields Optional fields to display along with the default properties.
  */
 @Command(name = "show",
         description = ["Show details about a repository"],
@@ -135,10 +119,10 @@ open class RepoShow : Runnable, RequiredRepoCommand() {
     private var fields: List<String>? = null
 
     override fun run() {
-        this.startService()
+        this.initService()
 
         if (this.user == null || this.name == null) {
-            this.startService()
+            this.initService()
         }
 
         // Retrieve and display a Repo instance.
@@ -148,6 +132,11 @@ open class RepoShow : Runnable, RequiredRepoCommand() {
     }
 }
 
+/**
+ * List all repositories associated with the user.
+ *
+ * @property user Provides positional parameter to specify the user whose repositories to list.
+ */
 @Command(name = "list",
         description = ["List names of user repositories."],
         mixinStandardHelpOptions = true)
@@ -158,8 +147,7 @@ class RepoList: Runnable, RepoCommand() {
     override val name: String?  = null
 
     override fun run() {
-        this.getCachedToken()
-        this.startService()
+        this.initService()
 
         val repoList = this.service.getAllRepos() ?: return
 
@@ -170,7 +158,22 @@ class RepoList: Runnable, RepoCommand() {
 }
 
 /**
- * Create a remote repository with content specified by class properties.
+ * Create a remote repository.
+ *
+ * @property description The description for the new repository.
+ * @property homepage The optional website for the repository.
+ * @property private Specifies that the repository is private or public.
+ * @property hasIssues Specifies if issues are allowed for the repository.
+ * @property hasProjects Specifies that sub-projects are allowed for the repository.
+ * @property hasWiki Specifies that wiki is enabled for the repository.
+ * @property isTemplate Specifies that the repository is a template.
+ * @property teamId The team id to which the repository is the be linked.
+ * @property autoInit Create an initial commit with a default README after creation.
+ * @property gitignoreTemplate The name of the language whose default gitignore to use.
+ * @property licenseTemplate The license for the project.
+ * @property allowSquashMerge Allow squash merges.
+ * @property allowMergeCommit Allow merge commits.
+ * @property allowRebaseMerge Allow rebase merges.
  */
 @Command(name = "init",
         description = ["Create a new remote repository"],
@@ -194,7 +197,7 @@ class RepoInit: Runnable, RequiredRepoCommand() {
     
     @Option(names = ["--has-project"],
             description = ["Enable projects for the repository."])
-    var hasProject: Boolean = true
+    var hasProjects: Boolean = true
 
     @Option(names = ["-w", "--has-wiki"],
             description = ["Enable wiki for the repository."])
@@ -233,8 +236,7 @@ class RepoInit: Runnable, RequiredRepoCommand() {
     var allowRebaseMerge: Boolean = true
 
     override fun run() {
-        this.getCachedToken()
-        this.startService()
+        this.initService()
 
         // Create the remote repository.
         this.service.createRepo(
@@ -244,7 +246,7 @@ class RepoInit: Runnable, RequiredRepoCommand() {
                 this.homepage,
                 this.private,
                 this.hasIssues,
-                this.hasProject,
+                this.hasProjects,
                 this.hasWiki,
                 this.isTemplate,
                 this.teamId,
@@ -260,6 +262,21 @@ class RepoInit: Runnable, RequiredRepoCommand() {
 
 /**
  * Patch a repository with content specified by class properties.
+ *
+ * @property newName The new name for the repository.
+ * @property description The new description for the  repository.
+ * @property homepage The new  homepage for the repository.
+ * @property private make the repository private.
+ * @property public make the repository public.
+ * @property hasIssues Make issues llowed for the repository.
+ * @property hasProjects Make sub-projects allowed for the repository.
+ * @property hasWiki Enable the wiki for the repository.
+ * @property isTemplate Make the repository a template.
+ * @property defaultBranch The new default branch for the repository.
+ * @property allowSquashMerge Allow squash merges.
+ * @property allowMergeCommit Allow merge commits.
+ * @property allowRebaseMerge Allow rebase merges.
+ * @property archived Archive the repository.
  */
 @Command(name = "patch",
         description = ["Edit an existing repository"],
@@ -322,10 +339,9 @@ class RepoPatch: Runnable, OptionalRepoCommand() {
     var archived: Boolean? = null
 
     override fun run() {
-        this.getCachedToken()
-        this.startService()
+        this.initService()
         if (this.user == null || this.name == null) {
-            this.startService()
+            this.initService()
         }
 
         // Patch the remote repository.
@@ -357,17 +373,16 @@ class RepoPatch: Runnable, OptionalRepoCommand() {
 }
 
 /**
- * Delete a remote repository owned by [user] and called [name].
+ * Delete a remote repository.
  */
 @Command(name = "delete",
         description = ["Delete a remote repository, user must have admin privileges."],
         mixinStandardHelpOptions = true)
 class RepoDelete: Runnable, OptionalRepoCommand() {
     override fun run() {
-        this.getCachedToken()
-        this.startService()
+        this.initService()
         if (this.user == null || this.name == null) {
-            this.startService()
+            this.initService()
         }
 
         // Delete the remote repository.
@@ -377,8 +392,10 @@ class RepoDelete: Runnable, OptionalRepoCommand() {
 }
 
 /**
- * Transfer a remote repository owned by [user] called [name], to a new
- * user [newOwner] with the optional team ids [teamIds].
+ * Transfer a remote repository to another user.
+ *
+ * @property newOwner The username of the new user to own the repository.
+ * @property teamIds The ids of teams to transfer the repository into.
  */
 @Command(name = "transfer",
         description = ["Transfer a repository to another user."],
@@ -393,8 +410,7 @@ class RepoTransfer: Runnable, OptionalRepoCommand() {
     lateinit var teamIds: List<Int>
 
     override fun run() {
-        this.getCachedToken()
-        this.startService()
+        this.initService()
 
         // Transfer the remote repository.
         this.service.transferRepo(this.user ?: return,this.name ?: return,
@@ -402,6 +418,14 @@ class RepoTransfer: Runnable, OptionalRepoCommand() {
     }
 }
 
+/**
+ * Create a fork of a repository.
+ *
+ * @property user The name of the fork owner.
+ * @property name The name of the target repository.
+ * @property current The name of the target repository owner.
+ * @property organization The organization of the fork.
+ */
 @Command(name = "fork",
         description = ["Create a fork of a repository."],
         mixinStandardHelpOptions = true)
@@ -420,12 +444,11 @@ class RepoFork: Runnable, RepoCommand() {
     lateinit var current: String
 
     @Option(names = ["-o", "--organization"],
-            description = ["The name of the organization to log into."])
+            description = ["The name of the organization to fork into."])
     var organization: String? = null
 
     override fun run() {
-        this.getCachedToken()
-        this.startService()
+        this.initService()
 
         val repo = this.service.createFork(this.current, this.name, organization)
 

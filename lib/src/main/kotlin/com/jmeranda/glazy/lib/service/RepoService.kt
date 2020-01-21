@@ -120,7 +120,7 @@ class RepoService(private var token: String?){
         val request = RepoTransferRequest(user, name, newOwner, teamIds)
         val header = GlazyTransferableHeader(this.token)
         val url = GlazyRepoUrl(request)
-        val handler = TransferHandler(header, url, Repo::class)
+        val handler = PostHandler(header, url, Repo::class)
 
         handler.handleNoRequest()
     }

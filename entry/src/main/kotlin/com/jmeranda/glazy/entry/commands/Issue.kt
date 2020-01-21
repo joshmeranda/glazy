@@ -7,28 +7,30 @@ import picocli.CommandLine.Option
 import picocli.CommandLine.Parameters
 import picocli.CommandLine.Spec
 import picocli.CommandLine.Model.CommandSpec
-import com.jmeranda.glazy.lib.objects.Issue
-import com.jmeranda.glazy.lib.service.IssueService
+
 import com.jmeranda.glazy.entry.getRepoName
 import com.jmeranda.glazy.lib.exception.NotInRepo
+import com.jmeranda.glazy.lib.objects.Issue
+import com.jmeranda.glazy.lib.service.IssueService
 import com.jmeranda.glazy.lib.service.CacheService
+import displayIssue
 
 /**
- * Display an [issue] to the console.
+ * Parent class for all issue commands.
+ *
+ * @property service The [com.jmeranda.glazy.lib.service.IssueService] utilized by issue commands.
+ * @property token The token to use for api authentication.
  */
-fun displayIssue(issue: Issue) {
-    println("[${issue.number}] ${issue.title}")
-}
-
-/**
- * Class to provide a [service] to perform operations and a [token] for
- * authentication. All issue sub-commands must inherit from this class.
- */
-open class IssueCommand {
+sealed class IssueCommand {
     protected var service: IssueService? = null
     private var token: String? = null
 
-    protected fun startService(): IssueService? {
+    /**
+     * Initializes the issue service.
+     *
+     * @return The issue service for a specific repository or null if an error occurs.
+     */
+    protected fun initService(): IssueService? {
         try {
             val (user, name) = getRepoName()
 
@@ -44,7 +46,7 @@ open class IssueCommand {
 }
 
 /**
- * Parent for all issue sub-commands.
+ * Parent command for all issue sub-commands.
  */
 @Command(name="issue",
         description=["Perform operations on repository issues"],
@@ -52,6 +54,11 @@ open class IssueCommand {
 class IssueParent : Runnable {
     @Spec lateinit var spec: CommandSpec
 
+    /**
+     * When run before all child classes, with end program if no sub-command is passed as an argument.
+     *
+     * @throws CommandLine.ParameterException When no sub-command is entered by terminal.
+     */
     override fun run() {
         throw CommandLine.ParameterException(this.spec.commandLine(),
                 "Missing required subcommand")
@@ -59,8 +66,9 @@ class IssueParent : Runnable {
 }
 
 /**
- * List repository issues, will list issues according to the value of
- * [number], if null all issues are listed.
+ * List repository issues with either a specific issue or all open.
+ *
+ * @property number The number of the issue too list.
  */
 @Command(name="list",
         description=["List repository issues."],
@@ -71,7 +79,7 @@ class IssueList : Runnable, IssueCommand() {
     private val number: Int? = null
 
     override fun run() {
-        this.startService() ?: return
+        this.initService() ?: return
 
         // Retrieve repository issues.
         val issueList: List<Issue?>? = if (this.number == null) {
@@ -88,8 +96,13 @@ class IssueList : Runnable, IssueCommand() {
 }
 
 /**
- * Create repository issues given a [title], [body], [milestone],
- * [labels], and [assignees].
+ * Create new issues for a repository.
+ *
+ * @property title The title for the new issue.
+ * @property body The body describing the issue.
+ * @property milestone The milestone which is to be associated with the new issue.
+ * @property labels The list of labels  with which to mark the new issue.
+ * @property assignees The list of people who are to be assigned to resolve the issue.
  */
 @Command(name="add",
         description=["Create a new issue in the repository."],
@@ -117,7 +130,7 @@ class IssueAdd: Runnable, IssueCommand() {
     private var assignees: List<String>? = null
 
     override fun run() {
-        this.startService() ?: return
+        this.initService() ?: return
         // Create the issue.
         val issue = this.service?.createIssue(title, body, milestone, labels, assignees) ?: return
         displayIssue(issue)
@@ -125,9 +138,15 @@ class IssueAdd: Runnable, IssueCommand() {
 }
 
 /**
- * Replace repository issue number [number] by replacing issue content
- * with values of [title], [body], [state], [milestone], [labels],
- * and [assignees].
+ * Modify the state and or content of an existing repository issue.
+ *
+ * @property number The number of the issue to patch.
+ * @property title The new title for the issue.
+ * @property body The new body for the issue.
+ * @property state The new state for the issue (either open or closed).
+ * @property milestone The new milestone to attatch to the issue.
+ * @property labels The labels with which to mark the issue.
+ * @property assignees The list of people who are assigned to resolve the issue.
  */
 @Command(name="patch",
         description=["Send a patch to an issue."],
@@ -161,7 +180,7 @@ class IssuePatch: Runnable, IssueCommand() {
     private var assignees: List<String>? = null
 
     override fun run() {
-        this.startService() ?: return
+        this.initService() ?: return
         val state = when {
             this.state == null -> null
             this.state?.open ?: false -> "open"

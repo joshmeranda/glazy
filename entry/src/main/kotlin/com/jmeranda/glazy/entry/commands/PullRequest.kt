@@ -1,8 +1,5 @@
 package com.jmeranda.glazy.entry.commands
 
-import kotlin.reflect.KProperty1
-import kotlin.reflect.full.memberProperties
-
 import picocli.CommandLine
 import picocli.CommandLine.ArgGroup
 import picocli.CommandLine.Command
@@ -10,56 +7,24 @@ import picocli.CommandLine.Option
 import picocli.CommandLine.Parameters
 import picocli.CommandLine.Spec
 import picocli.CommandLine.Model.CommandSpec
+
 import com.jmeranda.glazy.lib.service.PullRequestService
 import com.jmeranda.glazy.entry.getRepoName
 import com.jmeranda.glazy.lib.objects.PullRequest
 import com.jmeranda.glazy.lib.service.CacheService
+import displayPullRequest
 
 /**
- * Display information about the given [pullRequest],  with optional additional
- * [fields].
- */
-fun displayPullRequest(pullRequest: PullRequest, fields: List<String>?) {
-    var details = "[${pullRequest.number}] ${pullRequest.title}\n" +
-            "draft : ${pullRequest.draft}\n" +
-            "head: ${pullRequest.head.label}\n" +
-            "base: ${pullRequest.base.label}\n" +
-            "created: ${pullRequest.createdAt}"
-
-    val badFields = mutableListOf<String>()
-
-    // Concatenate additional fields to the details string.
-    for (field in fields ?: listOf()) {
-        // If property exists in class add to details, if not add to badFields.
-        try {
-            // Get repo property via input fields.
-            val property = pullRequest::class
-                    .memberProperties
-                    .first { it.name == field }
-                    as? KProperty1<PullRequest, Any>
-            // Print the field name and value to the console.
-            if (property != null) details += "\n$field: ${property.get(pullRequest)}"
-        } catch (e: Exception) {
-            badFields.add(field)
-        }
-    }
-
-    // Notify user of unrecognized fields
-    if (badFields.size > 0) details += "\n\nglazy: Could not recognize field(s) '${badFields.joinToString()}'.\n" +
-            "Please see 'https://developer.github.com/v3/repos/#list-your-repositories' for available fields"
-
-    println(details)
-}
-
-/**
- * Class to provide a service to perform operations and a [token] for
- * authentication. All pull su-commands must inherit from this class.
+ * Parent class for all pull request commands.
+ *
+ * @property service The [com.jmeranda.glazy.lib.service.PullRequestService] utilized by label commands.
+ * @property token The token to use for api authentication.
  */
 open class PullCommand {
     protected lateinit var service: PullRequestService
     private var token: String? = null
 
-    protected fun startService() {
+    protected fun initService() {
         val (user, name) = getRepoName()
         if (user != null) token = CacheService.token(user)
 
@@ -69,7 +34,7 @@ open class PullCommand {
 }
 
 /**
- * Parent for all pull sub-commands.
+ * Parent for all pull request sub-commands.
  */
 @Command(name = "pull",
         description = ["Perform operations on pull requests"],
@@ -77,6 +42,11 @@ open class PullCommand {
 class PullParent: Runnable {
     @Spec lateinit var spec: CommandSpec
 
+    /**
+     * When run before all child classes, with end program if no sub-command is passed as an argument.
+     *
+     * @throws CommandLine.ParameterException When no sub-command is entered by terminal.
+     */
     override fun run() {
         throw CommandLine.ParameterException(this.spec.commandLine(),
                 "Missing required subcommand")
@@ -84,8 +54,10 @@ class PullParent: Runnable {
 }
 
 /**
- * List pull request, will list pull requests according to the value of
- * [number], if null all pull requests are listed.
+ * List pull requests.
+ *
+ * @property number The number of the pull request to show.
+ * @property fields The specific fields of the pull request to show.
  */
 @Command(name = "list",
         description = ["List pull requests"],
@@ -101,7 +73,7 @@ class PullList: Runnable, PullCommand() {
     private var fields: List<String>? = null
 
     override fun run() {
-        this.startService()
+        this.initService()
         // Retrieve pull request list
         val pullList: List<PullRequest?>? = if (this.number == null) {
             this.service.getAllPullRequests()
@@ -115,6 +87,18 @@ class PullList: Runnable, PullCommand() {
     }
 }
 
+/**
+ * Create a new pull request.
+ *
+ * @property exclusive Argument group which specifies either the title for the new pull request or
+ *      the issue from which it is to be initiated.
+ * @property head The head branch which is to be merged.
+ * @property base The branch into which the [head] branch is to be merged.
+ * @property body The body of the pull requested.
+ * @property canModify Specifies whether the pull requests is read-only or not to repository
+ *      maintainers.
+ * @property draft Specifies that the pull request is a work in progress (WIP).
+ */
 @Command(name = "init",
         description = ["Create a merge request."],
         mixinStandardHelpOptions = true)
@@ -141,7 +125,7 @@ class PullInit: Runnable, PullCommand() {
     private var draft: Boolean? = null
 
     override fun run() {
-        this.startService()
+        this.initService()
         val pullRequest = this.service.createPullRequest(
                 this.exclusive.title,
                 this.head,
@@ -156,8 +140,10 @@ class PullInit: Runnable, PullCommand() {
 
     companion object {
         /**
-         * Class to provide the ability to create a pull request from an issue,
-         * or use a title.
+         * Class to provide the ability to create a pull request from an issue, or use a title.
+         *
+         * @property title The title for the new pull request.
+         * @property issue The number of the issue to attatch to the pull request.
          */
         class PullGroup {
             @Option(names = ["-t", "--title"],
@@ -172,6 +158,17 @@ class PullInit: Runnable, PullCommand() {
     }
 }
 
+/**
+ * Edit an existing pull request.
+ *
+ * @property number The number of the pull request which is to be modified.
+ * @property title The new title for the pull request.
+ * @property body The new body for the pull request.
+ * @property state The new state for the pull request.
+ * @property base The new base branch for the pull request.
+ * @property canModify Specifies whether the pull requests is read-only or not to repository
+ *      maintainers.
+ */
 @Command(name = "patch",
         description = ["Send a patch to a pull request."],
         mixinStandardHelpOptions = true)
@@ -200,7 +197,7 @@ class PullUpdate: Runnable, PullCommand() {
     private var canModify: Boolean? = null
 
     override fun run() {
-        this.startService()
+        this.initService()
         val pullRequest = this.service.patchPullRequest(this.number,
                 this.title,
                 this.body,

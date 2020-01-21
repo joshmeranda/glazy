@@ -2,6 +2,7 @@ package com.jmeranda.glazy.entry
 
 import com.jmeranda.glazy.lib.exception.NotInRepo
 import org.junit.Test
+import java.nio.file.Path
 
 import java.nio.file.Paths
 
@@ -22,7 +23,7 @@ class GetRepoDirTest {
 
     @Test fun testGit() {
         val gitDirPath = getRepoDir()
-        assertEquals("${Paths.get("..").toAbsolutePath().normalize()}", gitDirPath)
+        assertEquals(Paths.get("${Paths.get("..").toAbsolutePath().normalize()}"), gitDirPath)
     }
 
     @Test fun testFromRoot() {
@@ -44,19 +45,5 @@ class GetRepoNameTest {
         val (user: String?, name: String?) = getRepoName(targetPath = "$resourceDir/https")
         assertEquals("joshmeranda", user)
         assertEquals("glazy", name)
-    }
-
-    @Test fun testInRepo() {
-        val (user: String?, name: String?) = getRepoName()
-        assertNotNull(user)
-        assertNotNull(name)
-    }
-
-    @Test fun testNoRepo() {
-        assertFailsWith<NotInRepo> { getRepoName("/home/") }
-    }
-
-    @Test fun testFromRoot() {
-        assertFailsWith<NotInRepo> { getRepoDir("/") }
     }
 }

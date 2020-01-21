@@ -16,9 +16,14 @@ import com.jmeranda.glazy.entry.commands.*
 class Glazy: Runnable {
     @Spec lateinit var spec: CommandSpec
 
+    /**
+     * When run before all child classes, with end program if no sub-command is passed as an argument.
+     *
+     * @throws CommandLine.ParameterException When no sub-command is entered by terminal.
+     */
     override fun run() {
         throw CommandLine.ParameterException(this.spec.commandLine(),
-                "Missing required subcommand")
+                "Missing required sub-command")
     }
 }
 

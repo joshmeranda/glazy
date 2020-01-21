@@ -19,6 +19,11 @@ import com.jmeranda.glazy.lib.service.RepoService
 class CacheParent: Runnable {
     @Spec lateinit var spec: CommandSpec
 
+    /**
+     * When run before all child classes, with end program if no sub-command is passed as an argument.
+     *
+     * @throws CommandLine.ParameterException When no sub-command is entered by terminal.
+     */
     override fun run() {
         throw CommandLine.ParameterException(this.spec.commandLine(),
                 "Missing required subcommand")
@@ -26,8 +31,9 @@ class CacheParent: Runnable {
 }
 
 /**
- * Allow the user to clear the cache, ignores the token file according
- * to [ignoreToken]. By default the tokens are ignored.
+ * Allow the user to clear the cache.
+ *
+ * @property ignoreToken Specify to leave the token 'as-is' while cleaning cache.
  */
 @Command(name = "clear",
         description = ["Clear the cache."],
@@ -38,21 +44,22 @@ class ClearCache: Runnable {
     private var ignoreToken = true
 
     override fun run() {
-        // Clear the cache.
         CacheService.clear(this.ignoreToken)
     }
 }
 
 /**
- * Refresh the cache, a [user] login must be specified. If no repository
- * [name] is passed, then all repositories under the [user] are refreshed.
+ * Refresh the repositories in cache storage.
+ *
+ * @property user The username whose repositories to refresh. If null all repositories are refreshed.
+ * @property name The name of the repository to refresh. If null all repositories are refreshed.
  */
 @Command(name = "refresh",
         description = ["Refresh the cache."],
         mixinStandardHelpOptions = true)
 class RefreshCache: Runnable {
     @Option(names = ["-u", "--user"],
-            description = ["THe user whose repositories to refresh."],
+            description = ["The user whose repositories to refresh."],
             required = true)
     private lateinit var user: String
 
@@ -74,8 +81,10 @@ class RefreshCache: Runnable {
 }
 
 /**
- * Add a personal access [token] to the cache associated with the given
- * [user].
+ * Add a personal access token to the cache.
+ *
+ * @property user The username to associate with the access token.
+ * @property token The value of the token.
  */
 @Command(name = "token",
         description = ["Add token to the cache."],
@@ -88,7 +97,6 @@ class TokenCache: Runnable {
     private lateinit var token: String
 
     override fun run() {
-        // Write the token to the cache.
         CacheService.write(this.user, this.token)
     }
 }

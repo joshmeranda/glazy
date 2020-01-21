@@ -12,12 +12,12 @@ class HeaderTest {
     private val nonNullHeader = GlazySimpleHeader("foo")
 
     @Test fun testNullHeader() {
-        assertTrue(this.nullHeader.getHeaders().isEmpty())
+        assertTrue(this.nullHeader.headers.isEmpty())
     }
 
     @Test fun testHeader() {
         assertEquals(
-                mapOf("Authorization" to "token foo"), nonNullHeader.getHeaders()
+                mapOf("Authorization" to "token foo"), nonNullHeader.headers
         )
     }
 }
@@ -29,7 +29,7 @@ class DraftableHeaderTest {
     @Test fun testNullHeader() {
         assertEquals(
                 mapOf("Accept" to "application/vnd.github.shadow-cat-preview+json"),
-                nullDraftable.getHeaders()
+                nullDraftable.headers
         )
     }
 
@@ -37,7 +37,7 @@ class DraftableHeaderTest {
         assertEquals(
                 mapOf("Authorization" to "token foo")
                         .plus("Accept" to "application/vnd.github.shadow-cat-preview+json"),
-                nonNullDraftable.getHeaders()
+                nonNullDraftable.headers
         )
     }
 }
@@ -49,7 +49,7 @@ class TransferableHeaderTest {
     @Test fun testNullHeader() {
         assertEquals(
                 mapOf("Accept" to "application/vnd.github.nightshade-preview+json"),
-                this.nullTransferable.getHeaders()
+                this.nullTransferable.headers
         )
     }
 
@@ -57,7 +57,7 @@ class TransferableHeaderTest {
         assertEquals(
                 mapOf("Authorization" to "token foo")
                         .plus("Accept" to "application/vnd.github.nightshade-preview+json"),
-                nonNullTransferable.getHeaders()
+                nonNullTransferable.headers
         )
     }
 }
