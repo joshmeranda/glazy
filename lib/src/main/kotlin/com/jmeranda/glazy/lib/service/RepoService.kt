@@ -5,14 +5,21 @@ import com.jmeranda.glazy.lib.handler.*
 import com.jmeranda.glazy.lib.request.*
 
 /**
- * Class to run operations on remote repositories using [token] for authentication.
+ * Service providing access to repository operations.
+ *
+ * @param token The access token to be used for authentication.
  */
 class RepoService(private var token: String?){
     /**
-     * Get a repo with the specified [name], and [user].
+     * Retrieve a remote repository.
+     *
+     * @param user The owner of the target repository.
+     * @param name The name of the target repository.
+     * @return The repository owner by [user] and called [name], oro null if repository could not
+     *      be found.
      */
     fun getRepo(user: String, name: String): Repo? {
-        var repo: Repo? = CacheService.repo(user, name)
+        var repo: Repo? = repo(user, name)
 
         if (repo == null) {
             val request = RepoGetRequest(user, name)
@@ -27,18 +34,43 @@ class RepoService(private var token: String?){
     }
 
     /**
-     * Get all repos owned by a user.
+     * Retrieve a list of all repositories owned by an authenticated user.
+     *
+     * @return The list of found repositories, or null if a user could not be authenticated.
      */
     fun getAllRepos(): List<Repo>? {
         val header = GlazySimpleHeader(this.token)
         val url = GlazyCurrentUserRepoUrl()
         val handler = GetHandler(header, url, Repo::class)
 
-        return handler.handleListRequest() as List<Repo>?
+        return handler.handleListRequest()
+            ?.map{ obj -> obj as Repo }
     }
 
     /**
      * Create a remote repository.
+     *
+     * See https://developer.github.com/v3/repos/#create for detailed explanation of function
+     * parameters.
+     *
+     * @param user
+     * @param name
+     * @param description
+     * @param homepage
+     * @param private
+     * @param hasIssues
+     * @param hasProjects
+     * @param hasWiki
+     * @param hasWiki
+     * @param isTemplate
+     * @param teamId
+     * @param autoInit
+     * @param gitignoreTemplate
+     * @param licenseTemplate
+     * @param allowSquashMerge
+     * @param allowMergeCommit
+     * @param allowRebaseMerge
+     * @return The new repository, or null if there was an error.
      */
     fun createRepo(
             user: String,
@@ -47,7 +79,7 @@ class RepoService(private var token: String?){
             homepage: String? = null,
             private: Boolean? = null,
             hasIssues: Boolean? = null,
-            hasProject: Boolean? = null,
+            hasProjects: Boolean? = null,
             hasWiki: Boolean? = null,
             isTemplate: Boolean? = null,
             teamId: Int? = null,
@@ -59,7 +91,7 @@ class RepoService(private var token: String?){
             allowRebaseMerge: Boolean? = null
     ): Repo? {
         val request = RepoPostRequest(user, name, description, homepage,
-                private, hasIssues, hasProject, hasWiki, isTemplate,
+                private, hasIssues, hasProjects, hasWiki, isTemplate,
                 teamId, autoInit, gitignoreTemplate, licenseTemplate,
                 allowSquashMerge, allowMergeCommit, allowRebaseMerge)
         val header = GlazySimpleHeader(this.token)
@@ -71,6 +103,24 @@ class RepoService(private var token: String?){
 
     /**
      * Edit a remote repository.
+     *
+     * See https://developer.github.com/v3/repos/#create for detailed explanation of function
+     * parameters.
+     *
+     * @param user
+     * @param name
+     * @param description
+     * @param homepage
+     * @param private
+     * @param hasIssues
+     * @param hasProjects
+     * @param hasWiki
+     * @param hasWiki
+     * @param isTemplate
+     * @param allowSquashMerge
+     * @param allowMergeCommit
+     * @param allowRebaseMerge
+     * @return The edited repository, or null if the target repository could not be found.
      */
     fun editRepo(
             user: String,
@@ -101,7 +151,13 @@ class RepoService(private var token: String?){
     }
 
     /**
-     * Delete the remote repository called [name] owned by [user].
+     * Delete a remote repository.
+     *
+     * Please ensure that the access token used for authentication has the proper permissions for
+     * deleting repositories.
+     *
+     * @param user The owner of the target repository.
+     * @param name The name of the target repository.
      */
     fun deleteRepo(user: String, name: String) {
         val request = RepoDeleteRequest(user, name)
@@ -113,8 +169,12 @@ class RepoService(private var token: String?){
     }
 
     /**
-     * Transfer the ownership of the repository called [name] from
-     * [user] fo [newOwner] with optional [teamIds].
+     * Transfer the ownership of a repository.
+     *
+     * @param user The name of the current owner.
+     * @param name The name of the target repository.
+     * @param newOwner The name of the new owner.
+     * @param teamIds The team ids to add to the repository.
      */
     fun transferRepo(user: String, name: String, newOwner: String, teamIds: List<Int>? = null) {
         val request = RepoTransferRequest(user, name, newOwner, teamIds)
@@ -126,7 +186,12 @@ class RepoService(private var token: String?){
     }
 
     /**
-     * Create a fork of  repository called [name] and owned by [user].
+     * Create a fork of a repository.
+     *
+     * @param user The owner of the repository.
+     * @param name The name of the repository.
+     * @param organization The organization to fork into.
+     * @return The fork of the repository, or null if there was an error forking.
      */
     fun createFork(user: String, name: String, organization: String?): Repo? {
         val request = RepoForkRequest(user, name, organization)

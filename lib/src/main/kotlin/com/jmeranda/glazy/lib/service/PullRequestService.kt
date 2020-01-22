@@ -7,11 +7,12 @@ import com.jmeranda.glazy.lib.request.PullGetRequest
 import com.jmeranda.glazy.lib.request.PullPatchRequest
 import com.jmeranda.glazy.lib.request.PullPostRequest
 
-class PullRequestService(
-        private val user: String,
-        private val name: String,
-        private val token: String?
-) {
+/**
+ * Service providing access to operations on pull requests.
+ *
+ * @see [Service]
+ */
+class PullRequestService(user: String, name: String, token: String?): Service(user, name, token) {
     /**
      * Get list of all pull requests for the repository.
      */
@@ -21,7 +22,8 @@ class PullRequestService(
         val url = GlazySimplePullUrl(request)
         val handler = GetHandler(header, url, PullRequest::class)
 
-        return handler.handleListRequest() as List<PullRequest>?
+        return handler.handleListRequest()
+            ?.map{ obj -> obj as PullRequest }
     }
 
     /**

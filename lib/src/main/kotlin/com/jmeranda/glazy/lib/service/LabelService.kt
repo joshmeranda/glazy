@@ -7,20 +7,35 @@ import com.jmeranda.glazy.lib.request.LabelDeleteRequest
 import com.jmeranda.glazy.lib.request.LabelPatchRequest
 import com.jmeranda.glazy.lib.request.LabelPostRequest
 
-class LabelService(
-        private val user: String,
-        private val name: String,
-        private val token: String?
-) {
+/**
+ * Service providing access to label operation.
+ *
+ * @see [Service]
+ */
+class LabelService(user: String, name: String, token: String?): Service(user, name, token) {
+    /**
+     * Retrieve a list of all repository labels.
+     *
+     * @return A list of all repository labels, or null if the repository could not be found.
+     */
     fun getAllLabels(): List<Label>? {
         val request = LabelAllGetRequest(this.user, this.name)
         val header = GlazySimpleHeader(this.token)
         val url = GlazySimpleLabelUrl(request)
         val handler = GetHandler(header, url, Label::class)
 
-        return handler.handleListRequest() as List<Label>?
+        return handler.handleListRequest()
+            ?.map { obj -> obj as Label }
     }
 
+    /**
+     * Create a new label in the repository.
+     *
+     * @param label The label title.
+     * @param color The color of the label.
+     * @param description The description body of the label.
+     * @return The newly created label, or null if the label could not be created.
+     */
     fun createLabel(
             label: String,
             color: String,
@@ -34,6 +49,11 @@ class LabelService(
         return handler.handleRequest() as Label?
     }
 
+    /**
+     * Delete  repository label.
+     *
+     * @param label The title of the target label.
+     */
     fun deleteLabel(label: String) {
         val request = LabelDeleteRequest(this.user, this.name, label)
         val header = GlazySimpleHeader(this.token)
@@ -41,6 +61,15 @@ class LabelService(
         DeleteHandler(header, url, Label::class).handleNoRequest()
     }
 
+    /**
+     * Edit an exisitng label.
+     *
+     * @param label The current title of the labaell.
+     * @param newLabel The new title of the label.
+     * @param color The new color for the label.
+     * @param description The new describing body of the label.
+     * @return The edited label, or null if the label could not be found or edited.
+     */
     fun patchLabel(
             label: String,
             newLabel: String? = null,
