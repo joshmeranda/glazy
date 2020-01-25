@@ -372,16 +372,33 @@ class RepoPatch: Runnable, OptionalRepoCommand() {
 @Command(name = "delete",
         description = ["Delete a remote repository, user must have admin privileges."],
         mixinStandardHelpOptions = true)
-class RepoDelete: Runnable, OptionalRepoCommand() {
+class RepoDelete: Runnable, RequiredRepoCommand() {
+
+    @Option(names = ["--noconfirm"],
+        description = ["Do not ask for confirmation before deleting repository."])
+    private var noConfirm: Boolean = false
+
+    /**
+     * Get user confirmation to delete a repository.
+     *
+     * @return True if user confirmed, false otherwise.
+     */
+    private fun confirm(): Boolean {
+        print("Are you sure you would like to delete repository '${this.user}/${this.name}' (Y/n)? ")
+
+        return when (readLine()) {
+            "Y", "" -> true
+            else -> false
+        }
+    }
+
     override fun run() {
         this.initService()
-        if (this.user == null || this.name == null) {
-            this.initService()
-        }
 
-        // Delete the remote repository.
-        this.service.deleteRepo(this.user ?: return,
-                this.name ?: return)
+        if (this.noConfirm || this.confirm()) {
+            // Delete the remote repository.
+            this.service.deleteRepo(this.user, this.name)
+        }
     }
 }
 
