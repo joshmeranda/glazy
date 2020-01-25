@@ -162,8 +162,15 @@ fun write(user: String, token: String) {
     ensureCache(TOKEN_CACHE_PATH)
 
     val tokenFile = File(TOKEN_CACHE_PATH)
-    val tokenList: MutableList<UserTokenPair> = (mapper.readValue(tokenFile) as List<UserTokenPair>)
+    val tokenList: MutableList<UserTokenPair>
+
+    tokenList = try {
+        (mapper.readValue(tokenFile) as List<UserTokenPair>)
             .toMutableList()
+    } catch (e: Exception) {
+        mutableListOf()
+    }
+
     tokenList.add(UserTokenPair(user, token))
 
     try {
