@@ -3,6 +3,7 @@ package com.jmeranda.glazy.lib.service
 import com.jmeranda.glazy.lib.objects.Repo
 import com.jmeranda.glazy.lib.handler.*
 import com.jmeranda.glazy.lib.request.*
+import com.jmeranda.glazy.lib.service.cache.repo
 
 /**
  * Service providing access to repository operations.

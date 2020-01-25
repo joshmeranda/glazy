@@ -1,4 +1,4 @@
-package com.jmeranda.glazy.lib.service
+package com.jmeranda.glazy.lib.service.cache
 
 import java.lang.System
 import java.io.File
@@ -12,6 +12,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 
 import com.jmeranda.glazy.lib.objects.Repo
 import com.jmeranda.glazy.lib.objects.RootEndpoints
+import com.jmeranda.glazy.lib.service.RepoService
 
 /**
  * Data class for parsing token pairs.
@@ -107,7 +108,7 @@ fun token(user: String): String? {
  *
  * @return A root endpoints object if available, null otherwise.
  */
-fun endpoints(): RootEndpoints? {
+fun rootEndpoints(): RootEndpoints? {
     if (! Files.exists(Paths.get(ENDPOINT_CACHE_PATH))) return null
 
     val target = File(ENDPOINT_CACHE_PATH)
@@ -233,7 +234,7 @@ fun refresh(token: String?) {
 
         /* Refresh endpoints data */
         if (file.name == ENDPOINT_CACHE_PATH) {
-            write(endpoints()
+            write(rootEndpoints()
                     ?: continue)
         }
 

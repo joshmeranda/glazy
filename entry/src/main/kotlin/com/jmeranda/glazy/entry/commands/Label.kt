@@ -10,7 +10,7 @@ import picocli.CommandLine.Model.CommandSpec
 
 import com.jmeranda.glazy.entry.getRepoName
 import com.jmeranda.glazy.lib.objects.Label
-import com.jmeranda.glazy.lib.service.CacheService
+import com.jmeranda.glazy.lib.service.cache.token
 import com.jmeranda.glazy.lib.service.LabelService
 import displayLabel
 
@@ -27,7 +27,7 @@ sealed class LabelCommand {
     protected fun initService() {
         val (user, name) = getRepoName()
 
-        if (user != null) token = CacheService.token(user)
+        if (user != null) token = token(user)
 
         if (name != null && user != null) {
             this.service = LabelService(user, name, token)

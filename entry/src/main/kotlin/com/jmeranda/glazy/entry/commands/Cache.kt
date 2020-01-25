@@ -7,7 +7,7 @@ import picocli.CommandLine.Parameters
 import picocli.CommandLine.Spec
 import picocli.CommandLine.Model.CommandSpec
 
-import com.jmeranda.glazy.lib.service.CacheService
+import com.jmeranda.glazy.lib.service.cache.*
 import com.jmeranda.glazy.lib.service.RepoService
 
 /**
@@ -44,7 +44,7 @@ class ClearCache: Runnable {
     private var ignoreToken = true
 
     override fun run() {
-        CacheService.clear(this.ignoreToken)
+        clear(this.ignoreToken)
     }
 }
 
@@ -69,13 +69,13 @@ class RefreshCache: Runnable {
 
     override fun run() {
         // Retrieve the potentially needed access token.
-        val token = CacheService.token(this.user)
+        val token = token(this.user)
 
         // Refresh the cache.
         if (name == null) {
-            CacheService.refresh(token)
+            refresh(token)
         } else {
-            CacheService.refresh(this.user, this.name ?: return, RepoService(token))
+            refresh(this.user, this.name ?: return, RepoService(token))
         }
     }
 }
@@ -97,6 +97,6 @@ class TokenCache: Runnable {
     private lateinit var token: String
 
     override fun run() {
-        CacheService.write(this.user, this.token)
+        write(this.user, this.token)
     }
 }

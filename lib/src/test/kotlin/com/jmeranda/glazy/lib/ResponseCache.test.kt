@@ -5,23 +5,23 @@ import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
-import com.jmeranda.glazy.lib.service.CacheService
+import com.jmeranda.glazy.lib.service.cache.*
 import java.io.File
 
 class ResponseCacheTest {
     init {
-        CacheService.setCacheLocation(File("src/test/resource").canonicalPath)
+        setCacheLocation(File("src/test/resource").canonicalPath)
     }
 
     @Test fun testGetCachedAccessToken() {
-        assertEquals("bar", CacheService.token("foo"))
+        assertEquals("bar", token("foo"))
     }
 
     @Test fun testGetCachedAccessTokenBAD() {
-        assertNull(CacheService.token("I_DO_NOT_EXIST"))
+        assertNull(token("I_DO_NOT_EXIST"))
     }
 
     @Test fun testGetCachedRepo() {
-        assertNull(CacheService.repo("foo", "bar"))
+        assertNull(repo("foo", "bar"))
     }
 }

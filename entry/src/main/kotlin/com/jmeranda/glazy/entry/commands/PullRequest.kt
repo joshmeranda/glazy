@@ -11,7 +11,7 @@ import picocli.CommandLine.Model.CommandSpec
 import com.jmeranda.glazy.lib.service.PullRequestService
 import com.jmeranda.glazy.entry.getRepoName
 import com.jmeranda.glazy.lib.objects.PullRequest
-import com.jmeranda.glazy.lib.service.CacheService
+import com.jmeranda.glazy.lib.service.cache.token
 import displayPullRequest
 
 /**
@@ -26,7 +26,7 @@ open class PullCommand {
 
     protected fun initService() {
         val (user, name) = getRepoName()
-        if (user != null) token = CacheService.token(user)
+        if (user != null) token = token(user)
 
         if (name != null && user != null) this.service = PullRequestService(
                 user, name, token)

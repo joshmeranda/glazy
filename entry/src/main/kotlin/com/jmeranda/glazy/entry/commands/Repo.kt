@@ -8,18 +8,12 @@ import picocli.CommandLine.Spec
 import picocli.CommandLine.Parameters
 import picocli.CommandLine.Model.CommandSpec
 import com.jmeranda.glazy.lib.objects.Repo
-import com.jmeranda.glazy.lib.service.CacheService
+import com.jmeranda.glazy.lib.service.cache.token
 import com.jmeranda.glazy.lib.service.RepoService
 import displayRepo
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
-/**
- * Class to provide the [token] and [service] issue commands, as well
- * as [user] and [name] options. Despite not being a 'lateinit' (since
- * it may be null) treat [token] as a lateinit. Due to this please ensure
- * that setToken and setService are called before either property is used.
- */
 /**
  * Parent class for all repo commands.
  *
@@ -38,7 +32,7 @@ abstract class RepoCommand {
      * Initialize service to be utilized by repository commands.
      */
     protected open fun initService() {
-        this.token = CacheService.token(this.user ?: return)
+        this.token = token(this.user ?: return)
         this.service = RepoService(this.token)
     }
 }

@@ -12,7 +12,7 @@ import khttp.patch
 
 import com.jmeranda.glazy.lib.exception.BadEndpoint
 import com.jmeranda.glazy.lib.objects.*
-import com.jmeranda.glazy.lib.service.CacheService
+import com.jmeranda.glazy.lib.service.cache.*
 import khttp.responses.Response
 import kotlin.reflect.KClass
 
@@ -33,7 +33,7 @@ fun getRootEndpoints(rootUrl: String, mapper: ObjectMapper): RootEndpoints {
         throw BadEndpoint(rootUrl)
     }
 
-    CacheService.write(rootEndpoints)
+    write(rootEndpoints)
 
     return rootEndpoints
 }
@@ -105,7 +105,7 @@ abstract class Handler(
         val mapper: ObjectMapper = jacksonObjectMapper()
                 .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE)
 
-        val endpoints: RootEndpoints = CacheService.endpoints()
+        val endpoints: RootEndpoints = rootEndpoints()
                 ?: getRootEndpoints(ROOT_ENDPOINT, mapper)
 
         /**
