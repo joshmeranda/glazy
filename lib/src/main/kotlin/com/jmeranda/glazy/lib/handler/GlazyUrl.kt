@@ -3,6 +3,7 @@ package com.jmeranda.glazy.lib.handler
 import com.jmeranda.glazy.lib.request.IssueRequest
 import com.jmeranda.glazy.lib.request.LabelRequest
 import com.jmeranda.glazy.lib.request.PullRequest
+import com.jmeranda.glazy.lib.request.RepoGetRequest
 
 /**
  * Interface for all url cretion classes.
@@ -68,8 +69,33 @@ class GlazyRepoUrl(override val request: Request) : GlazyUrl {
  * @see [GlazyUrl]
  */
 class GlazyCurrentUserRepoUrl(override val request: Request? = null) : GlazyUrl {
-    override val requestUrl: String = Handler.endpoints.currentUserRepositoriesUrl
+    override var requestUrl: String = Handler.endpoints.currentUserRepositoriesUrl
             .replace(Regex("\\{.*}"), "")
+    init {
+        if (request is RepoGetRequest) {
+            var parameters = String()
+
+            if (request.visibility != null) {
+                parameters += "${if (parameters.isEmpty()) {
+                    "?"
+                } else {
+                    ""
+                }}visibility=${request.visibility}"
+            }
+
+            if (request.affiliation != null) {
+                parameters += "${if (parameters.isEmpty()) {
+                    "?"
+                } else {
+                    "&"
+                }}affiliation=${request.affiliation}"
+            }
+
+            if (parameters.isNotEmpty()) {
+                requestUrl += parameters
+            }
+        }
+    }
 }
 
 /**

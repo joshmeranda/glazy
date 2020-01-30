@@ -93,6 +93,7 @@ data class Repo(
         val treesUrl: String,
         val updatedAt: String,
         val url: String,
+        val visibility: String? = null,
         val watchers: Int,
         val watchersCount: Int
 ) : GitObject(id, nodeId)

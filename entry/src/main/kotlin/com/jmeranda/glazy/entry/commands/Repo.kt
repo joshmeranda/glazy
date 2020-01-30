@@ -115,13 +115,9 @@ open class RepoShow : Runnable, RequiredRepoCommand() {
     override fun run() {
         this.initService()
 
-        if (this.user == null || this.name == null) {
-            this.initService()
-        }
-
         // Retrieve and display a Repo instance.
-        val repo = this.service.getRepo(this.user ?: return,
-                this.name?: return) ?: return
+        val repo = this.service.getRepo(this.user,
+                this.name) ?: return
         displayRepo(repo, fields)
     }
 }
@@ -138,12 +134,20 @@ class RepoList: Runnable, RepoCommand() {
     @Parameters(index = "0", description = ["The user login for the desired repository."])
     override lateinit var user: String
 
+    @Option(names=["--affiliation"],
+        description=["The users affiliation to the group (defaults to owner)."])
+    var affiliation: String = "owner"
+
+    @Option(names=["--visibility"],
+        description = ["The visibility of repositories to show (defaults to all)."])
+    var visibility: String? = null
+
     override val name: String?  = null
 
     override fun run() {
         this.initService()
 
-        val repoList = this.service.getAllRepos() ?: return
+        val repoList = this.service.getAllRepos(visibility, affiliation) ?: return
 
         for (repo: Repo? in repoList) {
             println(repo?.fullName)

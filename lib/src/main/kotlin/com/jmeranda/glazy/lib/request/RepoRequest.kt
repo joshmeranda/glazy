@@ -10,9 +10,12 @@ import com.jmeranda.glazy.lib.handler.Request
 /**
  * Request class for GET requests.
  */
+@JsonInclude(Include.NON_NULL)
 data class RepoGetRequest(
         override val user: String,
-        override val name: String
+        override val name: String,
+        val visibility: String? = null,
+        val affiliation: String? = null
 ) : Request
 
 /**

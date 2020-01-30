@@ -4,6 +4,7 @@ import com.jmeranda.glazy.lib.objects.Repo
 import com.jmeranda.glazy.lib.handler.*
 import com.jmeranda.glazy.lib.request.*
 import com.jmeranda.glazy.lib.service.cache.repo
+import java.beans.Visibility
 
 /**
  * Service providing access to repository operations.
@@ -37,11 +38,15 @@ class RepoService(private var token: String?){
     /**
      * Retrieve a list of all repositories owned by an authenticated user.
      *
+     * See https://developer.github.com/v3/repos/#list-your-repositories for details regarding the
+     * values of visibility and affiliation.
+     *
      * @return The list of found repositories, or null if a user could not be authenticated.
      */
-    fun getAllRepos(): List<Repo>? {
-        val header = GlazySimpleHeader(this.token)
-        val url = GlazyCurrentUserRepoUrl()
+    fun getAllRepos(visibility: String?, affiliation: String?): List<Repo>? {
+        val request = RepoGetRequest(String(), String(), visibility, affiliation)
+        val header = GlazyVisibilityHeader(this.token)
+        val url = GlazyCurrentUserRepoUrl(request)
         val handler = GetHandler(header, url, Repo::class)
 
         return handler.handleListRequest()

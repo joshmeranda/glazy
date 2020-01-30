@@ -190,9 +190,8 @@ class PostHandler(
         clazz: KClass<out GitObject>
 ) : Handler(header, url, clazz), SingleResponse, NoResponse {
     override fun handleNoRequest() {
-        val body: String? = serializeRequest()
         val response: Response = post(this.requestUrl,
-            data = body,
+            data = serializeRequest(),
             headers = this.headers)
 
         handleCode(response)

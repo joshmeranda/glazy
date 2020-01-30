@@ -30,7 +30,7 @@ class RepoTest {
     }
 
     @Test fun testRepoListBad() {
-        assertNull(this.service.getAllRepos())
+        assertNull(this.service.getAllRepos(null, null))
     }
 }
 

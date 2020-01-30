@@ -40,3 +40,9 @@ class GlazyTransferableHeader(override val token: String?) : GlazySimpleHeader(t
         super.headers.plus("Accept" to "application/vnd.github.nightshade-preview+json")
     }
 }
+
+class GlazyVisibilityHeader(override val token: String?): GlazySimpleHeader(token) {
+    override val headers: Map<String, String> by lazy {
+        super.headers.plus("Accept" to "application/vnd.github.nebula-preview+json")
+    }
+}
