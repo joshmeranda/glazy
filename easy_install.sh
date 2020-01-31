@@ -2,6 +2,8 @@
 # install the glazy maven project and launcher script
 source .config
 
-# mvn install
+if [ ! -e "${JAR}" ]; then
+    mvn clean install
+fi
 
-ln --symbolic --force "${PWD}/${LAUNCHER}" "${INSTALL_DIR}"
+sudo ln --verbose --symbolic --force "${PWD}/${LAUNCHER}" "${INSTALL_DIR}"
