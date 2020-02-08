@@ -12,7 +12,6 @@ import com.jmeranda.glazy.lib.service.PullRequestService
 import com.jmeranda.glazy.entry.getRepoName
 import com.jmeranda.glazy.lib.objects.PullRequest
 import com.jmeranda.glazy.lib.service.cache.token
-import displayPullRequest
 
 /**
  * Parent class for all pull request commands.

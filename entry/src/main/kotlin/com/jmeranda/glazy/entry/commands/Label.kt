@@ -12,7 +12,6 @@ import com.jmeranda.glazy.entry.getRepoName
 import com.jmeranda.glazy.lib.objects.Label
 import com.jmeranda.glazy.lib.service.cache.token
 import com.jmeranda.glazy.lib.service.LabelService
-import displayLabel
 
 /**
  * Parent class for all label commands.

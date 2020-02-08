@@ -78,7 +78,7 @@ class CollaboratorList : Runnable, CollaboratorCommand() {
         this.initService() ?: return
 
         for (user: User in this.service?.getAllCollaborators(this.affiliation) ?: listOf()) {
-            println(user.login)
+            displayCollaborator(user)
         }
     }
 }
@@ -103,8 +103,7 @@ class CollaboratorAdd : Runnable, CollaboratorCommand() {
         this.initService() ?: return
 
         for (collaborator: String in this.collaborators ?: listOf()) {
-            this.service?.addCollaborator(collaborator, permissions) ?: continue
-            println("'${collaborator}' added with $permissions")
+            displayInvite(this.service?.addCollaborator(collaborator, permissions) ?: continue)
         }
     }
 }

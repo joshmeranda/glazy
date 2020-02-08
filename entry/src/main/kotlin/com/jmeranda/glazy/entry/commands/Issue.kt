@@ -13,7 +13,6 @@ import com.jmeranda.glazy.lib.exception.NotInRepo
 import com.jmeranda.glazy.lib.objects.Issue
 import com.jmeranda.glazy.lib.service.IssueService
 import com.jmeranda.glazy.lib.service.cache.token
-import displayIssue
 
 /**
  * Parent class for all issue commands.

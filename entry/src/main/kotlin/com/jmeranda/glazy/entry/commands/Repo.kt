@@ -10,7 +10,6 @@ import picocli.CommandLine.Model.CommandSpec
 import com.jmeranda.glazy.lib.objects.Repo
 import com.jmeranda.glazy.lib.service.cache.token
 import com.jmeranda.glazy.lib.service.RepoService
-import displayRepo
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 

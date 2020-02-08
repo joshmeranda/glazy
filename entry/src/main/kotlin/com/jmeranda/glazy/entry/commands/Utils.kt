@@ -1,10 +1,26 @@
-import com.jmeranda.glazy.lib.objects.Issue
-import com.jmeranda.glazy.lib.objects.Label
-import com.jmeranda.glazy.lib.objects.PullRequest
-import com.jmeranda.glazy.lib.objects.Repo
+package com.jmeranda.glazy.entry.commands
+import com.jmeranda.glazy.lib.objects.*
 
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
+
+/**
+ * Build a three letter description of a users permissions level.
+ *
+ * The three letters refer to admin, push, and pull respectively. While all users with push
+ * permissions have pull permissions, both are listed to differentiate between a user with only
+ * pull acess ('p') and a user with push access ('pp')
+ *
+ * @param user The user object who permissions to represent as a string.
+ * @return A three letter string denoting a users permission level.
+ */
+fun getPermissionString(user: User): String {
+    return StringBuilder()
+        .append(if (user.permissions!!.admin) { "a" } else { " " })
+        .append(if (user.permissions!!.push) { "p" } else { " " })
+        .append(if (user.permissions!!.pull) { "p" } else { " " })
+        .toString()
+}
 
 /**
  * Display a label to the console.
@@ -95,4 +111,18 @@ fun displayRepo(repo: Repo, fields: List<String>?) {
             "Please see 'https://developer.github.com/v3/repos/#list-your-repositories' for available fields"
 
     println(details)
+}
+
+/**
+ * Display a collaborator.
+ */
+fun displayCollaborator(collaborator: User) {
+    println(" ${getPermissionString(collaborator)} ${collaborator.login}")
+}
+
+/**
+ * Display a collaborator invitation.
+ */
+fun displayInvite(invite: Invite) {
+    println("User '${invite.inviter.login}' added '${invite.invitee.login}' as a collaborator.")
 }
