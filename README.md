@@ -11,11 +11,12 @@ A command line interface to the github api.
   -h, --help      Show this help message and exit.
   -V, --version   Print version information and exit.
 Commands:
-  issue  Perform operations on repository issues
-  repo   Perform operations on a repository.
-  cache  Perform operations on the glazy cache.
-  pull   Perform operations on pull requests
-  label  Perform operations on repository labels
+  issue   Perform operations on repository issues
+  repo    Perform operations on a  repository.
+  cache   Perform operations on the glazy cache.
+  pull    Perform operations on pull requests
+  label   Perform operations on repository labels
+  collab  Perform operations on repository collaborators.
 ```
 
 Pass the `--help` option to any subcommand to view its usage text.
