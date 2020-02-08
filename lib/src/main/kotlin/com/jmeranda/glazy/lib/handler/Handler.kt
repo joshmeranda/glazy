@@ -43,7 +43,7 @@ fun getRootEndpoints(rootUrl: String, mapper: ObjectMapper): RootEndpoints {
  *
  * @param header The header for sending requests.
  * @param url The url for generating endpoint targets.
- * @param clazz The expected return type from for requests.
+ * @param clazz The expected return type from requests.
  */
 abstract class Handler(
         private val header: GlazyHeader,
@@ -93,6 +93,7 @@ abstract class Handler(
                 Repo::class -> mapper.readValue<List<Repo>>(data)
                 Label::class -> mapper.readValue<List<Label>>(data)
                 PullRequest::class -> mapper.readValue<List<PullRequest>>(data)
+                User::class -> mapper.readValue<List<User>>(data)
                 else -> null
             }
         } catch (e: JsonMappingException) {

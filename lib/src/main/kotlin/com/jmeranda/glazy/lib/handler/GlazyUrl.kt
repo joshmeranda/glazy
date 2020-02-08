@@ -1,9 +1,6 @@
 package com.jmeranda.glazy.lib.handler
 
-import com.jmeranda.glazy.lib.request.IssueRequest
-import com.jmeranda.glazy.lib.request.LabelRequest
-import com.jmeranda.glazy.lib.request.PullRequest
-import com.jmeranda.glazy.lib.request.RepoGetRequest
+import com.jmeranda.glazy.lib.request.*
 
 /**
  * Interface for all url cretion classes.
@@ -161,4 +158,25 @@ class GlazyForkUrl(override val request: Request) : GlazyUrl {
             .replace("{owner}", this.request.user)
             .replace("{repo}", this.request.name)
             .plus("/forks")
+}
+
+
+/**
+ * Url class for the basic endpoint of all collaborators.
+ */
+class GlazySimpleCollaboratorUrl(override val request: CollaboratorRequest) : GlazyUrl {
+    override val requestUrl = Handler.endpoints.repositoryUrl
+        .replace("{owner}", this.request.user)
+        .replace("{repo}", this.request.name)
+        .plus("/collaborators")
+}
+
+/**
+ * Url class for an endpoint to a collaborator.
+ */
+class GlazyCollaboratorUrl(override val request: CollaboratorRequest) : GlazyUrl {
+    override val requestUrl = Handler.endpoints.repositoryUrl
+        .replace("{owner}", this.request.user)
+        .replace("{repo}", this.request.name)
+        .plus("/collaborators/${request.targetUser}")
 }

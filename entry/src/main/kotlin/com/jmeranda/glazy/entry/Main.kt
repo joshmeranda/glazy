@@ -64,5 +64,11 @@ fun main(args: Array<String>) {
                     .addSubcommand(LabelDelete())
                     .addSubcommand(LabelPatch())
                     .setToggleBooleanFlags(true))
+            // Collaborator sub-command
+            .addSubcommand(CommandLine(CollaboratorParent())
+                    .addSubcommand(CollaboratorList())
+                    .addSubcommand(CollaboratorAdd())
+                    .addSubcommand(CollaboratorRemove())
+                    .setToggleBooleanFlags(true))
             .execute(*args)
 }

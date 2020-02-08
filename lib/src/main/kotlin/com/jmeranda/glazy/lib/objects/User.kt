@@ -15,6 +15,7 @@ data class User(
         val htmlUrl: String,
         val login: String,
         val organizationsUrl: String,
+        val permissions: Permissions? = null,
         val receivedEventsUrl: String,
         val reposUrl: String,
         val siteAdmin: Boolean,
