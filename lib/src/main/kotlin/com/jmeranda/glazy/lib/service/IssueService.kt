@@ -2,10 +2,7 @@ package com.jmeranda.glazy.lib.service
 
 import com.jmeranda.glazy.lib.handler.*
 import com.jmeranda.glazy.lib.objects.Issue
-import com.jmeranda.glazy.lib.request.IssueGetAllRequest
-import com.jmeranda.glazy.lib.request.IssueGetRequest
-import com.jmeranda.glazy.lib.request.IssuePatchRequest
-import com.jmeranda.glazy.lib.request.IssuePostRequest
+import com.jmeranda.glazy.lib.request.*
 
 /**
  * Service providing access to operating on repository issues.
@@ -22,8 +19,7 @@ class IssueService(user: String, name: String, token: String?): Service(user, na
     fun getIssue(number: Int): Issue? {
         val request = IssueGetRequest(this.user, this.name, number)
         val header = GlazySimpleHeader(this.token)
-        val url = GlazyIssueUrl(request)
-        val handler = GetHandler(header, url, Issue::class)
+        val handler = GetHandler(header, issueUrl(request), request, Issue::class)
 
         return handler.handleRequest() as Issue?
     }
@@ -36,8 +32,7 @@ class IssueService(user: String, name: String, token: String?): Service(user, na
     fun getAllIssues(): List<Issue>? {
         val request = IssueGetAllRequest(this.user, this.name)
         val header = GlazySimpleHeader(this.token)
-        val url = GlazySimpleIssueUrl(request)
-        val handler = GetHandler(header, url, Issue::class)
+        val handler = GetHandler(header, issueRootUrl(request), request, Issue::class)
 
         return handler.handleListRequest()
             ?.map{ obj -> obj as Issue }
@@ -63,8 +58,7 @@ class IssueService(user: String, name: String, token: String?): Service(user, na
     ): Issue? {
         val request = IssuePostRequest(this.user, this.name, title, body, milestone, labels, assignees)
         val header = GlazySimpleHeader(this.token)
-        val url = GlazySimpleIssueUrl(request)
-        val issueHandler = PostHandler(header, url, Issue::class)
+        val issueHandler = PostHandler(header, issueRootUrl(request), request, Issue::class)
 
         return issueHandler.handleRequest() as Issue?
     }
@@ -93,8 +87,7 @@ class IssueService(user: String, name: String, token: String?): Service(user, na
         val request = IssuePatchRequest(this.user, this.name, number, title,
                 body, state, milestone, labels, assignees)
         val header = GlazySimpleHeader(this.token)
-        val url = GlazyIssueUrl(request)
-        val issueHandler = PatchHandler(header, url, Issue::class)
+        val issueHandler = PatchHandler(header, issueUrl(request), request, Issue::class)
 
         return issueHandler.handleRequest() as Issue?
     }

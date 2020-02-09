@@ -21,8 +21,7 @@ class LabelService(user: String, name: String, token: String?): Service(user, na
     fun getAllLabels(): List<Label>? {
         val request = LabelAllGetRequest(this.user, this.name)
         val header = GlazySimpleHeader(this.token)
-        val url = GlazySimpleLabelUrl(request)
-        val handler = GetHandler(header, url, Label::class)
+        val handler = GetHandler(header, labelRootUrl(request), request, Label::class)
 
         return handler.handleListRequest()
             ?.map { obj -> obj as Label }
@@ -43,8 +42,7 @@ class LabelService(user: String, name: String, token: String?): Service(user, na
     ): Label? {
         val request = LabelPostRequest(this.user, this.name, label, color, description)
         val header = GlazySimpleHeader(this.token)
-        val url = GlazySimpleLabelUrl(request)
-        val handler = PostHandler(header, url, Label::class)
+        val handler = PostHandler(header, labelRootUrl(request), request, Label::class)
 
         return handler.handleRequest() as Label?
     }
@@ -57,8 +55,7 @@ class LabelService(user: String, name: String, token: String?): Service(user, na
     fun deleteLabel(label: String) {
         val request = LabelDeleteRequest(this.user, this.name, label)
         val header = GlazySimpleHeader(this.token)
-        val url = GlazyLabelUrl(request)
-        DeleteHandler(header, url, Label::class).handleNoRequest()
+        DeleteHandler(header, labelUrl(request), request, Label::class).handleNoRequest()
     }
 
     /**
@@ -78,8 +75,7 @@ class LabelService(user: String, name: String, token: String?): Service(user, na
     ): Label? {
         val request = LabelPatchRequest(this.user, this.name, label, newLabel, color, description)
         val header = GlazySimpleHeader(this.token)
-        val url = GlazyLabelUrl(request)
-        val handler = PatchHandler(header, url, Label::class)
+        val handler = PatchHandler(header, labelUrl(request), request, Label::class)
 
         return handler.handleRequest() as Label?
     }

@@ -5,16 +5,18 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import khttp.get
-import khttp.post
+
 import khttp.delete
+import khttp.get
 import khttp.patch
+import khttp.post
+import khttp.responses.Response
+
+import kotlin.reflect.KClass
 
 import com.jmeranda.glazy.lib.exception.BadEndpoint
 import com.jmeranda.glazy.lib.objects.*
 import com.jmeranda.glazy.lib.service.cache.*
-import khttp.responses.Response
-import kotlin.reflect.KClass
 
 /**
  * Retrieve root endpoints.
@@ -46,10 +48,11 @@ fun getRootEndpoints(rootUrl: String, mapper: ObjectMapper): RootEndpoints {
  * @param clazz The expected return type from requests.
  */
 abstract class Handler(
-        private val header: GlazyHeader,
-        protected val url: GlazyUrl,
-        private val clazz: KClass<out GitObject>
-) : GlazyHeader by header, GlazyUrl by url {
+    private val header: GlazyHeader,
+    protected val url: String,
+    private val request: Request,
+    private val clazz: KClass<out GitObject>
+) : GlazyHeader by header {
 
     /**
      * Serialize the api request object.
@@ -161,19 +164,20 @@ interface ListResponse {
  * @see Handler
  */
 class GetHandler(
-        header: GlazyHeader,
-        url: GlazyUrl,
-        clazz: KClass<out GitObject>
-) : Handler(header, url, clazz), SingleResponse, ListResponse {
+    header: GlazyHeader,
+    url: String,
+    request: Request,
+    clazz: KClass<out GitObject>
+) : Handler(header, url, request, clazz), SingleResponse, ListResponse {
     override fun handleListRequest(): List<GitObject>? {
-        val response = get(this.requestUrl, headers = this.headers)
+        val response = get(this.url, headers = this.headers)
         if (! handleCode(response)) return null
 
         return deserializeList(response.text)
     }
 
     override fun handleRequest(): GitObject? {
-        val response = get(this.requestUrl, headers = this.headers)
+        val response = get(this.url, headers = this.headers)
         if (! handleCode(response)) return null
 
         return deserialize(response.text)
@@ -186,22 +190,19 @@ class GetHandler(
  * @see Handler
  */
 class PostHandler(
-        header: GlazyHeader,
-        url: GlazyUrl,
-        clazz: KClass<out GitObject>
-) : Handler(header, url, clazz), SingleResponse, NoResponse {
+    header: GlazyHeader,
+    url: String,
+    request: Request,
+    clazz: KClass<out GitObject>
+) : Handler(header, url, request, clazz), SingleResponse, NoResponse {
     override fun handleNoRequest() {
-        val response: Response = post(this.requestUrl,
-            data = serializeRequest(),
-            headers = this.headers)
+        val response: Response = post(this.url, data = serializeRequest(), headers = this.headers)
 
         handleCode(response)
     }
 
     override fun handleRequest(): GitObject? {
-        val response: Response = post(this.requestUrl,
-                data = serializeRequest(),
-                headers = this.headers)
+        val response: Response = post(this.url, data = serializeRequest(), headers = this.headers)
         if (! handleCode(response)) return null
 
         return deserialize(response.text)
@@ -214,14 +215,13 @@ class PostHandler(
  * @see Handler
  */
 class PatchHandler(
-        header: GlazyHeader,
-        url: GlazyUrl,
-        clazz: KClass<out GitObject>
-) : Handler(header, url, clazz), SingleResponse {
+    header: GlazyHeader,
+    url: String,
+    request: Request,
+    clazz: KClass<out GitObject>
+) : Handler(header, url, request, clazz), SingleResponse {
     override fun handleRequest(): GitObject? {
-        val response: Response = patch(this.requestUrl,
-                data = serializeRequest(),
-                headers = this.headers)
+        val response: Response = patch(this.url, data = serializeRequest(), headers = this.headers)
         if (! handleCode(response)) return null
 
         return deserialize(response.text)
@@ -234,14 +234,14 @@ class PatchHandler(
  * @see Handler
  */
 class DeleteHandler(
-        header: GlazyHeader,
-        url: GlazyUrl,
-        clazz: KClass<out GitObject>
-) : Handler(header, url, clazz), NoResponse {
+    header: GlazyHeader,
+    url: String,
+    request: Request,
+    clazz: KClass<out GitObject>
+) : Handler(header, url, request, clazz), NoResponse {
     override fun handleNoRequest() {
-        val response: Response = delete(this.requestUrl,
-                headers = this.headers)
+        val response: Response = delete(this.url, headers = this.headers)
 
-        ! handleCode(response)
+        handleCode(response)
     }
 }

@@ -26,8 +26,7 @@ class RepoService(private var token: String?){
         if (repo == null) {
             val request = RepoGetRequest(user, name)
             val header = GlazySimpleHeader(this.token)
-            val url = GlazyRepoUrl(request)
-            val repoHandler = GetHandler(header, url, Repo::class)
+            val repoHandler = GetHandler(header, repoUrl(request), request, Repo::class)
 
             repo = repoHandler.handleRequest() as Repo?
         }
@@ -46,8 +45,7 @@ class RepoService(private var token: String?){
     fun getAllRepos(visibility: String?, affiliation: String?): List<Repo>? {
         val request = RepoGetRequest(String(), String(), visibility, affiliation)
         val header = GlazyVisibilityHeader(this.token)
-        val url = GlazyCurrentUserRepoUrl(request)
-        val handler = GetHandler(header, url, Repo::class)
+        val handler = GetHandler(header, currentUserRepoUrlQuery(request), request, Repo::class)
 
         return handler.handleListRequest()
             ?.map{ obj -> obj as Repo }
@@ -101,8 +99,7 @@ class RepoService(private var token: String?){
                 teamId, autoInit, gitignoreTemplate, licenseTemplate,
                 allowSquashMerge, allowMergeCommit, allowRebaseMerge)
         val header = GlazySimpleHeader(this.token)
-        val url = GlazyCurrentUserRepoUrl(request)
-        val repoHandler = PostHandler(header, url, Repo::class)
+        val repoHandler = PostHandler(header, currentUserRepoUrl(), request, Repo::class)
 
         return repoHandler.handleRequest() as Repo?
     }
@@ -150,8 +147,7 @@ class RepoService(private var token: String?){
                 isTemplate, defaultBranch, allowSquashMerge, allowMergeCommit,
                 allowRebaseMerge, archived)
         val header = GlazySimpleHeader(this.token)
-        val url = GlazyRepoUrl(request)
-        val handler = PatchHandler(header, url, Repo::class)
+        val handler = PatchHandler(header, repoUrl(request), request, Repo::class)
 
         return handler.handleRequest() as Repo?
     }
@@ -168,8 +164,7 @@ class RepoService(private var token: String?){
     fun deleteRepo(user: String, name: String) {
         val request = RepoDeleteRequest(user, name)
         val header = GlazySimpleHeader(this.token)
-        val url = GlazyRepoUrl(request)
-        val handler = DeleteHandler(header, url, Repo::class)
+        val handler = DeleteHandler(header, repoUrl(request), request, Repo::class)
 
         handler.handleNoRequest()
     }
@@ -185,8 +180,7 @@ class RepoService(private var token: String?){
     fun transferRepo(user: String, name: String, newOwner: String, teamIds: List<Int>? = null) {
         val request = RepoTransferRequest(user, name, newOwner, teamIds)
         val header = GlazyTransferableHeader(this.token)
-        val url = GlazyRepoUrl(request)
-        val handler = PostHandler(header, url, Repo::class)
+        val handler = PostHandler(header, repoUrl(request), request, Repo::class)
 
         handler.handleNoRequest()
     }
@@ -202,8 +196,7 @@ class RepoService(private var token: String?){
     fun createFork(user: String, name: String, organization: String?): Repo? {
         val request = RepoForkRequest(user, name, organization)
         val header = GlazySimpleHeader(this.token)
-        val url = GlazyForkUrl(request)
-        val handler = PostHandler(header, url, Repo::class)
+        val handler = PostHandler(header, forkRootUrl(request),request, Repo::class)
 
         return handler.handleRequest() as Repo?
     }

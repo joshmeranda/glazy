@@ -19,8 +19,7 @@ class PullRequestService(user: String, name: String, token: String?): Service(us
     fun getAllPullRequests(): List<PullRequest>? {
         val request = PullGetAllRequest(this.user, this.name)
         val header = GlazyDraftableHeader(this.token)
-        val url = GlazySimplePullUrl(request)
-        val handler = GetHandler(header, url, PullRequest::class)
+        val handler = GetHandler(header, pullRootUrl(request), request, PullRequest::class)
 
         return handler.handleListRequest()
             ?.map{ obj -> obj as PullRequest }
@@ -32,8 +31,7 @@ class PullRequestService(user: String, name: String, token: String?): Service(us
     fun getPullRequest(number: Int): PullRequest? {
         val request = PullGetRequest(this.user, this.name, number)
         val header = GlazyDraftableHeader(this.token)
-        val url = GlazyPullUrl(request)
-        val handler = GetHandler(header, url, PullRequest::class)
+        val handler = GetHandler(header, pullUrl(request), request, PullRequest::class)
 
         return handler.handleRequest() as PullRequest?
     }
@@ -53,8 +51,7 @@ class PullRequestService(user: String, name: String, token: String?): Service(us
     ): PullRequest? {
         val request = PullPostRequest(user, name, title, issue, head, base, body, canModify, draft)
         val header = GlazyDraftableHeader(this.token)
-        val url = GlazySimplePullUrl(request)
-        val handler = PostHandler(header, url, PullRequest::class)
+        val handler = PostHandler(header, pullRootUrl(request), request, PullRequest::class)
 
         return handler.handleRequest() as PullRequest?
     }
@@ -69,8 +66,7 @@ class PullRequestService(user: String, name: String, token: String?): Service(us
     ): PullRequest? {
         val request = PullPatchRequest(this.user, this.name, number, title, body, state, base, canModify)
         val header = GlazyDraftableHeader(this.token)
-        val url = GlazyPullUrl(request)
-        val handler = PatchHandler(header, url, PullRequest::class)
+        val handler = PatchHandler(header, pullUrl(request), request, PullRequest::class)
 
         return handler.handleRequest() as PullRequest?
     }

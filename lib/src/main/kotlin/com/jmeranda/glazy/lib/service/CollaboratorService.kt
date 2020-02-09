@@ -24,8 +24,7 @@ class CollaboratorService(user: String, name: String, token: String?): Service(u
     fun getAllCollaborators(affiliation: String): List<User>? {
         val request = CollaboratorGetAllRequest(this.user, this.name, null, affiliation)
         val header = GlazySimpleHeader(this.token)
-        val url = GlazySimpleCollaboratorUrl(request)
-        val handler = GetHandler(header, url, User::class)
+        val handler = GetHandler(header, collaboratorRootUrl(request), request, User::class)
 
         return handler.handleListRequest()
             ?.map { obj -> obj as User }
@@ -43,8 +42,7 @@ class CollaboratorService(user: String, name: String, token: String?): Service(u
     fun addCollaborator(targetUser: String, permission: String): Invite? {
         val request = CollaboratorPostRequest(this.user, this.name, targetUser, permission)
         val header = GlazySimpleHeader(this.token)
-        val url = GlazyCollaboratorUrl(request)
-        val handler = PostHandler(header, url, Invite::class)
+        val handler = PostHandler(header, collaboratorUrl(request), request, Invite::class)
 
         return handler.handleRequest() as Invite?
     }
@@ -57,8 +55,7 @@ class CollaboratorService(user: String, name: String, token: String?): Service(u
     fun removeCollaborator(targetUser: String) {
         val request = CollaboratorDeleteRequest(this.user, this.name, targetUser)
         val header = GlazySimpleHeader(this.token)
-        val url = GlazyCollaboratorUrl(request)
-        val handler = DeleteHandler(header, url, GitObject::class)
+        val handler = DeleteHandler(header, collaboratorUrl(request), request, GitObject::class)
 
         return handler.handleNoRequest()
     }

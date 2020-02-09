@@ -3,17 +3,6 @@ package com.jmeranda.glazy.lib.handler
 import com.jmeranda.glazy.lib.request.*
 
 /**
- * Interface for all url cretion classes.
- *
- * @property request The request from which the endpoint url is created.
- * @property requestUrl The endpoint url.
- */
-interface GlazyUrl {
-    val request: Request?
-    val requestUrl: String
-}
-
-/**
  * Interface for all request types in [com.jmeranda.glazy.lib.request]
  */
 interface Request {
@@ -22,161 +11,152 @@ interface Request {
 }
 
 /**
- * Url class for the basic endpoint for all repository issues.
+ * Retrieve the root endpoint url for issues.
  *
  * @param request The request to be used for url creation.
- * @see [GlazyUrl]
+ * @return The root endpoint url for issues.
  */
-class GlazySimpleIssueUrl(override val request: Request) : GlazyUrl {
-    override val requestUrl = Handler.endpoints.repositoryUrl
-            .replace("{owner}", this.request.user)
-            .replace("{repo}", this.request.name)
+fun issueRootUrl(request: Request) = Handler.endpoints.repositoryUrl
+            .replace("{owner}", request.user)
+            .replace("{repo}", request.name)
             .plus("/issues")
-}
 
 /**
- * url class for an endpoint to a specific repository issue.
+ * Retrieve the endpoint for a specific issue.
  *
  * @param request The request to be used for url creation.
- * @see [GlazyUrl]
+ * @return The endpoint url for issues.
  */
-class GlazyIssueUrl(override val request: IssueRequest) : GlazyUrl {
-    override val requestUrl = Handler.endpoints.repositoryUrl
-            .replace("{owner}", this.request.user)
-            .replace("{repo}", this.request.name)
+fun issueUrl(request: IssueRequest) = Handler.endpoints.repositoryUrl
+            .replace("{owner}", request.user)
+            .replace("{repo}", request.name)
             .plus("/issues/${request.number}")
-}
 
 /**
- * Url class for an endpoint to a specific repository.
+ * Retrieve the root endpoint for a specific repository.
  *
  * @param request The request to be used for url creation.
- * @see [GlazyUrl]
+ * @return The endpoint url for a repository.
  */
-class GlazyRepoUrl(override val request: Request) : GlazyUrl {
-    override val requestUrl = Handler.endpoints.repositoryUrl
-            .replace("{owner}", this.request.user)
-            .replace("{repo}", this.request.name)
-}
+fun repoUrl(request: Request) = Handler.endpoints.repositoryUrl
+    .replace("{owner}", request.user)
+    .replace("{repo}", request.name)
 
 /**
- * Url class for an endpoint to all repositories for an authenticated user.
+ * Retrieve the root endpoint for an authenticated user's repositories.
  *
- * @param request The request to be used for url creation.
- * @see [GlazyUrl]
+ * @return The root endpoint url for authenticated users.
  */
-class GlazyCurrentUserRepoUrl(override val request: Request? = null) : GlazyUrl {
-    override var requestUrl: String = Handler.endpoints.currentUserRepositoriesUrl
-            .replace(Regex("\\{.*}"), "")
-    init {
-        if (request is RepoGetRequest) {
-            var parameters = String()
+fun currentUserRepoUrl() = Handler.endpoints.currentUserRepositoriesUrl
+    .replace(Regex("\\{.*}"), "")
 
-            if (request.visibility != null) {
-                parameters += "${if (parameters.isEmpty()) {
-                    "?"
-                } else {
-                    ""
-                }}visibility=${request.visibility}"
-            }
+/**
+ * Retrieve the root endpoint for an authenticated user's repositories with filters.
+ *
+ * @param request The request to be used for parameter creation.
+ * @return The root endpoint with the proper query parameters.
+ */
+fun currentUserRepoUrlQuery(request: RepoGetRequest): String {
+    var url = Handler.endpoints.currentUserRepositoriesUrl
+        .replace(Regex("\\{.*}"), "")
+    var parameters = String()
 
-            if (request.affiliation != null) {
-                parameters += "${if (parameters.isEmpty()) {
-                    "?"
-                } else {
-                    "&"
-                }}affiliation=${request.affiliation}"
-            }
-
-            if (parameters.isNotEmpty()) {
-                requestUrl += parameters
-            }
-        }
+    if (request.visibility != null) {
+        parameters += "${if (parameters.isEmpty()) {
+            "?"
+        } else {
+            ""
+        }}visibility=${request.visibility}"
     }
+
+    if (request.affiliation != null) {
+        parameters += "${if (parameters.isEmpty()) {
+            "?"
+        } else {
+            "&"
+        }}affiliation=${request.affiliation}"
+    }
+
+    if (parameters.isNotEmpty()) {
+        url += parameters
+    }
+
+    return url
 }
 
 /**
- * Url class for an endpoint to a repositories pull requests.
+ * Retrieve the root endpoint url for repositories pull requests.
  *
- * @param request The request to be used for url creation.
- * @see [GlazyUrl]
+ * @param request The request to use for url creation.
+ * @return The root endpoint for pull requests.
  */
-class GlazySimplePullUrl(override val request: Request) : GlazyUrl {
-    override val requestUrl = Handler.endpoints.repositoryUrl
-            .replace("{owner}", this.request.user)
-            .replace("{repo}", this.request.name)
-            .plus("/pulls")
-}
+fun pullRootUrl(request: Request) = Handler.endpoints.repositoryUrl
+    .replace("{owner}", request.user)
+    .replace("{repo}", request.name)
+    .plus("/pulls")
 
 /**
- * Url class for an endpoint to a specific pull request.
+ * Retrieve the endpoint for a specific repository pull request.
  *
- * @param request The request to be used for url creation.
- * @see [GlazyUrl]
+ * @param request The request to use for url creation.
+ * @return The endpoint url for a pull request.
  */
-class GlazyPullUrl(override val request: PullRequest) : GlazyUrl {
-    override val requestUrl = Handler.endpoints.repositoryUrl
-            .replace("{owner}", this.request.user)
-            .replace("{repo}", this.request.name)
-            .plus("/pulls/${request.number}")
-}
+fun pullUrl(request: PullRequest) = Handler.endpoints.repositoryUrl
+    .replace("{owner}", request.user)
+    .replace("{repo}", request.name)
+    .plus("/pulls/${request.number}")
 
 /**
- * Url class for an endpoint to a repositories labels.
+ * Retrieve the root endpoint url for a repositories labels.
  *
- * @param request The request to be used for url creation.
- * @see [GlazyUrl]
+ * @param request The request to use for url creation.
+ * @return The root endpoint url for labels.
  */
-class GlazySimpleLabelUrl(override val request: Request) : GlazyUrl {
-    override val requestUrl = Handler.endpoints.repositoryUrl
-            .replace("{owner}", this.request.user)
-            .replace("{repo}", this.request.name)
-            .plus("/labels")
-}
+fun labelRootUrl(request: Request) = Handler.endpoints.repositoryUrl
+    .replace("{owner}", request.user)
+    .replace("{repo}", request.name)
+    .plus("/labels")
 
 /**
- * Url class for an endpoint to a specific label.
+ * Retrieve the endpoint url for a specific label.
  *
- * @param request The request to be used for url creation.
- * @see [GlazyUrl]
+ * @param request The request to use for url creation.
+ * @return The endpoint url for a specific label.
  */
-class GlazyLabelUrl(override val request: LabelRequest) : GlazyUrl {
-    override val requestUrl = Handler.endpoints.repositoryUrl
-            .replace("{owner}", this.request.user)
-            .replace("{repo}", this.request.name)
-            .plus("/labels/${request.label}")
-}
+fun labelUrl(request: LabelRequest) = Handler.endpoints.repositoryUrl
+    .replace("{owner}", request.user)
+    .replace("{repo}", request.name)
+    .plus("/labels/${request.label}")
 
 /**
- * Url class for an endpoint to a repositories forks.
+ * Retrieve the root endpoint url for a repository's forks.
  *
- * @param request The request to be used for url creation.
- * @see [GlazyUrl]
+ * @param request The request to use for url creation.
+ * @return The root endpoint url for a repository's forks.
  */
-class GlazyForkUrl(override val request: Request) : GlazyUrl {
-    override val requestUrl = Handler.endpoints.repositoryUrl
-            .replace("{owner}", this.request.user)
-            .replace("{repo}", this.request.name)
-            .plus("/forks")
-}
-
+fun forkRootUrl(request: Request) = Handler.endpoints.repositoryUrl
+    .replace("{owner}", request.user)
+    .replace("{repo}", request.name)
+    .plus("/forks")
 
 /**
- * Url class for the basic endpoint of all collaborators.
+ * Retrieve the root endpoint url for a repositories collaborators.
+ *
+ * @param request The request to use for url creation.
+ * @return The root endpoint url for all collaborators.
  */
-class GlazySimpleCollaboratorUrl(override val request: CollaboratorRequest) : GlazyUrl {
-    override val requestUrl = Handler.endpoints.repositoryUrl
-        .replace("{owner}", this.request.user)
-        .replace("{repo}", this.request.name)
-        .plus("/collaborators")
-}
+fun collaboratorRootUrl(request: Request) = Handler.endpoints.repositoryUrl
+    .replace("{owner}", request.user)
+    .replace("{repo}", request.name)
+    .plus("/collaborators")
 
 /**
- * Url class for an endpoint to a collaborator.
+ * Retrieve the endpoint url for a specific collaborator.
+ *
+ * @param request The request to use for url creation.
+ * @return The endpoint url for a specific collaborator.
  */
-class GlazyCollaboratorUrl(override val request: CollaboratorRequest) : GlazyUrl {
-    override val requestUrl = Handler.endpoints.repositoryUrl
-        .replace("{owner}", this.request.user)
-        .replace("{repo}", this.request.name)
-        .plus("/collaborators/${request.targetUser}")
-}
+fun collaboratorUrl(request: CollaboratorRequest) = Handler.endpoints.repositoryUrl
+    .replace("{owner}", request.user)
+    .replace("{repo}", request.name)
+    .plus("/collaborators/${request.targetUser}")
