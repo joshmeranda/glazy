@@ -3,10 +3,10 @@ package com.jmeranda.glazy.entry.commands
 import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
-import picocli.CommandLine.Parameters
 import picocli.CommandLine.Spec
 import picocli.CommandLine.Model.CommandSpec
 
+import com.jmeranda.glazy.lib.service.getToken
 import com.jmeranda.glazy.lib.service.cache.*
 import com.jmeranda.glazy.lib.service.RepoService
 
@@ -32,19 +32,13 @@ class CacheParent: Runnable {
 
 /**
  * Allow the user to clear the cache.
- *
- * @property ignoreToken Specify to leave the token 'as-is' while cleaning cache.
  */
 @Command(name = "clear",
         description = ["Clear the cache."],
         mixinStandardHelpOptions = true)
 class ClearCache: Runnable {
-    @Option(names = ["-t", "--token"],
-            description = ["Do not ignore the access tokens when clearing cache."])
-    private var ignoreToken = true
-
     override fun run() {
-        clear(this.ignoreToken)
+        clear()
     }
 }
 
@@ -69,34 +63,13 @@ class RefreshCache: Runnable {
 
     override fun run() {
         // Retrieve the potentially needed access token.
-        val token = token(this.user)
+        val token = getToken()
 
         // Refresh the cache.
         if (name == null) {
-            refresh(token)
+            refresh()
         } else {
             refresh(this.user, this.name ?: return, RepoService(token))
         }
-    }
-}
-
-/**
- * Add a personal access token to the cache.
- *
- * @property user The username to associate with the access token.
- * @property token The value of the token.
- */
-@Command(name = "token",
-        description = ["Add token to the cache."],
-        mixinStandardHelpOptions = true)
-class TokenCache: Runnable {
-    @Parameters(index = "0", description = ["The users login to associate with the token"])
-    private lateinit var user: String
-
-    @Parameters(index = "1", description = ["The token to be cached."])
-    private lateinit var token: String
-
-    override fun run() {
-        write(this.user, this.token)
     }
 }

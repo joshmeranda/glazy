@@ -12,7 +12,7 @@ import com.jmeranda.glazy.entry.getRepoName
 import com.jmeranda.glazy.lib.exception.NotInRepo
 import com.jmeranda.glazy.lib.objects.Issue
 import com.jmeranda.glazy.lib.service.IssueService
-import com.jmeranda.glazy.lib.service.cache.token
+import com.jmeranda.glazy.lib.service.getToken
 
 /**
  * Parent class for all issue commands.
@@ -33,7 +33,7 @@ sealed class IssueCommand {
         try {
             val (user, name) = getRepoName()
 
-            if (user != null) token = token(user)
+            if (user != null) token = getToken()
 
             if (user != null && name != null) this.service = IssueService(user, name, token)
         } catch (e: NotInRepo) {

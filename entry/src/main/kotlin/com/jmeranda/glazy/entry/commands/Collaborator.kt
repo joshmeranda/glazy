@@ -3,8 +3,8 @@ package com.jmeranda.glazy.entry.commands
 import com.jmeranda.glazy.entry.getRepoName
 import com.jmeranda.glazy.lib.exception.NotInRepo
 import com.jmeranda.glazy.lib.objects.User
-import com.jmeranda.glazy.lib.service.cache.token
 import com.jmeranda.glazy.lib.service.CollaboratorService
+import com.jmeranda.glazy.lib.service.getToken
 import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.Option
@@ -29,7 +29,7 @@ sealed class CollaboratorCommand {
         try {
             val (user, name) = getRepoName()
 
-            if (user != null) token = token(user)
+            if (user != null) token = getToken()
 
             if (user != null && name != null) this.service = CollaboratorService(user, name, token)
         } catch (e: NotInRepo) {

@@ -13,6 +13,7 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import com.jmeranda.glazy.lib.objects.Repo
 import com.jmeranda.glazy.lib.objects.RootEndpoints
 import com.jmeranda.glazy.lib.service.RepoService
+import com.jmeranda.glazy.lib.service.getToken
 
 /**
  * Data class for parsing token pairs.
@@ -82,28 +83,6 @@ fun repo(user: String, name: String): Repo? {
 }
 
 /**
- * Retrieve a token paried to a username.
- *
- * @param user The username whose access token to retrieve.
- * @return The token, or null if not found.
- */
-fun token(user: String): String? {
-    // If the token cache file does not exist sdo nothing.
-    if (! Files.exists(Paths.get(TOKEN_CACHE_PATH))) return null
-
-    // Deserialize the cache file's content and search for the user.
-    val tokenFile = File(TOKEN_CACHE_PATH)
-    val tokenArray: List<UserTokenPair> = mapper.readValue(tokenFile)
-    var token: String? = null
-
-    for (pair: UserTokenPair in tokenArray) {
-        if (pair.user == user) { token = pair.token }
-    }
-
-    return token
-}
-
-/**
  * Retrieve root endpoints from the cache.
  *
  * @return A root endpoints object if available, null otherwise.
@@ -152,52 +131,12 @@ fun write(data: RootEndpoints) {
 }
 
 /**
- * Write a new user token pair to the cache.
- *
- * @param user The username to be associated with the token. Note that this does not need to be the same as the
- *      real username since the authentication process only needs the token.
- * @param token The personal access token to be stored.
- */
-fun write(user: String, token: String) {
-    ensureCache(TOKEN_CACHE_PATH)
-
-    val tokenFile = File(TOKEN_CACHE_PATH)
-    val tokenList: MutableList<UserTokenPair>
-
-    tokenList = try {
-        (mapper.readValue(tokenFile) as List<UserTokenPair>)
-            .toMutableList()
-    } catch (e: Exception) {
-        mutableListOf()
-    }
-
-    tokenList.add(UserTokenPair(user, token))
-
-    try {
-        tokenFile.writeText(mapper.writeValueAsString(tokenList))
-    } catch (e: Exception) {
-        e.printStackTrace()
-    }
-}
-
-/**
  * Clear the cache of all data.
- *
- * @param ignoreToken Specifies to leave an cached access tokens in place rather than delete them.
  */
-fun clear(ignoreToken: Boolean) {
-    if (! Files.exists(Paths.get(CACHE_PATH))) return
-
+fun clear() {
     val cacheDir = File(CACHE_PATH)
 
-    if (! ignoreToken) {
-        cacheDir.deleteRecursively()
-    } else {
-        for (file in cacheDir.listFiles() ?: arrayOf()) {
-            if (file == File(TOKEN_CACHE_PATH)) continue
-            file.deleteRecursively()
-        }
-    }
+    cacheDir.deleteRecursively()
 }
 
 /**
@@ -220,13 +159,11 @@ fun refresh(user: String, name: String, service: RepoService) {
 
 /**
  * Refresh all cache data.
- *
- * @param token The personal access token to use for authentication.
  */
-fun refresh(token: String?) {
+fun refresh() {
     if (! Files.exists(Paths.get(CACHE_PATH))) return
 
-    val service = RepoService(token)
+    val service = RepoService(getToken())
     val cacheDir = File(CACHE_PATH)
 
     /* Iterate through all cached data ignore access tokens */

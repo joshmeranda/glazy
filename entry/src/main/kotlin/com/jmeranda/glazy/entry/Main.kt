@@ -7,6 +7,7 @@ import picocli.CommandLine.Model.CommandSpec
 
 import com.jmeranda.glazy.entry.commands.*
 
+
 /**
  * Parent for all sub-commands.
  */
@@ -50,7 +51,6 @@ fun main(args: Array<String>) {
             .addSubcommand(CommandLine(CacheParent())
                     .addSubcommand(ClearCache())
                     .addSubcommand(RefreshCache())
-                    .addSubcommand(TokenCache())
                     .setToggleBooleanFlags(true))
             // Pull Request sub-command
             .addSubcommand(CommandLine(PullParent())

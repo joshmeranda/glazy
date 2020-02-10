@@ -1,8 +1,3 @@
-[core]
-	repositoryformatversion = 0
-	filemode = true
-	bare = false
-	logallrefupdates = true
 [remote "origin"]
     url = git@github.com:joshmeranda/glazy.git
     

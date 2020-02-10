@@ -13,14 +13,6 @@ class ResponseCacheTest {
         setCacheLocation(File("src/test/resource").canonicalPath)
     }
 
-    @Test fun testGetCachedAccessToken() {
-        assertEquals("bar", token("foo"))
-    }
-
-    @Test fun testGetCachedAccessTokenBAD() {
-        assertNull(token("I_DO_NOT_EXIST"))
-    }
-
     @Test fun testGetCachedRepo() {
         assertNull(repo("foo", "bar"))
     }

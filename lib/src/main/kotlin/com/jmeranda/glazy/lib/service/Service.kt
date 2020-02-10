@@ -1,5 +1,7 @@
 package com.jmeranda.glazy.lib.service
 
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder
+
 /**
  * Services will provide high level access to operations on a repository and its elements.
  *
@@ -11,3 +13,12 @@ abstract class Service(
     protected val user: String,
     protected val name: String,
     protected val token: String?)
+
+/**
+ * Determine te token to use for authentication.
+ *
+ * @return The personal access token.
+ */
+fun getToken(): String {
+    return FileRepositoryBuilder().build().config.getString("github", null, "token")
+}

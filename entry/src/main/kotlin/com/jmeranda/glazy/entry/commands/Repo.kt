@@ -8,8 +8,8 @@ import picocli.CommandLine.Spec
 import picocli.CommandLine.Parameters
 import picocli.CommandLine.Model.CommandSpec
 import com.jmeranda.glazy.lib.objects.Repo
-import com.jmeranda.glazy.lib.service.cache.token
 import com.jmeranda.glazy.lib.service.RepoService
+import com.jmeranda.glazy.lib.service.getToken
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
@@ -31,7 +31,7 @@ abstract class RepoCommand {
      * Initialize service to be utilized by repository commands.
      */
     protected open fun initService() {
-        this.token = token(this.user ?: return)
+        this.token = getToken()
         this.service = RepoService(this.token)
     }
 }
@@ -146,6 +146,7 @@ class RepoList: Runnable, RepoCommand() {
     override fun run() {
         this.initService()
 
+        // TODO if no available token find public of given users
         val repoList = this.service.getAllRepos(visibility, affiliation) ?: return
 
         for (repo: Repo? in repoList) {
@@ -234,6 +235,8 @@ class RepoInit: Runnable, RequiredRepoCommand() {
 
     override fun run() {
         this.initService()
+
+        // TODO optionally clone the created repository into the current directory
 
         // Create the remote repository.
         this.service.createRepo(
