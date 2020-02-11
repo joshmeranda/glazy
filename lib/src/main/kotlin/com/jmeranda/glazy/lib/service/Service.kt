@@ -20,5 +20,19 @@ abstract class Service(
  * @return The personal access token.
  */
 fun getToken(): String {
-    return FileRepositoryBuilder().build().config.getString("github", null, "token")
+    val builder = FileRepositoryBuilder()
+
+    builder.findGitDir()
+    builder.workTree = builder.gitDir
+
+    return builder.build().config.getString("github", null, "token")
+}
+
+fun getUser(): String {
+    val builder = FileRepositoryBuilder()
+
+    builder.findGitDir()
+    builder.workTree = builder.gitDir
+
+    return builder.build().config.getString("github", null, "user")
 }

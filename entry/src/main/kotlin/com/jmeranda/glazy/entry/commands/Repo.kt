@@ -10,6 +10,8 @@ import picocli.CommandLine.Model.CommandSpec
 import com.jmeranda.glazy.lib.objects.Repo
 import com.jmeranda.glazy.lib.service.RepoService
 import com.jmeranda.glazy.lib.service.getToken
+import com.jmeranda.glazy.lib.service.getUser
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
@@ -130,9 +132,6 @@ open class RepoShow : Runnable, RequiredRepoCommand() {
         description = ["List names of user repositories."],
         mixinStandardHelpOptions = true)
 class RepoList: Runnable, RepoCommand() {
-    @Parameters(index = "0", description = ["The user login for the desired repository."])
-    override lateinit var user: String
-
     @Option(names=["--affiliation"],
         description=["The users affiliation to the group (defaults to owner)."])
     var affiliation: String = "owner"
@@ -141,7 +140,8 @@ class RepoList: Runnable, RepoCommand() {
         description = ["The visibility of repositories to show (defaults to all)."])
     var visibility: String? = null
 
-    override val name: String?  = null
+    override val name: String? = null
+    override val user: String? = getUser()
 
     override fun run() {
         this.initService()
