@@ -17,6 +17,7 @@ import kotlin.reflect.KClass
 import com.jmeranda.glazy.lib.exception.BadEndpoint
 import com.jmeranda.glazy.lib.objects.*
 import com.jmeranda.glazy.lib.service.cache.*
+import java.util.logging.*
 
 /**
  * Retrieve root endpoints.
@@ -40,6 +41,18 @@ fun getRootEndpoints(rootUrl: String, mapper: ObjectMapper): RootEndpoints {
     return rootEndpoints
 }
 
+private class HandlerFormatter : Formatter() {
+    override fun format(record: LogRecord?): String {
+        val builder = StringBuilder()
+
+        builder.append("${record?.level?.name}: ")
+        builder.append(record?.message)
+        builder.append("\n")
+
+        return builder.toString()
+    }
+}
+
 /**
  * Handles requests for resources.
  *
@@ -61,9 +74,10 @@ abstract class Handler(
      */
     protected fun serializeRequest(): String? {
         return try {
+            log(Level.INFO,"Creating api response.")
             mapper.writeValueAsString(this.request)
         } catch (e: JsonMappingException) {
-            println("Error mapping api request.")
+            log(Level.WARNING, "Error mapping api request.")
             null
         }
     }
@@ -76,9 +90,10 @@ abstract class Handler(
      */
     fun deserialize(data: String): GitObject? {
         return try {
+            log(Level.INFO, "Parsing api response.")
             mapper.readValue(data, this.clazz.java)
         } catch (e: JsonMappingException) {
-            println("Error parsing api response.")
+            log(Level.WARNING, "Error parsing api response.")
             null
         }
     }
@@ -91,6 +106,7 @@ abstract class Handler(
      */
     protected fun deserializeList(data: String): List<GitObject>? {
         return try {
+            log(Level.INFO, "Parsing api response.")
             when (this.clazz) {
                 Issue::class -> mapper.readValue<List<Issue>>(data)
                 Repo::class -> mapper.readValue<List<Repo>>(data)
@@ -100,7 +116,7 @@ abstract class Handler(
                 else -> null
             }
         } catch (e: JsonMappingException) {
-            println("Error parsing api response.")
+            log(Level.WARNING, "Error parsing api response.")
             null
         }
     }
@@ -112,6 +128,35 @@ abstract class Handler(
         val endpoints: RootEndpoints = rootEndpoints()
                 ?: getRootEndpoints(ROOT_ENDPOINT, mapper)
 
+        protected val logger: Logger = Logger.getLogger(Handler::class.qualifiedName)
+
+        var verbose = false
+            set(value) {
+                // sets the logger level
+                logger.level = if (value) { Level.ALL } else { Level.OFF }
+                if (value) {
+                    logger.useParentHandlers = false
+                    val handler = ConsoleHandler()
+                    handler.formatter = HandlerFormatter()
+                    logger.addHandler(handler)
+                }
+
+                field = value
+            }
+
+        init {
+            logger.level = Level.OFF
+        }
+
+        /**
+         * Provide access to logging progress to the console.
+         *
+         * @param msg The message to be logged.
+         */
+        fun log(level: Level, msg: String) {
+            logger.log(level, msg)
+        }
+
         /**
          * Handle the request response to determine is success or failure.
          *
@@ -120,7 +165,7 @@ abstract class Handler(
          */
         fun handleCode(response: Response): Boolean {
             if (response.statusCode >= 400) {
-                println(response.jsonObject["message"])
+                log(Level.WARNING, response.jsonObject["message"] as String)
             }
 
             return response.statusCode < 400
@@ -170,6 +215,8 @@ class GetHandler(
     clazz: KClass<out GitObject>
 ) : Handler(header, url, request, clazz), SingleResponse, ListResponse {
     override fun handleListRequest(): List<GitObject>? {
+        log(Level.INFO, "Sending request to ${this.url}")
+
         val response = get(this.url, headers = this.headers)
         if (! handleCode(response)) return null
 
@@ -177,6 +224,8 @@ class GetHandler(
     }
 
     override fun handleRequest(): GitObject? {
+        log(Level.INFO, "Sending request to ${this.url}")
+
         val response = get(this.url, headers = this.headers)
         if (! handleCode(response)) return null
 
@@ -196,12 +245,16 @@ class PostHandler(
     clazz: KClass<out GitObject>
 ) : Handler(header, url, request, clazz), SingleResponse, NoResponse {
     override fun handleNoRequest() {
+        log(Level.INFO, "Sending request to ${this.url}")
+
         val response: Response = post(this.url, data = serializeRequest(), headers = this.headers)
 
         handleCode(response)
     }
 
     override fun handleRequest(): GitObject? {
+        log(Level.INFO, "Sending request to ${this.url}")
+
         val response: Response = post(this.url, data = serializeRequest(), headers = this.headers)
         if (! handleCode(response)) return null
 
@@ -221,6 +274,8 @@ class PatchHandler(
     clazz: KClass<out GitObject>
 ) : Handler(header, url, request, clazz), SingleResponse {
     override fun handleRequest(): GitObject? {
+        log(Level.INFO, "Sending request to ${this.url}")
+
         val response: Response = patch(this.url, data = serializeRequest(), headers = this.headers)
         if (! handleCode(response)) return null
 
@@ -240,6 +295,8 @@ class DeleteHandler(
     clazz: KClass<out GitObject>
 ) : Handler(header, url, request, clazz), NoResponse {
     override fun handleNoRequest() {
+        log(Level.INFO, "Sending request to ${this.url}")
+
         val response: Response = delete(this.url, headers = this.headers)
 
         handleCode(response)

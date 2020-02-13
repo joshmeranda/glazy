@@ -2,11 +2,17 @@ package com.jmeranda.glazy.entry
 
 import picocli.CommandLine
 import picocli.CommandLine.Command
+import picocli.CommandLine.Mixin
+import picocli.CommandLine.Option
 import picocli.CommandLine.Spec
 import picocli.CommandLine.Model.CommandSpec
 
 import com.jmeranda.glazy.entry.commands.*
 
+class Verbose {
+    @Option(names=["-v" ,"--verbose"], description=["Show verbose output."])
+    val verbose: Boolean? = null
+}
 
 /**
  * Parent for all sub-commands.
@@ -15,6 +21,9 @@ import com.jmeranda.glazy.entry.commands.*
         description = ["A command line interface to the github api."],
         mixinStandardHelpOptions = true)
 class Glazy: Runnable {
+    @Mixin
+    val verbose: Verbose? = null
+
     @Spec lateinit var spec: CommandSpec
 
     /**

@@ -1,4 +1,5 @@
 package com.jmeranda.glazy.entry.commands
+
 import com.jmeranda.glazy.lib.objects.*
 
 import kotlin.reflect.KProperty1

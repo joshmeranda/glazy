@@ -1,8 +1,10 @@
 package com.jmeranda.glazy.entry.commands
 
+import com.jmeranda.glazy.entry.Verbose
 import picocli.CommandLine
 import picocli.CommandLine.ArgGroup
 import picocli.CommandLine.Command
+import picocli.CommandLine.Mixin
 import picocli.CommandLine.Option
 import picocli.CommandLine.Parameters
 import picocli.CommandLine.Spec
@@ -10,6 +12,7 @@ import picocli.CommandLine.Model.CommandSpec
 
 import com.jmeranda.glazy.lib.service.PullRequestService
 import com.jmeranda.glazy.entry.getRepoName
+import com.jmeranda.glazy.lib.handler.Handler
 import com.jmeranda.glazy.lib.objects.PullRequest
 import com.jmeranda.glazy.lib.service.getToken
 
@@ -20,6 +23,8 @@ import com.jmeranda.glazy.lib.service.getToken
  * @property token The token to use for api authentication.
  */
 open class PullCommand {
+    @Mixin
+    var verbose: Verbose? = null
     protected lateinit var service: PullRequestService
     private var token: String? = null
 
@@ -27,8 +32,8 @@ open class PullCommand {
         val (user, name) = getRepoName()
         if (user != null) token = getToken()
 
-        if (name != null && user != null) this.service = PullRequestService(
-                user, name, token)
+        if (name != null && user != null) this.service = PullRequestService(user, name, token)
+        Handler.verbose = this.verbose?.verbose ?: false
     }
 }
 

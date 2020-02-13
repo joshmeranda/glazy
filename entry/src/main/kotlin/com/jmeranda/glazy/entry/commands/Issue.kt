@@ -1,8 +1,10 @@
 package com.jmeranda.glazy.entry.commands
 
+import com.jmeranda.glazy.entry.Verbose
 import picocli.CommandLine
 import picocli.CommandLine.ArgGroup
 import picocli.CommandLine.Command
+import picocli.CommandLine.Mixin
 import picocli.CommandLine.Option
 import picocli.CommandLine.Parameters
 import picocli.CommandLine.Spec
@@ -10,6 +12,7 @@ import picocli.CommandLine.Model.CommandSpec
 
 import com.jmeranda.glazy.entry.getRepoName
 import com.jmeranda.glazy.lib.exception.NotInRepo
+import com.jmeranda.glazy.lib.handler.Handler
 import com.jmeranda.glazy.lib.objects.Issue
 import com.jmeranda.glazy.lib.service.IssueService
 import com.jmeranda.glazy.lib.service.getToken
@@ -21,6 +24,8 @@ import com.jmeranda.glazy.lib.service.getToken
  * @property token The token to use for api authentication.
  */
 sealed class IssueCommand {
+    @Mixin
+    var verbose: Verbose? = null
     protected var service: IssueService? = null
     private var token: String? = null
 
@@ -40,6 +45,7 @@ sealed class IssueCommand {
             this.service = null
         }
 
+        Handler.verbose = this.verbose?.verbose ?: false
         return this.service
     }
 }

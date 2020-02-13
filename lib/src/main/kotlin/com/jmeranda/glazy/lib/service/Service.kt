@@ -15,7 +15,7 @@ abstract class Service(
     protected val token: String?)
 
 /**
- * Determine te token to use for authentication.
+ * Determine the token to use for authentication.
  *
  * @return The personal access token.
  */
@@ -28,6 +28,11 @@ fun getToken(): String {
     return builder.build().config.getString("github", null, "token")
 }
 
+/**
+ * Determine the user to use for authentication.
+ *
+ * @return The username for authentication.
+ */
 fun getUser(): String {
     val builder = FileRepositoryBuilder()
 

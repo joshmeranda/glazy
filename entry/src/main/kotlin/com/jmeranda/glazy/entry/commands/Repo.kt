@@ -1,17 +1,23 @@
 package com.jmeranda.glazy.entry.commands
 
-import com.jmeranda.glazy.entry.getRepoName
+import com.jmeranda.glazy.entry.Glazy
+import com.jmeranda.glazy.entry.Verbose
 import picocli.CommandLine
 import picocli.CommandLine.Command
+import picocli.CommandLine.Mixin
 import picocli.CommandLine.Option
 import picocli.CommandLine.Spec
 import picocli.CommandLine.Parameters
 import picocli.CommandLine.Model.CommandSpec
-import com.jmeranda.glazy.lib.objects.Repo
-import com.jmeranda.glazy.lib.service.RepoService
+
 import com.jmeranda.glazy.lib.service.getToken
 import com.jmeranda.glazy.lib.service.getUser
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder
+import com.jmeranda.glazy.entry.getRepoName
+import com.jmeranda.glazy.lib.handler.Handler
+import com.jmeranda.glazy.lib.objects.Repo
+import com.jmeranda.glazy.lib.service.RepoService
+
+
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
@@ -24,6 +30,9 @@ import kotlin.reflect.full.memberProperties
  * @property service The [com.jmeranda.glazy.lib.service.RepoService] to by repo commands.
  */
 abstract class RepoCommand {
+    @Mixin
+    var verbose: Verbose? = null
+
     abstract val user: String?
     abstract val name: String?
     protected open var token: String? = null
@@ -34,6 +43,7 @@ abstract class RepoCommand {
      */
     protected open fun initService() {
         this.token = getToken()
+        Handler.verbose = verbose?.verbose ?: false
         this.service = RepoService(this.token)
     }
 }
