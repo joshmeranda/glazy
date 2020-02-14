@@ -11,7 +11,7 @@ import java.beans.Visibility
  *
  * @param token The access token to be used for authentication.
  */
-class RepoService(private var token: String?){
+class RepoService(private var token: String?) {
     /**
      * Retrieve a remote repository.
      *
@@ -48,7 +48,7 @@ class RepoService(private var token: String?){
         val handler = GetHandler(header, currentUserRepoUrlQuery(request), request, Repo::class)
 
         return handler.handleListRequest()
-            ?.map{ obj -> obj as Repo }
+            ?.map { obj -> obj as Repo }
     }
 
     /**
@@ -77,27 +77,29 @@ class RepoService(private var token: String?){
      * @return The new repository, or null if there was an error.
      */
     fun createRepo(
-            user: String,
-            name: String,
-            description: String? = null,
-            homepage: String? = null,
-            private: Boolean? = null,
-            hasIssues: Boolean? = null,
-            hasProjects: Boolean? = null,
-            hasWiki: Boolean? = null,
-            isTemplate: Boolean? = null,
-            teamId: Int? = null,
-            autoInit: Boolean? = null,
-            gitignoreTemplate: String? = null,
-            licenseTemplate: String? = null,
-            allowSquashMerge: Boolean? = null,
-            allowMergeCommit: Boolean? = null,
-            allowRebaseMerge: Boolean? = null
+        user: String,
+        name: String,
+        description: String? = null,
+        homepage: String? = null,
+        private: Boolean? = null,
+        hasIssues: Boolean? = null,
+        hasProjects: Boolean? = null,
+        hasWiki: Boolean? = null,
+        isTemplate: Boolean? = null,
+        teamId: Int? = null,
+        autoInit: Boolean? = null,
+        gitignoreTemplate: String? = null,
+        licenseTemplate: String? = null,
+        allowSquashMerge: Boolean? = null,
+        allowMergeCommit: Boolean? = null,
+        allowRebaseMerge: Boolean? = null
     ): Repo? {
-        val request = RepoPostRequest(user, name, description, homepage,
-                private, hasIssues, hasProjects, hasWiki, isTemplate,
-                teamId, autoInit, gitignoreTemplate, licenseTemplate,
-                allowSquashMerge, allowMergeCommit, allowRebaseMerge)
+        val request = RepoPostRequest(
+            user, name, description, homepage,
+            private, hasIssues, hasProjects, hasWiki, isTemplate,
+            teamId, autoInit, gitignoreTemplate, licenseTemplate,
+            allowSquashMerge, allowMergeCommit, allowRebaseMerge
+        )
         val header = GlazySimpleHeader(this.token)
         val repoHandler = PostHandler(header, currentUserRepoUrl(), request, Repo::class)
 
@@ -126,26 +128,28 @@ class RepoService(private var token: String?){
      * @return The edited repository, or null if the target repository could not be found.
      */
     fun editRepo(
-            user: String,
-            currentName: String,
-            name: String? = null,
-            description: String? = null,
-            homepage: String? = null,
-            private: Boolean? = null,
-            hasIssues: Boolean? = null,
-            hasProjects: Boolean? = null,
-            hasWiki: Boolean? = null,
-            isTemplate: Boolean? = null,
-            defaultBranch: String? = null,
-            allowSquashMerge: Boolean? = null,
-            allowMergeCommit: Boolean? = null,
-            allowRebaseMerge: Boolean? = null,
-            archived: Boolean? = null
+        user: String,
+        currentName: String,
+        name: String? = null,
+        description: String? = null,
+        homepage: String? = null,
+        private: Boolean? = null,
+        hasIssues: Boolean? = null,
+        hasProjects: Boolean? = null,
+        hasWiki: Boolean? = null,
+        isTemplate: Boolean? = null,
+        defaultBranch: String? = null,
+        allowSquashMerge: Boolean? = null,
+        allowMergeCommit: Boolean? = null,
+        allowRebaseMerge: Boolean? = null,
+        archived: Boolean? = null
     ): Repo? {
-        val request = RepoPatchRequest(user, currentName, name, description,
-                homepage, private, hasIssues, hasProjects, hasWiki,
-                isTemplate, defaultBranch, allowSquashMerge, allowMergeCommit,
-                allowRebaseMerge, archived)
+        val request = RepoPatchRequest(
+            user, currentName, name, description,
+            homepage, private, hasIssues, hasProjects, hasWiki,
+            isTemplate, defaultBranch, allowSquashMerge, allowMergeCommit,
+            allowRebaseMerge, archived
+        )
         val header = GlazySimpleHeader(this.token)
         val handler = PatchHandler(header, repoUrl(request), request, Repo::class)
 
@@ -196,7 +200,25 @@ class RepoService(private var token: String?){
     fun createFork(user: String, name: String, organization: String?): Repo? {
         val request = RepoForkRequest(user, name, organization)
         val header = GlazySimpleHeader(this.token)
-        val handler = PostHandler(header, forkRootUrl(request),request, Repo::class)
+        val handler = PostHandler(header, forkRootUrl(request), request, Repo::class)
+
+        return handler.handleRequest() as Repo?
+    }
+
+    /**
+     * Create a repository from a template.
+     */
+    fun fromTemplate(
+        templateOwner: String,
+        templateName: String,
+        user: String? = null,
+        name: String? = null,
+        description: String? = null,
+        private: Boolean? = null
+    ): Repo? {
+        val request = RepoTemplateRequest(templateOwner, templateName, user ?: getUser(), name ?: templateName, description, private)
+        val header = GlazySimpleHeader(this.token)
+        val handler = PostHandler(header, templateUrl(request), request, Repo::class)
 
         return handler.handleRequest() as Repo?
     }

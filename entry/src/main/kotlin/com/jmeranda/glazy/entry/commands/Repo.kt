@@ -270,6 +270,35 @@ class RepoInit: Runnable, RequiredRepoCommand() {
     }
 }
 
+@Command(name = "template",
+    description = ["Create a new repository from a template."])
+class RepoTemplate: Runnable, OptionalRepoCommand() {
+    @Parameters(index = "0", description = ["The owner of the template repository."])
+    lateinit var templateOwner: String
+
+    @Parameters(index = "1", description = ["The name of the template repository."])
+    lateinit var templateName: String
+
+    @Option(names = ["-d", "--description"],
+        description = ["THe description for the new repository"])
+    var description: String? = null
+
+    @Option(names = ["-p", "--private"],
+            description = ["Mark the new repository as private."])
+    var private: Boolean = false
+
+    override fun run() {
+        this.initService()
+        this.service.fromTemplate(
+            this.templateOwner, this.templateName,
+            this.user, this.name,
+            this.description,
+            this.private)
+
+        // TODO optionally clone the created repository into the current directory
+    }
+}
+
 /**
  * Patch a repository with content specified by class properties.
  *

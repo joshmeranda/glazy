@@ -90,3 +90,15 @@ data class RepoForkRequest (
         @JsonIgnore override val name: String,
         val organization: String? = null
 ) : Request
+
+/**
+ * Request class for creating a repository from a template.
+ */
+data class RepoTemplateRequest (
+        override val user: String,
+        override val name: String,
+        val templateOwner: String,
+        val templateName: String,
+        val description: String? = null,
+        val private: Boolean? = null
+) : Request

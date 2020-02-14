@@ -160,3 +160,8 @@ fun collaboratorUrl(request: CollaboratorRequest) = Handler.endpoints.repository
     .replace("{owner}", request.user)
     .replace("{repo}", request.name)
     .plus("/collaborators/${request.targetUser}")
+
+fun templateUrl(request: RepoTemplateRequest) = Handler.endpoints.repositoryUrl
+    .replace("{owner}", request.templateOwner)
+    .replace("{repo}", request.templateName)
+    .plus("/generate")

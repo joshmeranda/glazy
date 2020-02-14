@@ -21,10 +21,19 @@ Commands:
 
 Pass the `--help` option to any subcommand to view its usage text.
 
+# Configuration
+Much of the functionality of this project relies on the local git configuration, specifically the `github.user` and
+`github.token` fields. To properlly configure these fields please use the following commands:
+
+```shell script
+git config --global github.user <username>
+git config --global github.token <token>
+```
+
 # Development resources
 [Kotlin Coding Conventions](https://kotlinlang.org/docs/reference/coding-conventions.html)
 
-[Kotlin Docs](https://kotlinlang.org/docs/reference/)
+[Kotlin Docs](https://kotlinlang.org/docs/reference/)s
 
 [Git API docs](https://developer.github.com/v3/)
 

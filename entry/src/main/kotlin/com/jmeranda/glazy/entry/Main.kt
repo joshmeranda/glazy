@@ -51,9 +51,10 @@ fun main(args: Array<String>) {
                     .addSubcommand(RepoShow())
                     .addSubcommand(RepoList())
                     .addSubcommand(RepoInit())
+                    .addSubcommand(RepoTemplate())
+                    .addSubcommand(RepoTransfer())
                     .addSubcommand(RepoPatch())
                     .addSubcommand(RepoDelete())
-                    .addSubcommand(RepoTransfer())
                     .addSubcommand(RepoFork())
                     .setToggleBooleanFlags(true))
             // Cache sub-command
