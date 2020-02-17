@@ -25,7 +25,7 @@ class RepoService(private var token: String?) {
 
         if (repo == null) {
             val request = RepoGetRequest(user, name)
-            val header = GlazySimpleHeader(this.token)
+            val header = GlazyTemplateHeader(this.token)
             val repoHandler = GetHandler(header, repoUrl(request), request, Repo::class)
 
             repo = repoHandler.handleRequest() as Repo?
@@ -221,7 +221,7 @@ class RepoService(private var token: String?) {
             name ?: templateName,
             description,
             private)
-        val header = GlazySimpleHeader(this.token)
+        val header = GlazyTemplateHeader(this.token)
         val handler = PostHandler(header, templateUrl(request), request, Repo::class)
 
         return handler.handleRequest() as Repo?

@@ -88,7 +88,12 @@ fun displayRepo(repo: Repo, fields: List<String>?) {
     var details = "full name: ${repo.fullName}\n" +
             "private: ${repo.private}\n" +
             "created: ${repo.createdAt}\n" +
-            "clone url: ${repo.cloneUrl}"
+            "https url: ${repo.cloneUrl}\n" +
+            "ssh url: ${repo.sshUrl}\n"
+
+    if (repo.isTemplate != null) {
+        details += "template: ${repo.isTemplate}"
+    }
 
     val badFields = mutableListOf<String>()
 

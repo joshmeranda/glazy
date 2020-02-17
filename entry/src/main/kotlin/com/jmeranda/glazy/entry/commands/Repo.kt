@@ -125,7 +125,6 @@ open class RepoShow : Runnable, RequiredRepoCommand() {
 
     override fun run() {
         this.initService()
-        println("=== ${this.token != null} ===")
 
         // Retrieve and display a Repo instance.
         val repo = this.service.getRepo(this.user,
