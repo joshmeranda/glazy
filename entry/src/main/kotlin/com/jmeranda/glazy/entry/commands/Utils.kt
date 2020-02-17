@@ -5,6 +5,7 @@ import com.jmeranda.glazy.lib.objects.*
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties
 
+
 /**
  * Build a three letter description of a users permissions level.
  *

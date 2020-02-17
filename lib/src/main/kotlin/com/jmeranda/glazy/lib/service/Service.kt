@@ -1,6 +1,12 @@
 package com.jmeranda.glazy.lib.service
 
+import org.eclipse.jgit.lib.Config
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
+
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * Services will provide high level access to operations on a repository and its elements.
@@ -15,17 +21,40 @@ abstract class Service(
     protected val token: String?)
 
 /**
+ * A list of all config files for git.
+ */
+private val configList: List<File> by lazy {
+    val list = mutableListOf<File>()
+
+    if (Files.exists(Paths.get(System.getenv("PWD") + "/.git/config"))) {
+        list.add(File(System.getenv("PWD") + "/.git/config"))
+    }
+
+    if (Files.exists(Paths.get(System.getenv("HOME") + "/.gitconfig"))) {
+        list.add(File(System.getenv("HOME") + "/.gitconfig"))
+    }
+
+    if (Files.exists(Paths.get("/etc/gitconfig"))) {
+        list.add(File("/etc/gitconfig"))
+    }
+
+    list.toList()
+}
+
+/**
  * Determine the token to use for authentication.
  *
  * @return The personal access token.
  */
-fun getToken(): String {
-    val builder = FileRepositoryBuilder()
+fun getToken(): String? {
+    val cfg = Config()
 
-    builder.findGitDir()
-    builder.workTree = builder.gitDir
+    for (path in configList) {
+        cfg.fromText(path.readText())
+        return cfg.getString("github", null, "token") ?: continue
+    }
 
-    return builder.build().config.getString("github", null, "token")
+    return null
 }
 
 /**
@@ -33,11 +62,13 @@ fun getToken(): String {
  *
  * @return The username for authentication.
  */
-fun getUser(): String {
-    val builder = FileRepositoryBuilder()
+fun getUser(): String? {
+    val cfg = Config()
 
-    builder.findGitDir()
-    builder.workTree = builder.gitDir
+    for (path in configList) {
+        cfg.fromText(path.readText())
+        return cfg.getString("github", null, "user") ?: continue
+    }
 
-    return builder.build().config.getString("github", null, "user")
+    return null
 }

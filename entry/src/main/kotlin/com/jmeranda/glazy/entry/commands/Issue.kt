@@ -43,6 +43,7 @@ sealed class IssueCommand {
             if (user != null && name != null) this.service = IssueService(user, name, token)
         } catch (e: NotInRepo) {
             this.service = null
+
         }
 
         Handler.verbose = this.verbose?.verbose ?: false

@@ -216,7 +216,11 @@ class RepoService(private var token: String?) {
         description: String? = null,
         private: Boolean? = null
     ): Repo? {
-        val request = RepoTemplateRequest(templateOwner, templateName, user ?: getUser(), name ?: templateName, description, private)
+        val request = RepoTemplateRequest(templateOwner, templateName,
+            user ?: getUser() ?: return null,
+            name ?: templateName,
+            description,
+            private)
         val header = GlazySimpleHeader(this.token)
         val handler = PostHandler(header, templateUrl(request), request, Repo::class)
 
