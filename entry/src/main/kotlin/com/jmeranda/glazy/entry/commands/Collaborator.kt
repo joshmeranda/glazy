@@ -29,18 +29,14 @@ sealed class CollaboratorCommand {
     /**
      * Initialize the collaborator service.
      *
-     * @reutnr The collaborator service for a specific repositoru or null is an error occurs.
+     * @return The collaborator service for a specific repositoru or null is an error occurs.
+     * @throws NotInRepo when the current working directory is not in a git repository.s
      */
     protected fun initService(): CollaboratorService? {
-        try {
-            val (user, name) = getRepoName()
+        val (user, name) = getRepoName()
 
-            if (user != null) token = getToken()
-
-            if (user != null && name != null) this.service = CollaboratorService(user, name, token)
-        } catch (e: NotInRepo) {
-            this.service = null
-        }
+        if (user != null) token = getToken()
+        if (user != null && name != null) this.service = CollaboratorService(user, name, token)
 
         Handler.verbose = this.verbose?.verbose ?: false
         return this.service

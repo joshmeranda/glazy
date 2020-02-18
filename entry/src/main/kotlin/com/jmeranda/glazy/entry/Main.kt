@@ -2,12 +2,30 @@ package com.jmeranda.glazy.entry
 
 import picocli.CommandLine
 import picocli.CommandLine.Command
+import picocli.CommandLine.IExecutionExceptionHandler
 import picocli.CommandLine.Mixin
 import picocli.CommandLine.Option
 import picocli.CommandLine.Spec
 import picocli.CommandLine.Model.CommandSpec
 
 import com.jmeranda.glazy.entry.commands.*
+import com.jmeranda.glazy.lib.exception.NotInRepo
+import java.lang.Exception
+
+/**
+ * Exception handler to specially handle NotInRepo by notifying user.
+ */
+class OutsideGitHandler() : IExecutionExceptionHandler {
+    override fun handleExecutionException(e: Exception?, cl: CommandLine?, pr: CommandLine.ParseResult?): Int {
+        if (e is NotInRepo) {
+            cl?.err?.println(e.message);
+        } else {
+            e?.printStackTrace()
+        }
+
+        return 1
+    }
+}
 
 class Verbose {
     @Option(names=["-v" ,"--verbose"], description=["Show verbose output."])
@@ -80,5 +98,6 @@ fun main(args: Array<String>) {
                     .addSubcommand(CollaboratorAdd())
                     .addSubcommand(CollaboratorRemove())
                     .setToggleBooleanFlags(true))
+            .setExecutionExceptionHandler(OutsideGitHandler())
             .execute(*args)
 }

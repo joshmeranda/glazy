@@ -33,18 +33,13 @@ sealed class IssueCommand {
      * Initializes the issue service.
      *
      * @return The issue service for a specific repository or null if an error occurs.
+     * @throws NotInRepo when the current working directory is not in a git repository.s
      */
     protected fun initService(): IssueService? {
-        try {
-            val (user, name) = getRepoName()
+        val (user, name) = getRepoName()
 
-            if (user != null) token = getToken()
-
-            if (user != null && name != null) this.service = IssueService(user, name, token)
-        } catch (e: NotInRepo) {
-            this.service = null
-
-        }
+        if (user != null) token = getToken()
+        if (user != null && name != null) this.service = IssueService(user, name, token)
 
         Handler.verbose = this.verbose?.verbose ?: false
         return this.service

@@ -4,6 +4,7 @@ import com.jmeranda.glazy.lib.exception.NotInRepo
 import org.eclipse.jgit.lib.Config
 import org.eclipse.jgit.lib.RepositoryBuilder
 import java.io.File
+import java.io.FileNotFoundException
 import java.nio.file.Files
 import java.nio.file.Paths
 
@@ -19,19 +20,26 @@ import java.nio.file.Paths
  * @throws NotInRepo When the target pth is null and there is not
  */
 fun getRepoName(targetPath: String? = null): Pair<String?, String?> {
-    // return null if the specified files does not exist
-    if (targetPath != null && ! Files.exists(Paths.get(targetPath))) {
+    val path: File = if (targetPath == null) {
+        try {
+            File(RepositoryBuilder().findGitDir().gitDir.toString() + "/config")
+        } catch (e: FileNotFoundException) {
+            throw NotInRepo(System.getenv("PWD"))
+        } catch (e: NullPointerException) {
+            throw NotInRepo(System.getenv("PWD"))
+        }
+    } else {
+        if (Files.exists(Paths.get(targetPath))) {
+            File(targetPath)
+        }
+
         return Pair(null, null)
     }
 
-    // throw error if the current working directory is not in a repository.
-    val gitDir = RepositoryBuilder().findGitDir()
-    if (targetPath == null && gitDir == null) {
-        throw NotInRepo(System.getenv("PWD"))
-    }
-
     val cfg = Config()
-    cfg.fromText(File(targetPath).readText())
+    cfg.fromText(
+        path.readText()
+    )
 
     val fullNamePattern = Regex( "[a-zA-Z0-9]+/[a-zA-Z0-9\\-_]+\\.git$", RegexOption.UNIX_LINES)
     val url = cfg.getString("remote", "origin", "url") ?: return Pair(null, null)
