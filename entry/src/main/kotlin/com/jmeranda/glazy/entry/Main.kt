@@ -11,6 +11,7 @@ import picocli.CommandLine.Model.CommandSpec
 import com.jmeranda.glazy.entry.commands.*
 import com.jmeranda.glazy.lib.exception.NotInRepo
 import java.lang.Exception
+import java.time.format.DateTimeFormatter
 
 /**
  * Exception handler to specially handle NotInRepo by notifying user.
@@ -55,8 +56,10 @@ class Glazy: Runnable {
     }
 }
 
+val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+
 fun main(args: Array<String>) {
-    CommandLine(Glazy())
+    val cli = CommandLine(Glazy())
             // Issue sub-command
             .addSubcommand(CommandLine(
                     IssueParent())
@@ -99,5 +102,6 @@ fun main(args: Array<String>) {
                     .addSubcommand(CollaboratorRemove())
                     .setToggleBooleanFlags(true))
             .setExecutionExceptionHandler(OutsideGitHandler())
-            .execute(*args)
+
+    cli.execute(*args)
 }

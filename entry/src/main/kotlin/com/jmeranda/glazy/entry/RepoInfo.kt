@@ -31,9 +31,9 @@ fun getRepoName(targetPath: String? = null): Pair<String?, String?> {
     } else {
         if (Files.exists(Paths.get(targetPath))) {
             File(targetPath)
+        } else {
+            return Pair(null, null)
         }
-
-        return Pair(null, null)
     }
 
     val cfg = Config()

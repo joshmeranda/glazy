@@ -1,6 +1,5 @@
 package com.jmeranda.glazy.entry.commands
 
-import com.jmeranda.glazy.entry.Glazy
 import com.jmeranda.glazy.entry.Verbose
 import picocli.CommandLine
 import picocli.CommandLine.Command
@@ -16,7 +15,6 @@ import com.jmeranda.glazy.entry.getRepoName
 import com.jmeranda.glazy.lib.handler.Handler
 import com.jmeranda.glazy.lib.objects.Repo
 import com.jmeranda.glazy.lib.service.RepoService
-
 
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.memberProperties

@@ -66,7 +66,6 @@ abstract class Handler(
     private val request: Request,
     private val clazz: KClass<out GitObject>
 ) : GlazyHeader by header {
-
     /**
      * Serialize the api request object.
      *
