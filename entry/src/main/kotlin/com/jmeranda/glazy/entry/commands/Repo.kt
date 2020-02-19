@@ -244,10 +244,8 @@ class RepoInit: Runnable, RequiredRepoCommand() {
     override fun run() {
         this.initService()
 
-        // TODO optionally clone the created repository into the current directory
-
         // Create the remote repository.
-        this.service.createRepo(
+        displayRepo(this.service.createRepo(
                 this.user,
                 this.name,
                 this.description,
@@ -264,7 +262,7 @@ class RepoInit: Runnable, RequiredRepoCommand() {
                 this.allowSquashMerge,
                 this.allowMergeCommit,
                 this.allowRebaseMerge
-        )
+        ) ?: return, listOf())
     }
 }
 
@@ -287,13 +285,13 @@ class RepoTemplate: Runnable, OptionalRepoCommand() {
 
     override fun run() {
         this.initService()
-        this.service.fromTemplate(
+        displayRepo(this.service.fromTemplate(
             this.templateOwner, this.templateName,
             this.user, this.name,
             this.description,
-            this.private)
-
-        // TODO optionally clone the created repository into the current directory
+            this.private) ?: return,
+            listOf()
+        )
     }
 }
 
