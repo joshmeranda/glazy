@@ -85,6 +85,7 @@ data class RepoDeleteRequest(
 /**
  * Request class for forking a repository.
  */
+@JsonInclude(Include.NON_NULL)
 data class RepoForkRequest (
         @JsonIgnore override val user: String,
         @JsonIgnore override val name: String,
@@ -94,11 +95,12 @@ data class RepoForkRequest (
 /**
  * Request class for creating a repository from a template.
  */
+@JsonInclude(Include.NON_NULL)
 data class RepoTemplateRequest (
-        override val user: String,
+        @JsonIgnore override val user: String,
         override val name: String,
-        val templateOwner: String,
-        val templateName: String,
+        @JsonIgnore val templateOwner: String,
+        @JsonIgnore val templateName: String,
         val description: String? = null,
         val private: Boolean? = null
 ) : Request

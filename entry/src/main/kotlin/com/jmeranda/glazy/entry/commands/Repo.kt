@@ -62,12 +62,8 @@ sealed class OptionalRepoCommand : RepoCommand() {
     override var name: String? = null
 
     override fun initService() {
-        if (this.user == null && this.name == null) {
-            val (user, name) = getRepoName()
-
-            this.user = user
-            this.name = name
-        }
+        this.user = getUser()
+        this.token = getToken()
 
         super.initService()
     }
@@ -375,9 +371,6 @@ class RepoPatch: Runnable, OptionalRepoCommand() {
 
     override fun run() {
         this.initService()
-        if (this.user == null || this.name == null) {
-            this.initService()
-        }
 
         // Patch the remote repository.
         val repo = this.service.editRepo(this.user ?: return, this.name ?: return,
