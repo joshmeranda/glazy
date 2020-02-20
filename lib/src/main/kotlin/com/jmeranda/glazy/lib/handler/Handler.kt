@@ -16,7 +16,8 @@ import kotlin.reflect.KClass
 
 import com.jmeranda.glazy.lib.exception.BadEndpoint
 import com.jmeranda.glazy.lib.objects.*
-import com.jmeranda.glazy.lib.service.cache.*
+import com.jmeranda.glazy.lib.service.rootEndpoints
+import com.jmeranda.glazy.lib.service.write
 import java.util.logging.*
 
 /**

@@ -1,4 +1,4 @@
-package com.jmeranda.glazy.lib.service.cache
+package com.jmeranda.glazy.lib.service
 
 import java.lang.System
 import java.io.File
@@ -12,23 +12,8 @@ import com.fasterxml.jackson.module.kotlin.readValue
 
 import com.jmeranda.glazy.lib.objects.Repo
 import com.jmeranda.glazy.lib.objects.RootEndpoints
-import com.jmeranda.glazy.lib.service.RepoService
-import com.jmeranda.glazy.lib.service.getToken
-
-/**
- * Data class for parsing token pairs.
- *
- * @param user The username for the token.
- * @param token The personal access token provided by github.
- */
-private data class UserTokenPair(
-    val user: String,
-    val token: String
-)
 
 private var CACHE_PATH = "${System.getProperty("user.home")}/.cache/glazy"
-
-private var TOKEN_CACHE_PATH = "$CACHE_PATH/access_tokens.json"
 
 private var ENDPOINT_CACHE_PATH = "$CACHE_PATH/root_endpoints.json"
 
@@ -63,7 +48,6 @@ private fun ensureCache(cachePath: String, isDir: Boolean = false) {
  */
 fun setCacheLocation(path: String) {
     CACHE_PATH = path
-    TOKEN_CACHE_PATH = "$CACHE_PATH/access_tokens.json"
     ENDPOINT_CACHE_PATH = "$CACHE_PATH/root_endpoints.json"
 }
 
@@ -178,7 +162,8 @@ fun refresh() {
 
         /* Refresh endpoints data */
         if (file.name == ENDPOINT_CACHE_PATH) {
-            write(rootEndpoints()
+            write(
+                rootEndpoints()
                     ?: continue)
         }
 

@@ -3,8 +3,6 @@ package com.jmeranda.glazy.lib.service
 import com.jmeranda.glazy.lib.objects.Repo
 import com.jmeranda.glazy.lib.handler.*
 import com.jmeranda.glazy.lib.request.*
-import com.jmeranda.glazy.lib.service.cache.repo
-import java.beans.Visibility
 
 /**
  * Service providing access to repository operations.
@@ -29,6 +27,7 @@ class RepoService(private var token: String?) {
             val repoHandler = GetHandler(header, repoUrl(request), request, Repo::class)
 
             repo = repoHandler.handleRequest() as Repo?
+            write(repo ?: return null)
         }
 
         return repo
@@ -47,8 +46,14 @@ class RepoService(private var token: String?) {
         val header = GlazyVisibilityHeader(this.token)
         val handler = GetHandler(header, currentUserRepoUrlQuery(request), request, Repo::class)
 
-        return handler.handleListRequest()
+        val list = handler.handleListRequest()
             ?.map { obj -> obj as Repo }
+
+        for (repo in list ?: return null) {
+            write(repo)
+        }
+
+        return list
     }
 
     /**
@@ -100,10 +105,14 @@ class RepoService(private var token: String?) {
             teamId, autoInit, gitignoreTemplate, licenseTemplate,
             allowSquashMerge, allowMergeCommit, allowRebaseMerge
         )
+
         val header = GlazySimpleHeader(this.token)
         val repoHandler = PostHandler(header, currentUserRepoUrl(), request, Repo::class)
+        val repo = repoHandler.handleRequest() as Repo?
 
-        return repoHandler.handleRequest() as Repo?
+        write(repo ?: return null)
+
+        return repo
     }
 
     /**
@@ -152,8 +161,11 @@ class RepoService(private var token: String?) {
         )
         val header = GlazySimpleHeader(this.token)
         val handler = PatchHandler(header, repoUrl(request), request, Repo::class)
+        val repo = handler.handleRequest() as Repo?
 
-        return handler.handleRequest() as Repo?
+        write(repo ?: return null)
+
+        return repo
     }
 
     /**
@@ -201,8 +213,11 @@ class RepoService(private var token: String?) {
         val request = RepoForkRequest(user, name, organization)
         val header = GlazySimpleHeader(this.token)
         val handler = PostHandler(header, forkRootUrl(request), request, Repo::class)
+        val repo = handler.handleRequest() as Repo?
 
-        return handler.handleRequest() as Repo?
+        write(repo ?: return null)
+
+        return repo
     }
 
     /**
@@ -224,7 +239,10 @@ class RepoService(private var token: String?) {
             private)
         val header = GlazyTemplateHeader(this.token)
         val handler = PostHandler(header, templateUrl(request), request, Repo::class)
+        val repo = handler.handleRequest() as Repo?
 
-        return handler.handleRequest() as Repo?
+        write(repo ?: return null)
+
+        return repo
     }
 }

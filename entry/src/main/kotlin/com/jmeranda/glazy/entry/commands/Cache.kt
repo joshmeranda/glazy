@@ -7,8 +7,9 @@ import picocli.CommandLine.Spec
 import picocli.CommandLine.Model.CommandSpec
 
 import com.jmeranda.glazy.lib.service.getToken
-import com.jmeranda.glazy.lib.service.cache.*
 import com.jmeranda.glazy.lib.service.RepoService
+import com.jmeranda.glazy.lib.service.clear
+import com.jmeranda.glazy.lib.service.refresh
 
 /**
  * Parent for all cache sub-commands.
