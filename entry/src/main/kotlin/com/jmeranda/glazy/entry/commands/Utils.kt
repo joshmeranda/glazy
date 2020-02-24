@@ -92,7 +92,11 @@ fun displayRepo(repo: Repo, fields: List<String>?) {
             "ssh url: ${repo.sshUrl}\n"
 
     if (repo.isTemplate != null) {
-        details += "template: ${repo.isTemplate}"
+        details += "is template: ${repo.isTemplate}"
+    }
+
+    if (repo.template != null) {
+        details += "template: ${repo.template}"
     }
 
     val badFields = mutableListOf<String>()

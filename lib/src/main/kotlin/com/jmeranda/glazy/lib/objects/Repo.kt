@@ -59,6 +59,7 @@ data class Repo(
         val issueEventsUrl: String,
         val issuesUrl: String,
         val isTemplate: Boolean? = null,
+        val template: String? = null,
         val keysUrl: String,
         val labelsUrl: String,
         val language: String? = null,
