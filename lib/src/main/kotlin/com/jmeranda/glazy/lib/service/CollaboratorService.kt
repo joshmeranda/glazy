@@ -6,7 +6,7 @@ import com.jmeranda.glazy.lib.objects.Invite
 import com.jmeranda.glazy.lib.objects.User
 import com.jmeranda.glazy.lib.request.CollaboratorDeleteRequest
 import com.jmeranda.glazy.lib.request.CollaboratorGetAllRequest
-import com.jmeranda.glazy.lib.request.CollaboratorPostRequest
+import com.jmeranda.glazy.lib.request.CollaboratorPutRequest
 
 /**
  * Service providing access to operating on repository issues.
@@ -40,9 +40,9 @@ class CollaboratorService(user: String, name: String, token: String?): Service(u
      * @return The invite created.
      */
     fun addCollaborator(targetUser: String, permission: String): Invite? {
-        val request = CollaboratorPostRequest(this.user, this.name, targetUser, permission)
+        val request = CollaboratorPutRequest(this.user, this.name, targetUser, permission)
         val header = GlazySimpleHeader(this.token)
-        val handler = PostHandler(header, collaboratorUrl(request), request, Invite::class)
+        val handler = PutHandler(header, collaboratorUrl(request), request, Invite::class)
 
         return handler.handleRequest() as Invite?
     }

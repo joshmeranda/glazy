@@ -20,7 +20,7 @@ data class CollaboratorGetAllRequest (
 /**
  * Request class for POST requests.
  */
-data class CollaboratorPostRequest (
+data class CollaboratorPutRequest (
     @JsonIgnore override val user: String,
     @JsonIgnore override val name: String,
     @JsonIgnore override val targetUser: String,

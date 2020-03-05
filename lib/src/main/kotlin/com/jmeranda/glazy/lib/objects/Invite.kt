@@ -1,12 +1,14 @@
 package com.jmeranda.glazy.lib.objects
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+
 data class Invite (
     override val id: Int,
-    override val nodeId: String,
+    @JsonIgnore override val nodeId: String = String(),
     val repository: Repo,
     val invitee: User,
     val inviter: User,
-    val permission: String,
+    val permissions: String,
     val createdAt: String,
     val url: String,
     val htmlUrl: String

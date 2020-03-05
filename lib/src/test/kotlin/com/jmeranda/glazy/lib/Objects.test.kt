@@ -4,9 +4,20 @@ import com.jmeranda.glazy.lib.service.IssueService
 import com.jmeranda.glazy.lib.service.LabelService
 import com.jmeranda.glazy.lib.service.PullRequestService
 import com.jmeranda.glazy.lib.service.RepoService
-import org.junit.Test
+
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+
+/// ###############
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
+import com.jmeranda.glazy.lib.objects.Invite
+import com.jmeranda.glazy.lib.objects.Repo
+/// ##############
+
+import org.junit.Test
 
 /**
  * Please noe that when running these tests, you will quickly deplete the

@@ -1,24 +1,22 @@
 package com.jmeranda.glazy.lib.handler
 
+import com.jmeranda.glazy.lib.exception.BadEndpoint
+import com.jmeranda.glazy.lib.objects.*
+import com.jmeranda.glazy.lib.service.rootEndpoints
+import com.jmeranda.glazy.lib.service.write
+
 import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 
-import khttp.delete
-import khttp.get
-import khttp.patch
-import khttp.post
+import java.util.logging.*
+
+import khttp.*
 import khttp.responses.Response
 
 import kotlin.reflect.KClass
-
-import com.jmeranda.glazy.lib.exception.BadEndpoint
-import com.jmeranda.glazy.lib.objects.*
-import com.jmeranda.glazy.lib.service.rootEndpoints
-import com.jmeranda.glazy.lib.service.write
-import java.util.logging.*
 
 /**
  * Retrieve root endpoints.
@@ -42,6 +40,9 @@ fun getRootEndpoints(rootUrl: String, mapper: ObjectMapper): RootEndpoints {
     return rootEndpoints
 }
 
+/**
+ * Formatter for handler logging.
+ */
 private class HandlerFormatter : Formatter() {
     override fun format(record: LogRecord?): String {
         val builder = StringBuilder()
@@ -256,6 +257,35 @@ class PostHandler(
         log(Level.INFO, "Sending request to ${this.url}")
 
         val response: Response = post(this.url, data = serializeRequest(), headers = this.headers)
+        if (! handleCode(response)) return null
+
+        return deserialize(response.text)
+    }
+}
+
+/**
+ * Handler for PUT style requests/
+ *
+ * @see Handler
+ */
+class PutHandler(
+    header: GlazyHeader,
+    url: String,
+    request: Request,
+    clazz: KClass<out GitObject>
+) : Handler(header, url, request, clazz), SingleResponse, NoResponse {
+    override fun handleNoRequest() {
+        log(Level.INFO, "Sending request to ${this.url}")
+
+        val response: Response = put(this.url, data = serializeRequest(), headers = this.headers)
+
+        handleCode(response)
+    }
+
+    override fun handleRequest(): GitObject? {
+        log(Level.INFO, "Sending request to ${this.url}")
+
+        val response: Response = put(this.url, data = serializeRequest(), headers = this.headers)
         if (! handleCode(response)) return null
 
         return deserialize(response.text)
