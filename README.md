@@ -23,7 +23,7 @@ Pass the `--help` option to any subcommand to view its usage text.
 
 # Configuration
 Much of the functionality of this project relies on the local git configuration, specifically the `github.user` and
-`github.token` fields. To properlly configure these fields please use the following commands:
+`github.token` fields. To properly configure these fields please use the following commands:
 
 ```shell script
 git config --global github.user <username>
