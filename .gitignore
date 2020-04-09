@@ -38,3 +38,6 @@ buildNumber.properties
 .idea/
 *.iml
 *.ipr
+
+# debuger generated files
+.attatch_pid*

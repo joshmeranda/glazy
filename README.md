@@ -33,7 +33,7 @@ git config --global github.token <token>
 # Development resources
 [Kotlin Coding Conventions](https://kotlinlang.org/docs/reference/coding-conventions.html)
 
-[Kotlin Docs](https://kotlinlang.org/docs/reference/)s
+[Kotlin Docs](https://kotlinlang.org/docs/reference/)
 
 [Git API docs](https://developer.github.com/v3/)
 
