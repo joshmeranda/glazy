@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import com.jmeranda.glazy.lib.makeVerbose
 
 import java.util.logging.*
 
@@ -38,21 +39,6 @@ fun getRootEndpoints(rootUrl: String, mapper: ObjectMapper): RootEndpoints {
     write(rootEndpoints)
 
     return rootEndpoints
-}
-
-/**
- * Formatter for handler logging.
- */
-private class HandlerFormatter : Formatter() {
-    override fun format(record: LogRecord?): String {
-        val builder = StringBuilder()
-
-        builder.append("${record?.level?.name}: ")
-        builder.append(record?.message)
-        builder.append("\n")
-
-        return builder.toString()
-    }
 }
 
 /**
@@ -133,13 +119,8 @@ abstract class Handler(
 
         var verbose = false
             set(value) {
-                // sets the logger level
-                logger.level = if (value) { Level.ALL } else { Level.OFF }
                 if (value) {
-                    logger.useParentHandlers = false
-                    val handler = ConsoleHandler()
-                    handler.formatter = HandlerFormatter()
-                    logger.addHandler(handler)
+                    logger.makeVerbose()
                 }
 
                 field = value

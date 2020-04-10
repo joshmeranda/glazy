@@ -41,8 +41,8 @@ abstract class RepoCommand {
      */
     protected open fun initService() {
         this.token = getToken()
-        Handler.verbose = verbose?.verbose ?: false
-        this.service = RepoService(this.token)
+        Handler.verbose = this.verbose?.verbose ?: false
+        this.service = RepoService(this.token, this.verbose?.verbose ?: false)
     }
 }
 

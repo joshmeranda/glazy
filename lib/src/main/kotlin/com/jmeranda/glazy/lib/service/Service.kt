@@ -1,5 +1,6 @@
 package com.jmeranda.glazy.lib.service
 
+import com.jmeranda.glazy.lib.makeVerbose
 import org.eclipse.jgit.lib.Config
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 
@@ -7,6 +8,7 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.logging.Logger
 
 /**
  * Services will provide high level access to operations on a repository and its elements.

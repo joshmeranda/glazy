@@ -70,7 +70,7 @@ class RefreshCache: Runnable {
         if (name == null) {
             refresh()
         } else {
-            refresh(this.user, this.name ?: return, RepoService(token))
+            refresh(this.user, this.name ?: return, RepoService(token, false))
         }
     }
 }

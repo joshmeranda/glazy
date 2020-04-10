@@ -2,14 +2,24 @@ package com.jmeranda.glazy.lib.service
 
 import com.jmeranda.glazy.lib.objects.Repo
 import com.jmeranda.glazy.lib.handler.*
+import com.jmeranda.glazy.lib.makeVerbose
 import com.jmeranda.glazy.lib.request.*
+import java.util.logging.Level
+import java.util.logging.Logger
 
 /**
  * Service providing access to repository operations.
  *
  * @param token The access token to be used for authentication.
  */
-class RepoService(private var token: String?) {
+class RepoService(protected val token: String? = null, verbose: Boolean = false) {
+    private val logger: Logger? = if (verbose) {
+        Logger.getLogger(RepoService::class.qualifiedName)
+            .makeVerbose()
+    } else {
+        null
+    }
+
     /**
      * Retrieve a remote repository.
      *
@@ -19,9 +29,11 @@ class RepoService(private var token: String?) {
      *      be found.
      */
     fun getRepo(user: String, name: String): Repo? {
+        logger?.log(Level.INFO, "Checking local cache for $user/$name")
         var repo: Repo? = repo(user, name)
 
         if (repo == null) {
+            logger?.log(Level.INFO, "No local cache entry found")
             val request = RepoGetRequest(user, name)
             val header = GlazyTemplateHeader(this.token)
             val repoHandler = GetHandler(header, repoUrl(request), request, Repo::class)
