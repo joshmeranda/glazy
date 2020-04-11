@@ -1,6 +1,5 @@
 package com.jmeranda.glazy.lib
 
-import com.jmeranda.glazy.lib.handler.Handler
 import java.util.logging.*
 
 /**

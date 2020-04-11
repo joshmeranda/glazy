@@ -17,7 +17,7 @@ import java.nio.file.Paths
  * @param targetPath The path of the file to parse the information from, will most often will most often be
  *      <some_path>/.git/config.
  * @return A [Pair] specifying the repository owner and name, or a [Pair] of nulls if an error occurs.
- * @throws NotInRepo When the target pth is null and there is not
+ * @throws NotInRepo When the target path is null and there is no provided target path to parse.
  */
 fun getRepoName(targetPath: String? = null): Pair<String?, String?> {
     val path: File = if (targetPath == null) {

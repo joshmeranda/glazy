@@ -61,6 +61,16 @@ sealed class OptionalRepoCommand : RepoCommand() {
             description = ["The name of the desired repository"])
     override var name: String? = null
 
+    /**
+     * Retrieve repository info if non-specified
+     */
+    protected fun initRepoInfo() {
+        getRepoName().let {
+            this.user = this.user ?: it.first
+            this.name = this.name ?: it.second
+        }
+    }
+
     override fun initService() {
         this.user = getUser()
         this.token = getToken()
@@ -281,6 +291,8 @@ class RepoTemplate: Runnable, OptionalRepoCommand() {
 
     override fun run() {
         this.initService()
+        this.initRepoInfo()
+
         displayRepo(this.service.fromTemplate(
             this.templateOwner, this.templateName,
             this.user, this.name,
@@ -371,6 +383,7 @@ class RepoPatch: Runnable, OptionalRepoCommand() {
 
     override fun run() {
         this.initService()
+        this.initRepoInfo()
 
         // Patch the remote repository.
         val repo = this.service.editRepo(this.user ?: return, this.name ?: return,
@@ -456,6 +469,7 @@ class RepoTransfer: Runnable, OptionalRepoCommand() {
 
     override fun run() {
         this.initService()
+        this.initRepoInfo()
 
         // Transfer the remote repository.
         this.service.transferRepo(this.user ?: return,this.name ?: return,
