@@ -40,4 +40,4 @@ buildNumber.properties
 *.ipr
 
 # debuger generated files
-.attatch_pid*
+.attach_pid*

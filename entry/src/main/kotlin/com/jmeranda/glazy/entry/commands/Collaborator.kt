@@ -1,12 +1,13 @@
 package com.jmeranda.glazy.entry.commands
 
 import com.jmeranda.glazy.entry.Verbose
-import com.jmeranda.glazy.entry.getRepoName
 import com.jmeranda.glazy.lib.exception.NotInRepo
 import com.jmeranda.glazy.lib.handler.Handler
 import com.jmeranda.glazy.lib.objects.User
 import com.jmeranda.glazy.lib.service.CollaboratorService
 import com.jmeranda.glazy.lib.service.getToken
+import com.jmeranda.glazy.lib.service.getRepoName
+
 import picocli.CommandLine
 import picocli.CommandLine.Command
 import picocli.CommandLine.Mixin

@@ -158,7 +158,6 @@ class RepoList: Runnable, RepoCommand() {
     override fun run() {
         this.initService()
 
-        // TODO if no available token find public of given users
         val repoList = this.service.getAllRepos(visibility, affiliation) ?: return
 
         for (repo: Repo? in repoList) {
@@ -389,6 +388,13 @@ class RepoPatch: Runnable, OptionalRepoCommand() {
                 this.hasIssues, this.hasProjects, this.hasWiki, this.isTemplate,
                 this.defaultBranch, this.allowSquashMerge, this.allowMergeCommit,
                 this.allowRebaseMerge, this.archived) ?: return
+
+        // Check that the current repository is the same as the one patched before updating configs
+        val (patchedOwner, patchedName) = getRepoName("./.git/config")
+
+        if (patchedOwner == this.user && patchedName == this.name) {
+            changeLocalName(repo)
+        }
 
         val patchedFields = mutableListOf<String>()
         val ignoreProps = arrayOf("token", "service", "user", "name")

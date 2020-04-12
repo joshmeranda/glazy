@@ -10,12 +10,12 @@ import picocli.CommandLine.Parameters
 import picocli.CommandLine.Spec
 import picocli.CommandLine.Model.CommandSpec
 
-import com.jmeranda.glazy.entry.getRepoName
 import com.jmeranda.glazy.lib.exception.NotInRepo
 import com.jmeranda.glazy.lib.handler.Handler
 import com.jmeranda.glazy.lib.objects.Issue
 import com.jmeranda.glazy.lib.service.IssueService
 import com.jmeranda.glazy.lib.service.getToken
+import com.jmeranda.glazy.lib.service.getRepoName
 
 /**
  * Parent class for all issue commands.

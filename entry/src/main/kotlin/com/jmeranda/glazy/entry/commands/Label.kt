@@ -10,11 +10,11 @@ import picocli.CommandLine.Parameters
 import picocli.CommandLine.Spec
 import picocli.CommandLine.Model.CommandSpec
 
-import com.jmeranda.glazy.entry.getRepoName
 import com.jmeranda.glazy.lib.handler.Handler
 import com.jmeranda.glazy.lib.objects.Label
 import com.jmeranda.glazy.lib.service.LabelService
 import com.jmeranda.glazy.lib.service.getToken
+import com.jmeranda.glazy.lib.service.getRepoName
 
 /**
  * Parent class for all label commands.

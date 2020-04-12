@@ -178,8 +178,6 @@ class RepoService(protected val token: String? = null, verbose: Boolean = false)
 
         write(repo ?: return null)
 
-        changeLocalName(repo)
-
         return repo
     }
 

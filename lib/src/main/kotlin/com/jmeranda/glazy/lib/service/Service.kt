@@ -7,6 +7,7 @@ import java.io.File
 
 import org.eclipse.jgit.errors.RepositoryNotFoundException
 import org.eclipse.jgit.lib.Config
+import org.eclipse.jgit.lib.StoredConfig
 import org.eclipse.jgit.storage.file.FileBasedConfig
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 import org.eclipse.jgit.util.FS
@@ -43,6 +44,8 @@ private val config: FileBasedConfig by lazy {
             }
     } catch (e: RepositoryNotFoundException) {
         throw NotInRepo(System.getProperty("user.dir"))
+    } catch (e: IllegalArgumentException) {
+        throw NotInRepo(System.getProperty("user.dir"))
     }
 }
 
@@ -52,7 +55,11 @@ private val config: FileBasedConfig by lazy {
  * @return The personal access token.
  */
 fun getToken(): String? {
-    return config.getString("github", null, "token")
+    return try {
+        config.getString("github", null, "token")
+    } catch (e: NotInRepo) {
+        null
+    }
 }
 
 /**
@@ -60,8 +67,13 @@ fun getToken(): String? {
  *
  * @return The username for authentication.
  */
+@Throws(NotInRepo::class)
 fun getUser(): String? {
-    return config.getString("github", null, "user")
+    return try {
+        config.getString("github", null, "user")
+    } catch (e: NotInRepo) {
+        null
+    }
 }
 
 /**
@@ -69,8 +81,13 @@ fun getUser(): String? {
  *
  * @param patchedRepo A repository object representing the current state of the repository.
  */
+@Throws(NotInRepo::class)
 fun changeLocalName(patchedRepo: Repo) {
-    val remote = config.getString("remote", "origin", "url") ?: return
+    val remote = try {
+        config.getString("remote", "origin", "url") ?: return
+    } catch (e: NotInRepo) {
+        return
+    }
 
     // change the remote configuration to the new url
     config.setString("remote", "origin", "url",
@@ -99,15 +116,16 @@ fun changeLocalName(patchedRepo: Repo) {
  * @return A [Pair] specifying the repository owner and name, or a [Pair] of nulls if an error occurs.
  * @throws NotInRepo When the target path is null and there is no provided target path to parse.
  */
+@Throws(NotInRepo::class)
 fun getRepoName(targetPath: String? = null): Pair<String?, String?> {
-    val cfg: Config = if (targetPath == null) {
+    val cfg: StoredConfig = (if (targetPath == null) {
         config
     } else {
-        FileBasedConfig(File(targetPath), FS.detect()).let {
-            it.load()
-            it
-        }
-    }
+        FileBasedConfig(File(targetPath), FS.detect())
+    })
+
+    cfg.load()
+
     val url = cfg.getString("remote", "origin", "url") ?: return Pair(null, null)
 
     return url.split(":").last()

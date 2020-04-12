@@ -11,10 +11,10 @@ import picocli.CommandLine.Spec
 import picocli.CommandLine.Model.CommandSpec
 
 import com.jmeranda.glazy.lib.service.PullRequestService
-import com.jmeranda.glazy.entry.getRepoName
 import com.jmeranda.glazy.lib.handler.Handler
 import com.jmeranda.glazy.lib.objects.PullRequest
 import com.jmeranda.glazy.lib.service.getToken
+import com.jmeranda.glazy.lib.service.getRepoName
 
 /**
  * Parent class for all pull request commands.
