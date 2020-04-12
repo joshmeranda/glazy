@@ -9,9 +9,7 @@ import picocli.CommandLine.Spec
 import picocli.CommandLine.Parameters
 import picocli.CommandLine.Model.CommandSpec
 
-import com.jmeranda.glazy.lib.service.getToken
-import com.jmeranda.glazy.lib.service.getUser
-import com.jmeranda.glazy.entry.getRepoName
+import com.jmeranda.glazy.lib.service.*
 import com.jmeranda.glazy.lib.handler.Handler
 import com.jmeranda.glazy.lib.objects.Repo
 import com.jmeranda.glazy.lib.service.RepoService
