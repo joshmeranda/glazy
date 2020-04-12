@@ -30,10 +30,4 @@ class GetRepoNameTest {
         assertNull(user)
         assertNull(name)
     }
-
-    @Test fun testBadUrl() {
-        val (user: String?, name: String?) = getRepoName(targetPath = "$resourceDir/badurl")
-        assertNull(user)
-        assertNull(name)
-    }
 }

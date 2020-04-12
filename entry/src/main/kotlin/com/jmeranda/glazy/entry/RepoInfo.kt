@@ -1,12 +1,15 @@
 package com.jmeranda.glazy.entry
 
 import com.jmeranda.glazy.lib.exception.NotInRepo
+import org.eclipse.jgit.errors.RepositoryNotFoundException
 import org.eclipse.jgit.lib.Config
-import org.eclipse.jgit.lib.RepositoryBuilder
+
 import java.io.File
-import java.io.FileNotFoundException
-import java.nio.file.Files
-import java.nio.file.Paths
+
+import org.eclipse.jgit.lib.Repository
+import org.eclipse.jgit.storage.file.FileBasedConfig
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder
+import org.eclipse.jgit.util.FS
 
 /**
  * Determine the user login and name of the current repository.
@@ -20,34 +23,22 @@ import java.nio.file.Paths
  * @throws NotInRepo When the target path is null and there is no provided target path to parse.
  */
 fun getRepoName(targetPath: String? = null): Pair<String?, String?> {
-    val path: File = if (targetPath == null) {
-        try {
-            File(RepositoryBuilder().findGitDir().gitDir.toString() + "/config")
-        } catch (e: FileNotFoundException) {
-            throw NotInRepo(System.getenv("PWD"))
-        } catch (e: NullPointerException) {
-            throw NotInRepo(System.getenv("PWD"))
-        }
+    val cfg: Config = if (targetPath == null) {
+        FileRepositoryBuilder()
+            .setMustExist(true)
+            .findGitDir()
+            .build()
+            .config
     } else {
-        if (Files.exists(Paths.get(targetPath))) {
-            File(targetPath)
-        } else {
-            return Pair(null, null)
+        Config().let {
+            FileBasedConfig(File(targetPath), FS.detect())
         }
     }
-
-    val cfg = Config()
-    cfg.fromText(
-        path.readText()
-    )
-
-    val fullNamePattern = Regex( "[a-zA-Z0-9]+/[a-zA-Z0-9\\-_]+\\.git$", RegexOption.UNIX_LINES)
     val url = cfg.getString("remote", "origin", "url") ?: return Pair(null, null)
-    val fullName = fullNamePattern.find(url)?.value?.split("/") ?: return Pair(null, null)
 
-    return Pair(
-        fullName[fullName.lastIndex - 1],
-        fullName[fullName.lastIndex]
-            .replace(".git", "")
-    )
+    return url.split(":").last()
+        .split("/").let {
+            Pair(it[it.lastIndex - 1],
+                it[it.lastIndex].replace(".git", ""))
+        }
 }

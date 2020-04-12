@@ -1,14 +1,14 @@
 package com.jmeranda.glazy.lib.service
 
-import com.jmeranda.glazy.lib.makeVerbose
-import org.eclipse.jgit.lib.Config
-import org.eclipse.jgit.storage.file.FileRepositoryBuilder
+import com.jmeranda.glazy.lib.exception.NotInRepo
+import com.jmeranda.glazy.lib.objects.Repo
 
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.util.logging.Logger
+
+import org.eclipse.jgit.errors.RepositoryNotFoundException
+import org.eclipse.jgit.storage.file.FileBasedConfig
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder
+import org.eclipse.jgit.util.FS
 
 /**
  * Services will provide high level access to operations on a repository and its elements.
@@ -25,22 +25,12 @@ abstract class Service(
 /**
  * A list of all config files for git.
  */
-private val configList: List<File> by lazy {
-    val list = mutableListOf<File>()
-
-    if (Files.exists(Paths.get(System.getenv("PWD") + "/.git/config"))) {
-        list.add(File(System.getenv("PWD") + "/.git/config"))
+private val config: FileBasedConfig by lazy {
+    try {
+        FileBasedConfig(File(FileRepositoryBuilder().findGitDir().gitDir, "config"), FS.detect())
+    } catch (e: RepositoryNotFoundException) {
+        throw NotInRepo(System.getProperty("user.dir"))
     }
-
-    if (Files.exists(Paths.get(System.getenv("HOME") + "/.gitconfig"))) {
-        list.add(File(System.getenv("HOME") + "/.gitconfig"))
-    }
-
-    if (Files.exists(Paths.get("/etc/gitconfig"))) {
-        list.add(File("/etc/gitconfig"))
-    }
-
-    list.toList()
 }
 
 /**
@@ -49,14 +39,7 @@ private val configList: List<File> by lazy {
  * @return The personal access token.
  */
 fun getToken(): String? {
-    val cfg = Config()
-
-    for (path in configList) {
-        cfg.fromText(path.readText())
-        return cfg.getString("github", null, "token") ?: continue
-    }
-
-    return null
+    return config.getString("github", null, "token")
 }
 
 /**
@@ -65,12 +48,29 @@ fun getToken(): String? {
  * @return The username for authentication.
  */
 fun getUser(): String? {
-    val cfg = Config()
+    return config.getString("github", null, "user")
+}
 
-    for (path in configList) {
-        cfg.fromText(path.readText())
-        return cfg.getString("github", null, "user") ?: continue
-    }
+/**
+ * Change local remotes and directory names to reflect a repository name change.
+ *
+ * @param patchedRepo A repository object representing the current state of the repository.
+ */
+fun changeLocalName(patchedRepo: Repo) {
+    val remote = config.getString("remote", "origin", "url") ?: return
 
-    return null
+    // rename the root directory
+    val dir = File(System.getProperty("user.dir"))
+    dir.renameTo(File(dir.parent + File.separator + patchedRepo.name))
+
+    // change the remote configuration to the new url
+    config.setString("remote", "origin", "url",
+        if (remote.contains("https")) {
+            patchedRepo.cloneUrl
+        } else {
+            patchedRepo.sshUrl
+        })
+
+    // save the new configuration to persistent storage
+    config.save()
 }

@@ -4,6 +4,7 @@ import com.jmeranda.glazy.lib.objects.Repo
 import com.jmeranda.glazy.lib.handler.*
 import com.jmeranda.glazy.lib.makeVerbose
 import com.jmeranda.glazy.lib.request.*
+
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -176,6 +177,8 @@ class RepoService(protected val token: String? = null, verbose: Boolean = false)
         val repo = handler.handleRequest() as Repo?
 
         write(repo ?: return null)
+
+        changeLocalName(repo)
 
         return repo
     }
