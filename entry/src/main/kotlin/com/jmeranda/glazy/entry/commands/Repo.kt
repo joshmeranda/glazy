@@ -145,8 +145,15 @@ open class RepoShow : Runnable, RequiredRepoCommand() {
         mixinStandardHelpOptions = true)
 class RepoList: Runnable, RepoCommand() {
     @Option(names=["--affiliation"],
-        description=["The users affiliation to the group (defaults to owner)."])
+        description=["The users affiliation to the group (owner, collaborator, member) defaults to owner."])
     var affiliation: String = "owner"
+        set(value) {
+            field = when (value) {
+                "member" -> "organization_member"
+                "organization_member", "owner", "collaborator" -> value
+                else -> value
+            }
+        }
 
     @Option(names=["--visibility"],
         description = ["The visibility of repositories to show (defaults to all)."])
@@ -186,6 +193,7 @@ class RepoList: Runnable, RepoCommand() {
  */
 @Command(name = "init",
         description = ["Create a new remote repository"],
+        footer = ["See the following link for a list of License name keywords:\nhttps://help.github.com/en/github/creating-cloning-and-archiving-repositories/licensing-a-repository"],
         mixinStandardHelpOptions = true)
 class RepoInit: Runnable, RequiredRepoCommand() {
     @Option(names = ["-d", "--description"],
@@ -225,11 +233,11 @@ class RepoInit: Runnable, RequiredRepoCommand() {
     var autoInit: Boolean = false
 
     @Option(names = ["--gitignore-template"],
-            description = ["The language gitignore template to use."])
+            description = ["See link for supported languages https://github.com/github/gitignore."])
     var gitignoreTemplate: String? = null
 
     @Option(names = ["--license-template"],
-            description = ["The license to use for the repository (MIT, GPL, etc.)."])
+            description = ["The license to use for the repository by keyword."])
     var licenseTemplate: String? = null
 
     @Option(names = ["--allow-squash"],

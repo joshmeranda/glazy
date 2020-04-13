@@ -75,7 +75,7 @@ class CollaboratorParent : Runnable {
     mixinStandardHelpOptions=true)
 class CollaboratorList : Runnable, CollaboratorCommand() {
     @Option(names=["--affiliation"],
-        description=["The affiliation of collaborators to list."])
+        description=["The affiliation of collaborators to list (outside, direct, all) defaults to all."])
     var affiliation: String = "all"
 
     override fun run() {
