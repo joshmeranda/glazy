@@ -11,6 +11,7 @@ import org.eclipse.jgit.lib.StoredConfig
 import org.eclipse.jgit.storage.file.FileBasedConfig
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder
 import org.eclipse.jgit.util.FS
+import java.lang.IllegalArgumentException
 
 /**
  * Services will provide high level access to operations on a repository and its elements.
@@ -27,8 +28,8 @@ abstract class Service(
 /**
  * A list of all config files for git.
  */
-private val config: FileBasedConfig by lazy {
-    try {
+private val config: StoredConfig by lazy {
+    val cfg =  try {
         FileRepositoryBuilder()
             FileRepositoryBuilder()
             .setMustExist(true)
@@ -42,11 +43,17 @@ private val config: FileBasedConfig by lazy {
                 fbcfg.load()
                 fbcfg
             }
-    } catch (e: RepositoryNotFoundException) {
-        throw NotInRepo(System.getProperty("user.dir"))
-    } catch (e: IllegalArgumentException) {
-        throw NotInRepo(System.getProperty("user.dir"))
+    } catch (e: Exception) {
+        // config of system and user config files
+        FileBasedConfig(
+            FileBasedConfig(File("/etc/gitconfig"), FS.detect()),
+            File(System.getProperty("user.home"), ".gitconfig"),
+            FS.detect()
+        )
     }
+
+    cfg.load()
+    cfg
 }
 
 /**
@@ -83,11 +90,9 @@ fun getUser(): String? {
  */
 @Throws(NotInRepo::class)
 fun changeLocalName(patchedRepo: Repo) {
-    val remote = try {
-        config.getString("remote", "origin", "url") ?: return
-    } catch (e: NotInRepo) {
-        return
-    }
+    // retrieve the old remote value
+    // will also return on null config or value
+    val remote = config.getString("remote", "origin", "url") ?: return
 
     // change the remote configuration to the new url
     config.setString("remote", "origin", "url",

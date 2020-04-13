@@ -147,13 +147,6 @@ class RepoList: Runnable, RepoCommand() {
     @Option(names=["--affiliation"],
         description=["The users affiliation to the group (owner, collaborator, member) defaults to owner."])
     var affiliation: String = "owner"
-        set(value) {
-            field = when (value) {
-                "member" -> "organization_member"
-                "organization_member", "owner", "collaborator" -> value
-                else -> value
-            }
-        }
 
     @Option(names=["--visibility"],
         description = ["The visibility of repositories to show (defaults to all)."])
@@ -165,6 +158,14 @@ class RepoList: Runnable, RepoCommand() {
     override fun run() {
         this.initService()
 
+        this.affiliation = when (this.affiliation) {
+                "member" -> "organization_member"
+                "organization_member", "owner", "collaborator" -> this.affiliation
+                else -> {
+                    System.err.println("Unknown affiliation value ${this.affiliation}")
+                    return
+                }
+            }
         val repoList = this.service.getAllRepos(visibility, affiliation) ?: return
 
         for (repo: Repo? in repoList) {
