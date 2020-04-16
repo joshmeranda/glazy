@@ -97,7 +97,7 @@ class CollaboratorList : Runnable, CollaboratorCommand() {
     description=["Add collaborators to the repository."],
     mixinStandardHelpOptions=true)
 class CollaboratorAdd : Runnable, CollaboratorCommand() {
-    @Parameters(index="0", description=["The permissions to apply to the new collaborators."])
+    @Parameters(index="0", description=["The permissions to apply to the new collaborators (pull, push, admin, maintain, triage) defaults to pull."])
     private lateinit var permissions: String
 
     @Parameters(index="1..*", description=["The username to add as a collaborator"])
@@ -121,7 +121,7 @@ class CollaboratorAdd : Runnable, CollaboratorCommand() {
     description=["Remove collaborators to the repository."],
     mixinStandardHelpOptions=true)
 class CollaboratorRemove : Runnable, CollaboratorCommand() {
-    @Parameters(index="0..*", description=["The users sto remove as collaborators."])
+    @Parameters(index="0..*", description=["The users to remove as collaborators."])
     private val collaborators: List<String>? = null
 
     override fun run() {

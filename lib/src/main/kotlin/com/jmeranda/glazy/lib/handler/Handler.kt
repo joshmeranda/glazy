@@ -80,7 +80,7 @@ abstract class Handler(
             log(Level.INFO, "Parsing api response.")
             mapper.readValue(data, this.clazz.java)
         } catch (e: JsonMappingException) {
-            log(Level.WARNING, "Error parsing api response.")
+            log(Level.WARNING, "Error mapping response due to bad or missing value at '${e.pathReference}': $data")
             null
         }
     }
