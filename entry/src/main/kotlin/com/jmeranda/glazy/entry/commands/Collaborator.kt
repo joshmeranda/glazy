@@ -97,11 +97,11 @@ class CollaboratorList : Runnable, CollaboratorCommand() {
     description=["Add collaborators to the repository."],
     mixinStandardHelpOptions=true)
 class CollaboratorAdd : Runnable, CollaboratorCommand() {
-    @Parameters(index="0", description=["The permissions to apply to the new collaborators (pull, push, admin, maintain, triage) defaults to pull."])
-    private lateinit var permissions: String
+    @Parameters(index="0", description=["The permissions to apply to the new collaborators (pull, push, admin, maintain, triage)."])
+    private var permissions: String = "pull"
 
     @Parameters(index="1..*", description=["The username to add as a collaborator"])
-    private val collaborators: List<String>? = null
+    private lateinit var collaborators: List<String>
 
     override fun run() {
         this.initService() ?: return

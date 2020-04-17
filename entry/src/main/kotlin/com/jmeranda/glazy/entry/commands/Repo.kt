@@ -122,7 +122,7 @@ class RepoParent: Runnable, OptionalRepoCommand() {
 open class RepoShow : Runnable, RequiredRepoCommand() {
     @Option(names = ["-f", "--fields"],
             description = ["The fields to also show"],
-            split = ",")
+            arity = "1..*")
     private var fields: List<String>? = null
 
     override fun run() {
@@ -477,7 +477,7 @@ class RepoTransfer: Runnable, OptionalRepoCommand() {
 
     @Option(names = ["-t", "--team-ids"],
             description = ["Team id(s) to add to the repository."],
-            split = ",")
+            arity = "1..*")
     lateinit var teamIds: List<Int>
 
     override fun run() {

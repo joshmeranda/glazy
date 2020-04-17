@@ -121,13 +121,13 @@ class IssueAdd: Runnable, IssueCommand() {
     private var milestone: Int? = null
 
     @Option(names=["-l", "--labels"],
-            description=["The labels for the new issue as comma separated strings."],
-            split=",")
+            description=["The labels for the new issue."],
+            arity="1..*")
     private var labels: List<String>? = null
 
     @Option(names=["-a", "--assignees"],
-            description=["The user logins for users to be assigned to the issue, as comma separated strings."],
-            split=",")
+            description=["The user logins for users to be assigned to the issue."],
+            arity="1..*")
     private var assignees: List<String>? = null
 
     override fun run() {
@@ -172,12 +172,13 @@ class IssuePatch: Runnable, IssueCommand() {
     private var milestone: Int? = null
 
     @Option(names=["-l", "--labels"],
-            description=["The patched labels for the issue as comma separated strings."])
+            description=["The patched labels for the issue."],
+            arity="1..*")
     private var labels: List<String>? = null
 
     @Option(names=["-a", "--assignees"],
-            description=["The patched user logins for users to be assigned to the issue, as comma separated strings."],
-            split=",")
+            description=["The patched user logins for users to be assigned to the issue"],
+            arity="1..*")
     private var assignees: List<String>? = null
 
     override fun run() {

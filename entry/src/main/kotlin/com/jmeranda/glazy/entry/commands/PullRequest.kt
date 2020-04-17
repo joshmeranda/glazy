@@ -73,7 +73,7 @@ class PullList: Runnable, PullCommand() {
 
     @Option(names = ["-f", "--fields"],
             description = ["The fields to also show"],
-            split = ",")
+            arity = "1..*")
     private var fields: List<String>? = null
 
     override fun run() {
