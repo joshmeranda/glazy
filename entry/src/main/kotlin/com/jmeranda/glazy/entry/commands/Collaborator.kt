@@ -100,7 +100,7 @@ class CollaboratorAdd : Runnable, CollaboratorCommand() {
     @Parameters(index="0", description=["The permissions to apply to the new collaborators (pull, push, admin, maintain, triage)."])
     private var permissions: String = "pull"
 
-    @Parameters(index="1..*", description=["The username to add as a collaborator"])
+    @Parameters(index="1", arity="1..*", description=["The username to add as a collaborator"])
     private lateinit var collaborators: List<String>
 
     override fun run() {
