@@ -121,11 +121,13 @@ class PullInit: Runnable, PullCommand() {
     private var body: String? = null
 
     @Option(names = ["-m", "--can-modify"],
-            description = ["Specifies that the repository maintainers can modify the pull request."])
+            description = ["Specifies that the repository maintainers can modify the pull request."],
+            negatable = true)
     private var canModify: Boolean? = null
 
     @Option(names = ["-d", "--draft"],
-            description = ["Specifies whether the pull request is a draft or not."])
+            description = ["Specifies whether the pull request is a draft or not."],
+            negatable = true)
     private var draft: Boolean? = null
 
     override fun run() {
@@ -197,7 +199,8 @@ class PullUpdate: Runnable, PullCommand() {
     private var base: String? = null
 
     @Option(names = ["-m", "--can-modify"],
-            description = ["Specify that the maintainer can modify the request."])
+            description = ["Specify that the maintainer can modify the request."],
+            negatable = true)
     private var canModify: Boolean? = null
 
     override fun run() {

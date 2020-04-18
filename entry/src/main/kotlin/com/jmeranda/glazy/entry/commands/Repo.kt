@@ -209,16 +209,19 @@ class RepoInit: Runnable, RequiredRepoCommand() {
             description = ["Mark the new repository as private."])
     var private: Boolean = false
 
-    @Option(names = ["-i", "--has-issues"],
-            description = ["Enable issues for the repository."])
+    @Option(names = ["-i", "--issues"],
+            description = ["Enable issues for the repository."],
+            negatable = true)
     var hasIssues: Boolean = true
     
-    @Option(names = ["--has-project"],
-            description = ["Enable projects for the repository."])
+    @Option(names = ["--projects"],
+            description = ["Enable projects for the repository."],
+            negatable = true)
     var hasProjects: Boolean = true
 
-    @Option(names = ["-w", "--has-wiki"],
-            description = ["Enable wiki for the repository."])
+    @Option(names = ["-w", "--wiki"],
+            description = ["Enable wiki for the repository."],
+            negatable = true)
     var hasWiki: Boolean = true
 
     @Option(names = ["--is-template"],
@@ -230,7 +233,8 @@ class RepoInit: Runnable, RequiredRepoCommand() {
     var teamId: Int? = null
 
     @Option(names = ["-a", "--auto-init"],
-            description = ["Create an initial commit with an empty README"])
+            description = ["Create an initial commit with an empty README"],
+            negatable = true)
     var autoInit: Boolean = false
 
     @Option(names = ["--gitignore-template"],
@@ -242,15 +246,18 @@ class RepoInit: Runnable, RequiredRepoCommand() {
     var licenseTemplate: String? = null
 
     @Option(names = ["--allow-squash"],
-            description = ["Allow squash merging pull requests"])
+            description = ["Allow squash merging pull requests"],
+            negatable = true)
     var allowSquashMerge: Boolean = true
 
-    @Option(names = ["--allow_merge"],
-            description = ["Allow merging pull requests with a commit."])
+    @Option(names = ["--allow-merge"],
+            description = ["Allow merging pull requests with a commit."],
+            negatable = true)
     var allowMergeCommit: Boolean = true
 
     @Option(names = ["--allow-rebase"],
-            description = ["Allow rebase merging pull requests."])
+            description = ["Allow rebase merging pull requests."],
+            negatable = true)
     var allowRebaseMerge: Boolean = true
 
     override fun run() {
@@ -351,19 +358,22 @@ class RepoPatch: Runnable, OptionalRepoCommand() {
             description = ["Make the repository public."])
     var public: Boolean? = null
 
-    @Option(names = ["--has-issues"],
-            description = ["Allow issue for the repo."])
+    @Option(names = ["--issues"],
+            description = ["Allow issue for the repo."],
+            negatable = true)
     var hasIssues: Boolean? = null
 
-    @Option(names = ["--has-projects"],
-            description = ["Allow projects for the repo."])
+    @Option(names = ["--projects"],
+            description = ["Allow projects for the repo."],
+            negatable = true)
     var hasProjects: Boolean? = null
 
-    @Option(names = ["--has-wiki"],
-            description = ["Allow wiki for the repo."])
+    @Option(names = ["--wiki"],
+            description = ["Allow wiki for the repo."],
+            negatable = true)
     var hasWiki: Boolean? = null
 
-    @Option(names = ["--is-tempalte"],
+    @Option(names = ["--is-template"],
             description = ["Mark the repository as a template"])
     var isTemplate: Boolean? = null
 
@@ -372,19 +382,23 @@ class RepoPatch: Runnable, OptionalRepoCommand() {
     var defaultBranch: String? = null
 
     @Option(names = ["--allow-squash"],
-            description = ["Allow squash merging for the repo."])
+            description = ["Allow squash merging for the repo."],
+            negatable = true)
     var allowSquashMerge: Boolean? = null
 
     @Option(names = ["--allow-merge"],
-            description = ["Allow merge commits for the repo."])
+            description = ["Allow merge commits for the repo."],
+            negatable = true)
     var allowMergeCommit: Boolean? = null
 
     @Option(names = ["--allow-rebase"],
-            description = ["Allow rebase merges for the repo."])
+            description = ["Allow rebase merges for the repo."],
+            negatable = true)
     var allowRebaseMerge: Boolean? = null
 
     @Option(names = ["-a", "--archive"],
-            description = ["Archive the repo."])
+            description = ["Archive the repo."],
+            negatable = true)
     var archived: Boolean? = null
 
     override fun run() {
@@ -434,9 +448,10 @@ class RepoPatch: Runnable, OptionalRepoCommand() {
         mixinStandardHelpOptions = true)
 class RepoDelete: Runnable, RequiredRepoCommand() {
 
-    @Option(names = ["--noconfirm"],
-        description = ["Do not ask for confirmation before deleting repository."])
-    private var noConfirm: Boolean = false
+    @Option(names = ["--no-confirm"],
+        description = ["Do not ask for confirmation before deleting repository."],
+            negatable = true)
+    private var noConfirm: Boolean = true
 
     /**
      * Get user confirmation to delete a repository.
