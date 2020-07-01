@@ -16,6 +16,7 @@ data class IssuePullRequest (
 data class Issue(
         override val id: Int,
         override val nodeId: String,
+        val activeLockReason: String? = null,
         val assignee: User? = null,
         val assignees: List<User?>,
         val authorAssociation: String,

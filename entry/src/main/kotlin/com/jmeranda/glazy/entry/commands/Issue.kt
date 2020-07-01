@@ -26,7 +26,9 @@ import com.jmeranda.glazy.lib.service.getRepoName
 sealed class IssueCommand {
     @Mixin
     var verbose: Verbose? = null
+
     protected var service: IssueService? = null
+
     private var token: String? = null
 
     /**
