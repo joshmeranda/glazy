@@ -87,6 +87,9 @@ data class RepoDeleteRequest(
  */
 @JsonInclude(Include.NON_NULL)
 data class RepoForkRequest (
+        /**
+         * The owner of the original repository.
+         */
         @JsonIgnore override val user: String,
         @JsonIgnore override val name: String,
         val organization: String? = null

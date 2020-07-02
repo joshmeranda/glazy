@@ -13,7 +13,7 @@ import java.util.logging.Logger
  *
  * @param token The access token to be used for authentication.
  */
-class RepoService(protected val token: String? = null, verbose: Boolean = false) {
+class RepoService(private val token: String? = null, verbose: Boolean = false) {
     private val logger: Logger? = if (verbose) {
         Logger.getLogger(RepoService::class.qualifiedName)
             .makeVerbose()

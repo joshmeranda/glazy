@@ -510,26 +510,12 @@ class RepoTransfer: Runnable, OptionalRepoCommand() {
  *
  * @property user The name of the fork owner.
  * @property name The name of the target repository.
- * @property current The name of the target repository owner.
  * @property organization The organization of the fork.
  */
 @Command(name = "fork",
-        description = ["Create a fork of a repository."],
+        description = ["Create a fork of a repository for the authenticated user."],
         mixinStandardHelpOptions = true)
-class RepoFork: Runnable, RepoCommand() {
-    @Parameters(index = "0", description = ["The new owner for the repository."])
-    override lateinit var user: String
-
-    @Option(names = ["-n", "--name"],
-            description = ["The name of the desired repository"],
-            required = true)
-    override lateinit var name: String
-
-    @Option(names = ["-u", "--user"],
-            description = ["The owner of the original repository."],
-            required = true)
-    lateinit var current: String
-
+class RepoFork: Runnable, RequiredRepoCommand() {
     @Option(names = ["-o", "--organization"],
             description = ["The name of the organization to fork into."])
     var organization: String? = null
@@ -537,7 +523,7 @@ class RepoFork: Runnable, RepoCommand() {
     override fun run() {
         this.initService()
 
-        val repo = this.service.createFork(this.current, this.name, organization)
+        val repo = this.service.createFork(this.user, this.name, organization)
 
         displayRepo(repo ?: return, null)
     }
