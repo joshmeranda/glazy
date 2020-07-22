@@ -34,6 +34,7 @@ data class Issue(
         val milestone: Milestone? = null,
         val number: Int,
         val pullRequest: IssuePullRequest? = null,
+        val performedViaGithubApp: Boolean? = null,
         val repositoryUrl: String,
         val state: String,
         val title: String,
