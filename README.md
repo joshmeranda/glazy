@@ -1,6 +1,12 @@
 # glazy
 Git web API wrapper written in Kotlin. Its git, but all command line for when a gui is just too much effort.
 
+# NOTE
+
+Be aware this project aimed to augment some missing functionality from the official [github command line](https://cli.github.com/).
+That tool has implement most if not all of this project's functionality has been implemented and this project will no
+longer be maintained, and should not be used in favor of the official tool.
+
 # Build
 Run `mvn package`. Add repository location to PATH environment variable.
 
