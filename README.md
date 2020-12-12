@@ -1,5 +1,5 @@
 # glazy
-Git web API wrapper written in Kotlin. Its git, but all command line for when a gui is just too much effort.
+Git web API wrapper written in Kotlin. It's git, but all command line for when a gui is just too much effort.
 
 # Build
 Run `mvn package`. Add repository location to PATH environment variable.
